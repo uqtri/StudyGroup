@@ -81,7 +81,10 @@ model User {
   resourceFolders  ResourceFolder[]
   resourceRatings  ResourceRating[]
   posts            Post[]
+  postVotes        PostVote[]
   comments         Comment[]
+  commentVotes     CommentVote[]
+  commentMentions  CommentMention[] @relation("MentionedUser")
   notifications    Notification[]
   reports          Report[]         @relation("Reporter")
   refreshTokens    RefreshToken[]
@@ -240,13 +243,46 @@ model Post {
   authorId  String
   title     String
   content   String
+  editedAt  DateTime?
   deletedAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
   group    StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
   author   User       @relation(fields: [authorId], references: [id])
-  comments Comment[]
+  comments    Comment[]
+  votes       PostVote[]
+  attachments PostAttachment[]
+}
+
+model PostAttachment {
+  id        String   @id @default(uuid())
+  postId    String
+  fileUrl   String
+  fileName  String
+  fileType  String
+  fileSize  Int?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model PostVote {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
 }
 
 model Comment {
@@ -255,14 +291,45 @@ model Comment {
   authorId        String
   parentCommentId String?
   content         String
+  editedAt        DateTime?
   deletedAt       DateTime?
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
-  author  User      @relation(fields: [authorId], references: [id])
-  parent  Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id])
-  replies Comment[] @relation("CommentReplies")
+  post     Post             @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author   User             @relation(fields: [authorId], references: [id])
+  parent   Comment?         @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies  Comment[]        @relation("CommentReplies")
+  votes    CommentVote[]
+  mentions CommentMention[]
+}
+
+model CommentVote {
+  id        String   @id @default(uuid())
+  commentId String
+  userId    String
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+}
+
+model CommentMention {
+  id        String   @id @default(uuid())
+  commentId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation("MentionedUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([userId])
 }
 
 model Notification {

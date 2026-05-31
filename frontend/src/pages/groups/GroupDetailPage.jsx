@@ -1,6 +1,6 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -10,7 +10,7 @@ import { groupApi } from "../../api/groupApi";
 
 import { sessionApi } from "../../api/sessionApi";
 
-import { postsApi } from "../../api/postsApi";
+import { GroupDiscussionsTab } from "../../components/discussions/GroupDiscussionsTab";
 
 import { useAuthStore } from "../../store/authStore";
 
@@ -23,8 +23,6 @@ import {
 
 import { Button } from "../../components/common/Button";
 import { Avatar } from "../../components/common/Avatar";
-
-import { formatDate, formatDateTime } from "../../utils/formatDate";
 
 import { CreateSessionForm } from "../../components/sessions/CreateSessionForm";
 import { SessionCard } from "../../components/sessions/SessionCard";
@@ -45,12 +43,19 @@ export const GroupDetailPage = () => {
   const { id } = useParams();
 
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const qc = useQueryClient();
 
   const { isAuthenticated, user } = useAuthStore();
 
-  const [activeTab, setActiveTab] = useState("Overview");
+  const tabFromUrl = searchParams.get("tab");
+  const highlightPostId = searchParams.get("post");
+  const highlightCommentId = searchParams.get("comment");
+
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl && baseTabs.includes(tabFromUrl) ? tabFromUrl : "Overview",
+  );
   const [showCreateSession, setShowCreateSession] = useState(false);
 
   const { data: group, isLoading } = useQuery({
@@ -67,15 +72,6 @@ export const GroupDetailPage = () => {
 
     enabled: activeTab === "Sessions",
     refetchInterval: activeTab === "Sessions" ? 10000 : false,
-  });
-
-  const { data: posts } = useQuery({
-    queryKey: ["group-posts", id],
-
-    queryFn: () =>
-      postsApi.list({ groupId: id, limit: 20 }).then((r) => r.data.data),
-
-    enabled: activeTab === "Discussions",
   });
 
   const joinMutation = useMutation({
@@ -135,6 +131,12 @@ export const GroupDetailPage = () => {
 
     return result;
   }, [canManage]);
+
+  useEffect(() => {
+    const t = searchParams.get("tab");
+    if (!t) return;
+    if (tabs.includes(t)) setActiveTab(t);
+  }, [searchParams, tabs]);
 
   if (isLoading) return <GroupDetailSkeleton />;
 
@@ -206,7 +208,18 @@ export const GroupDetailPage = () => {
           <button
             key={tab}
             type="button"
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              setActiveTab(tab);
+              const next = new URLSearchParams(searchParams);
+              if (tab === "Discussions") {
+                next.set("tab", "Discussions");
+              } else {
+                next.delete("tab");
+                next.delete("post");
+                next.delete("comment");
+              }
+              setSearchParams(next, { replace: true });
+            }}
             className={cn(
               "inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition",
 
@@ -403,23 +416,20 @@ export const GroupDetailPage = () => {
       )}
 
       {activeTab === "Discussions" && (
-        <div className="space-y-4">
-          {(posts?.items || []).map((p) => (
-            <Card key={p.id}>
-              <h3 className="font-semibold">{p.title}</h3>
-
-              <p className="mt-1 text-xs text-muted">
-                {p.author?.fullName} · {formatDate(p.createdAt)}
-              </p>
-
-              <p className="mt-2 text-sm text-muted">{p.content}</p>
-            </Card>
-          ))}
-
-          {!posts?.items?.length && (
-            <p className="text-muted">No discussions yet.</p>
-          )}
-        </div>
+        <GroupDiscussionsTab
+          groupId={id}
+          members={group.members || []}
+          userId={user?.id}
+          isMember={isMember}
+          highlightPostId={highlightPostId}
+          highlightCommentId={highlightCommentId}
+          onHighlightDone={() => {
+            const next = new URLSearchParams(searchParams);
+            next.delete("post");
+            next.delete("comment");
+            setSearchParams(next, { replace: true });
+          }}
+        />
       )}
 
       <Link

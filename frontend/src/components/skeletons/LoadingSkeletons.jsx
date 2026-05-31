@@ -351,6 +351,86 @@ export const DiscussionsPageSkeleton = () => (
   </div>
 );
 
+export const DiscussionPostSkeleton = () => (
+  <div className="surface-panel overflow-hidden p-0">
+    <div className="flex gap-3 p-4 sm:p-5">
+      <div className="flex flex-col items-center gap-1">
+        <Skeleton className="h-6 w-6 rounded-md" />
+        <Skeleton className="h-4 w-6" />
+        <Skeleton className="h-6 w-6 rounded-md" />
+      </div>
+      <div className="min-w-0 flex-1 space-y-3">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-9 w-9 rounded-full" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-3 w-24" />
+          </div>
+        </div>
+        <Skeleton className="h-6 w-3/4 max-w-md" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <div className="flex gap-2 pt-2">
+          <Skeleton className="h-8 w-28 rounded-[var(--radius-control)]" />
+          <Skeleton className="h-4 w-20" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+export const GroupDiscussionsTabSkeleton = ({ count = 3 }) => (
+  <div className="space-y-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-16 rounded-lg" />
+        <Skeleton className="h-9 w-20 rounded-lg" />
+      </div>
+      <Skeleton className="h-10 w-48 rounded-[var(--radius-control)]" />
+    </div>
+    {Array.from({ length: count }).map((_, i) => (
+      <DiscussionPostSkeleton key={i} />
+    ))}
+  </div>
+);
+
+export const DiscussionCommentsSkeleton = ({ count = 4 }) => (
+  <div className="space-y-6">
+    <div className="flex gap-2">
+      <Skeleton className="h-7 w-16 rounded-lg" />
+      <Skeleton className="h-7 w-14 rounded-lg" />
+    </div>
+    <Skeleton className="h-20 w-full rounded-xl" />
+    <Skeleton className="h-9 w-24 rounded-[var(--radius-control)]" />
+    {Array.from({ length: count }).map((_, i) => (
+      <div key={i} className="flex gap-3">
+        <div className="flex flex-col items-center gap-1">
+          <Skeleton className="h-5 w-5 rounded-md" />
+          <Skeleton className="h-3 w-5" />
+          <Skeleton className="h-5 w-5 rounded-md" />
+        </div>
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8 rounded-full" />
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-3 w-20" />
+          </div>
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-4/5" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+export const DiscussionDetailSkeleton = () => (
+  <div className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
+    <Skeleton className="h-4 w-40" />
+    <DiscussionPostSkeleton />
+    <DiscussionCommentsSkeleton count={3} />
+  </div>
+);
+
 export const GroupManageSkeleton = () => (
   <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
     <Skeleton className="h-8 w-64" />

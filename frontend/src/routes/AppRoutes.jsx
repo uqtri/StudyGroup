@@ -8,6 +8,7 @@ import { LoginPage } from '../pages/auth/LoginPage';
 import { RegisterPage } from '../pages/auth/RegisterPage';
 import { GroupsPage } from '../pages/groups/GroupsPage';
 import { GroupDetailPage } from '../pages/groups/GroupDetailPage';
+import { DiscussionDetailPage } from '../pages/groups/DiscussionDetailPage';
 import { CreateGroupPage } from '../pages/groups/CreateGroupPage';
 import { GroupManagePage } from '../pages/groups/GroupManagePage';
 import { MyGroupsPage } from '../pages/my-groups/MyGroupsPage';
@@ -33,6 +34,7 @@ export const AppRoutes = () => (
     <Route element={<WebsiteLayout />}>
       <Route path="/" element={<LandingPage />} />
       <Route path="/groups" element={<GroupsPage />} />
+      <Route path="/groups/:id/discussions/:postId" element={<DiscussionDetailPage />} />
       <Route path="/groups/:id" element={<GroupDetailPage />} />
 
       <Route path="/contact" element={<StaticPage title="Contact">Reach us at support@studyhub.com</StaticPage>} />
