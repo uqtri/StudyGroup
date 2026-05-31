@@ -9,6 +9,7 @@ export const resourceFoldersRepository = {
       orderBy,
       include: {
         creator: { select: { id: true, fullName: true } },
+        group: { select: { id: true, name: true } },
         _count: { select: { resources: { where: { deletedAt: null } } } },
       },
     }),

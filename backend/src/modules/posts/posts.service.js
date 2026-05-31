@@ -18,6 +18,9 @@ export const postsService = {
     const { page, limit, skip } = parsePagination(query);
     const where = {};
     if (query.groupId) where.groupId = query.groupId;
+    if (query.myGroups === 'true' && userId) {
+      where.group = { members: { some: { userId, deletedAt: null } } };
+    }
 
     const sortBy = query.sortBy === 'votes' ? 'votes' : 'createdAt';
     const sortOrder = query.sortOrder === 'asc' ? 'asc' : 'desc';

@@ -15,6 +15,7 @@ export const postsRepository = {
       orderBy,
       include: {
         author: { select: authorSelect },
+        group: { select: { id: true, name: true } },
         ...votesInclude,
         ...attachmentsInclude,
         _count: { select: { comments: { where: { deletedAt: null } } } },
@@ -29,6 +30,7 @@ export const postsRepository = {
       orderBy: { createdAt: 'desc' },
       include: {
         author: { select: authorSelect },
+        group: { select: { id: true, name: true } },
         votes: { select: { userId: true, value: true } },
         ...attachmentsInclude,
         _count: { select: { comments: { where: { deletedAt: null } } } },

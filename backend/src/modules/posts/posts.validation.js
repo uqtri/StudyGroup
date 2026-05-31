@@ -3,6 +3,7 @@ import { body, param, query } from 'express-validator';
 export const listPostsValidation = [
   query('page').optional().isInt({ min: 1 }),
   query('groupId').optional().isUUID(),
+  query('myGroups').optional().isIn(['true', 'false']),
   query('sortBy').optional().isIn(['createdAt', 'votes']),
   query('sortOrder').optional().isIn(['asc', 'desc']),
 ];

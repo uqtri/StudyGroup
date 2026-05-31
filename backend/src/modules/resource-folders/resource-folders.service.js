@@ -5,14 +5,18 @@ import { buildPaginatedResult, parsePagination } from '../../utils/pagination.js
 
 export const resourceFoldersService = {
   list: async (query, userId) => {
-    if (!query.groupId) throw ApiError.badRequest('groupId is required');
-
-    const membership = await groupsRepository.isMember(query.groupId, userId);
-    if (!membership) throw ApiError.forbidden('Must be a group member');
-
     const { page, limit, skip } = parsePagination(query);
+    const where = {};
 
-    const where = { groupId: query.groupId };
+    if (query.myGroups === 'true') {
+      where.group = { members: { some: { userId, deletedAt: null } } };
+    } else if (query.groupId) {
+      const membership = await groupsRepository.isMember(query.groupId, userId);
+      if (!membership) throw ApiError.forbidden('Must be a group member');
+      where.groupId = query.groupId;
+    } else {
+      throw ApiError.badRequest('groupId or myGroups is required');
+    }
 
     const [items, total] = await Promise.all([
       resourceFoldersRepository.findMany({

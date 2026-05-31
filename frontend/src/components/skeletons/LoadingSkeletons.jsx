@@ -434,15 +434,8 @@ export const DiscussionDetailSkeleton = () => (
 export const GroupManageSkeleton = () => (
   <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
     <Skeleton className="h-8 w-64" />
-    <div className="mt-6 flex flex-wrap gap-2">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <Skeleton key={i} className="h-9 w-24 rounded-lg" />
-      ))}
-    </div>
-    <div className="mt-6 surface-panel p-6">
-      <Skeleton className="mb-4 h-5 w-32" />
-      <Skeleton className="h-4 w-full max-w-xl" />
-      <Skeleton className="mt-4 h-4 w-48" />
+    <div className="mt-6">
+      <ChartGridSkeleton />
     </div>
   </div>
 );
