@@ -5,7 +5,7 @@ import { validate } from '../../utils/validationHandler.js';
 export const sessionsController = {
   list: async (req, res) => {
     validate(req);
-    const data = await sessionsService.list(req.query, req.user.id);
+    const data = await sessionsService.list(req.query, req.user?.id);
     ApiResponse.success(res, { message: 'Sessions retrieved', data });
   },
 

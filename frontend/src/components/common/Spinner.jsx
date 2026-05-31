@@ -1,8 +1,7 @@
 export const Spinner = ({ className = 'h-8 w-8' }) => (
   <div
-    className={`${className} animate-spin rounded-full border-4 border-border border-t-transparent`}
-    style={{
-      borderTopColor: 'var(--gradient-from)',
-    }}
+    role="status"
+    aria-label="Loading"
+    className={`${className} animate-spin rounded-full border-[3px] border-border border-t-primary`}
   />
 );

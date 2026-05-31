@@ -9,16 +9,15 @@ import {
 } from './groups.validation.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
-import { authorize } from '../../middlewares/role.middleware.js';
-import { ROLES } from '../../constants/roles.js';
+import { optionalAuthenticate } from '../../middlewares/optionalAuth.middleware.js';
 import { param } from 'express-validator';
 
 const router = Router();
 
-router.use(authenticate);
+router.get('/', optionalAuthenticate, listGroupsValidation, asyncHandler(groupsController.list));
+router.get('/:id', optionalAuthenticate, groupIdValidation, asyncHandler(groupsController.getById));
 
-router.get('/', listGroupsValidation, asyncHandler(groupsController.list));
-router.get('/:id', groupIdValidation, asyncHandler(groupsController.getById));
+router.use(authenticate);
 router.post('/', createGroupValidation, asyncHandler(groupsController.create));
 router.patch('/:id', updateGroupValidation, asyncHandler(groupsController.update));
 router.delete(

@@ -5,7 +5,7 @@ import { validate } from '../../utils/validationHandler.js';
 export const groupsController = {
   list: async (req, res) => {
     validate(req);
-    const data = await groupsService.list(req.query, req.user.id);
+    const data = await groupsService.list(req.query, req.user?.id);
     ApiResponse.success(res, { message: 'Groups retrieved', data });
   },
 

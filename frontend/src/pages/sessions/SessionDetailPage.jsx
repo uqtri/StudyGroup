@@ -24,8 +24,8 @@ export const SessionDetailPage = () => {
   if (!session) return <p>Session not found</p>;
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground">{session.title}</h2>
+    <div className="mx-auto max-w-4xl space-y-6 px-4 py-10 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold tracking-tight text-foreground">{session.title}</h1>
       <p className="text-muted">{session.group?.name}</p>
       <p>{session.description}</p>
 

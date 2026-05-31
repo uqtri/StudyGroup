@@ -14,7 +14,7 @@ export const groupsService = {
         { subject: { contains: query.search, mode: 'insensitive' } },
       ];
     }
-    if (query.myGroups === 'true') {
+    if (query.myGroups === 'true' && userId) {
       where.members = { some: { userId, deletedAt: null } };
     }
 

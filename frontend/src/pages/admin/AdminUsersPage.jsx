@@ -21,7 +21,6 @@ export const AdminUsersPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground">Manage Users</h2>
       <Card>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">

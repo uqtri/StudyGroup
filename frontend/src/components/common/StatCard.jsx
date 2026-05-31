@@ -1,14 +1,14 @@
 export const StatCard = ({ label, value, icon: Icon, trend }) => (
-  <div className="group rounded-2xl border border-border bg-surface/90 p-5 shadow-sm backdrop-blur-sm transition hover:border-primary/25 hover:shadow-md hover:shadow-primary/10 dark:bg-surface/80">
-    <div className="flex items-start justify-between">
+  <div className="rounded-[var(--radius-card)] border border-border bg-surface p-5 shadow-soft transition hover:border-primary/15">
+    <div className="flex items-start justify-between gap-4">
       <div>
         <p className="text-sm text-muted">{label}</p>
-        <p className="mt-1 text-2xl font-bold text-foreground">{value}</p>
-        {trend && <p className="mt-1 text-xs text-success">{trend}</p>}
+        <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">{value}</p>
+        {trend && <p className="mt-1 text-xs font-medium text-success">{trend}</p>}
       </div>
       {Icon && (
-        <div className="rounded-xl bg-gradient-brand p-2.5 text-white shadow-glow">
-          <Icon size={22} />
+        <div className="rounded-[var(--radius-control)] bg-primary/10 p-2.5 text-primary">
+          <Icon size={22} strokeWidth={1.75} />
         </div>
       )}
     </div>

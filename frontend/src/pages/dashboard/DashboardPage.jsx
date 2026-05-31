@@ -30,7 +30,7 @@ export const DashboardPage = () => {
 
 const StudentDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Student Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-foreground">Student Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard label="My Groups" value={data.totalGroups} icon={Users} />
       <StatCard label="Upcoming Sessions" value={data.upcomingSessions?.length || 0} icon={Calendar} />
@@ -75,7 +75,7 @@ const StudentDashboard = ({ data }) => (
 
 const LeaderDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Leader Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-foreground">Leader Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-3">
       <StatCard label="My Groups" value={data.groupCount} icon={Users} />
       <StatCard label="Total Members" value={data.totalMembers} icon={Users} />
@@ -106,7 +106,7 @@ const LeaderDashboard = ({ data }) => (
 
 const AdminDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Admin Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-foreground">Admin Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard label="Total Users" value={data.totalUsers} icon={Users} />
       <StatCard label="Active Groups" value={data.activeGroups} icon={Shield} />

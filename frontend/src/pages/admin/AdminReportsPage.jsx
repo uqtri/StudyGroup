@@ -30,7 +30,6 @@ export const AdminReportsPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-foreground">Reports</h2>
       <div className="space-y-4">
         {reports.map((r) => (
           <Card key={r.id}>

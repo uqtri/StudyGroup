@@ -6,6 +6,7 @@ import { registerSchema } from '../../schemas/authSchemas';
 import { authApi } from '../../api/authApi';
 import { useAuthStore } from '../../store/authStore';
 import { getApiError } from '../../api/client';
+import { getHomePath } from '../../utils/authRedirect';
 import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
 
@@ -25,7 +26,7 @@ export const RegisterPage = () => {
     onSuccess: ({ data }) => {
       const { user, accessToken, refreshToken } = data.data;
       setAuth(user, accessToken, refreshToken);
-      navigate('/dashboard');
+      navigate(getHomePath(user));
     },
     onError: (err) => {
       const { message } = getApiError(err);
@@ -35,7 +36,7 @@ export const RegisterPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Create account</h2>
+      <h2 className="text-2xl font-bold tracking-tight text-foreground">Create account</h2>
       <p className="mt-1 text-sm text-muted">Join StudyHub and start learning together</p>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit((d) => mutation.mutate(d))}>

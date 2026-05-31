@@ -15,7 +15,7 @@ export const sessionsService = {
       where.startTime = { gte: new Date() };
       where.status = 'SCHEDULED';
     }
-    if (query.mySessions === 'true') {
+    if (query.mySessions === 'true' && userId) {
       where.group = { members: { some: { userId, deletedAt: null } } };
     }
 

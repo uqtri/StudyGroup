@@ -11,55 +11,54 @@
   --color-border: var(--border-color);
   --color-primary: var(--brand-500);
   --color-secondary: var(--brand-300);
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --radius-card: 1rem;
+  --radius-control: 0.625rem;
 }
 
-/* Light theme */
 :root {
-  --brand-500: #2563eb;
-  --brand-300: #60a5fa;
-  --gradient-from: #2563eb;
-  --gradient-via: #6366f1;
-  --gradient-to: #06b6d4;
-  --bg-page: #f1f5f9;
+  --brand-500: #0d9488;
+  --brand-600: #0f766e;
+  --brand-300: #5eead4;
+  --brand-50: #f0fdfa;
+  --gradient-from: #0d9488;
+  --gradient-to: #14b8a6;
+  --bg-page: #f4f4f5;
   --bg-surface: #ffffff;
-  --bg-elevated: #f8fafc;
-  --text-primary: #0f172a;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
-  --chart-grid: #e2e8f0;
-  --chart-bar: #2563eb;
-  --shadow-glow: 0 8px 32px rgb(37 99 235 / 0.15);
+  --bg-elevated: #fafafa;
+  --text-primary: #18181b;
+  --text-muted: #71717a;
+  --border-color: #e4e4e7;
+  --chart-grid: #e4e4e7;
+  --chart-bar: #0d9488;
+  --shadow-soft: 0 1px 2px rgb(24 24 27 / 0.04), 0 8px 24px rgb(24 24 27 / 0.06);
+  --shadow-elevated: 0 4px 6px rgb(24 24 27 / 0.05), 0 16px 40px rgb(13 148 136 / 0.08);
 }
 
-/* Dark theme */
 .dark {
-  --brand-500: #60a5fa;
-  --brand-300: #93c5fd;
-  --gradient-from: #3b82f6;
-  --gradient-via: #8b5cf6;
-  --gradient-to: #22d3ee;
-  --bg-page: #0b1220;
-  --bg-surface: #131c2e;
-  --bg-elevated: #1a2438;
-  --text-primary: #f1f5f9;
-  --text-muted: #94a3b8;
-  --border-color: #2a3548;
-  --chart-grid: #334155;
-  --chart-bar: #60a5fa;
-  --shadow-glow: 0 8px 32px rgb(59 130 246 / 0.2);
+  --brand-500: #2dd4bf;
+  --brand-600: #14b8a6;
+  --brand-300: #5eead4;
+  --brand-50: #134e4a;
+  --gradient-from: #2dd4bf;
+  --gradient-to: #14b8a6;
+  --bg-page: #09090b;
+  --bg-surface: #18181b;
+  --bg-elevated: #27272a;
+  --text-primary: #fafafa;
+  --text-muted: #a1a1aa;
+  --border-color: #3f3f46;
+  --chart-grid: #3f3f46;
+  --chart-bar: #2dd4bf;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.2), 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-elevated: 0 4px 6px rgb(0 0 0 / 0.25), 0 16px 40px rgb(45 212 191 / 0.06);
 }
 
 @utility bg-gradient-brand {
-  background-image: linear-gradient(
-    135deg,
-    var(--gradient-from) 0%,
-    var(--gradient-via) 50%,
-    var(--gradient-to) 100%
-  );
+  background-image: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
 }
 
 @utility text-gradient-brand {
@@ -69,13 +68,24 @@
   color: transparent;
 }
 
-@utility shadow-glow {
-  box-shadow: var(--shadow-glow);
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
 }
 
-@utility glass {
-  background: color-mix(in srgb, var(--bg-surface) 85%, transparent);
-  backdrop-filter: blur(12px);
+@utility shadow-elevated {
+  box-shadow: var(--shadow-elevated);
+}
+
+@utility surface-panel {
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+@utility nav-active {
+  background-color: color-mix(in srgb, var(--brand-500) 12%, transparent);
+  color: var(--brand-500);
 }
 
 body {
@@ -84,23 +94,17 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-page);
   color: var(--text-primary);
-  background-image:
-    radial-gradient(ellipse 90% 60% at 50% -30%, color-mix(in srgb, var(--gradient-from) 14%, transparent), transparent),
-    radial-gradient(ellipse 50% 40% at 100% 0%, color-mix(in srgb, var(--gradient-to) 10%, transparent), transparent),
-    radial-gradient(ellipse 40% 30% at 0% 100%, color-mix(in srgb, var(--gradient-via) 8%, transparent), transparent);
+  -webkit-font-smoothing: antialiased;
   transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.dark body {
-  background-image:
-    radial-gradient(ellipse 90% 60% at 50% -30%, color-mix(in srgb, var(--gradient-via) 18%, transparent), transparent),
-    radial-gradient(ellipse 50% 40% at 100% 0%, color-mix(in srgb, var(--gradient-to) 12%, transparent), transparent),
-    radial-gradient(ellipse 40% 30% at 0% 100%, color-mix(in srgb, var(--gradient-from) 10%, transparent), transparent);
+::selection {
+  background-color: color-mix(in srgb, var(--brand-500) 25%, transparent);
+  color: var(--text-primary);
 }
 
-/* Scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
