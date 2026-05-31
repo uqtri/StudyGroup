@@ -13,6 +13,7 @@ import { GroupManagePage } from '../pages/groups/GroupManagePage';
 import { MyGroupsPage } from '../pages/my-groups/MyGroupsPage';
 import { SessionsPage } from '../pages/sessions/SessionsPage';
 import { SessionDetailPage } from '../pages/sessions/SessionDetailPage';
+import { SessionMeetingPage } from '../pages/sessions/SessionMeetingPage';
 import { ResourcesPage } from '../pages/resources/ResourcesPage';
 import { DiscussionsPage } from '../pages/discussions/DiscussionsPage';
 import { ProfilePage } from '../pages/profile/ProfilePage';
@@ -61,6 +62,7 @@ export const AppRoutes = () => (
       <Route element={<StudentRoute />}>
         <Route path="/my-groups" element={<MyGroupsPage />} />
         <Route path="/sessions" element={<SessionsPage />} />
+        <Route path="/sessions/:id/meeting" element={<SessionMeetingPage />} />
         <Route path="/sessions/:id" element={<SessionDetailPage />} />
         <Route path="/resources" element={<ResourcesPage />} />
         <Route path="/discussions" element={<DiscussionsPage />} />

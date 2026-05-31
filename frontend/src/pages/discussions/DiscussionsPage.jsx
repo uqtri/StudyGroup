@@ -7,7 +7,7 @@ import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
 import { Input } from '../../components/common/Input';
-import { Spinner } from '../../components/common/Spinner';
+import { DiscussionsPageSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { formatDate } from '../../utils/formatDate';
 
 export const DiscussionsPage = () => {
@@ -46,13 +46,7 @@ export const DiscussionsPage = () => {
 
   const posts = data?.items || [];
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <DiscussionsPageSkeleton />;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">

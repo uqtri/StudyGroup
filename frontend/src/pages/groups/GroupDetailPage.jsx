@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { Settings } from "lucide-react";
+import { Settings, Plus } from "lucide-react";
 
 import { groupApi } from "../../api/groupApi";
 
@@ -18,13 +18,15 @@ import { useAuthStore } from "../../store/authStore";
 
 import { Card } from "../../components/common/Card";
 
-import { Spinner } from "../../components/common/Spinner";
+import { GroupDetailSkeleton, GroupSessionsTabSkeleton } from "../../components/skeletons/LoadingSkeletons";
 
 import { Button } from "../../components/common/Button";
 import { Avatar } from "../../components/common/Avatar";
 
 import { formatDate, formatDateTime } from "../../utils/formatDate";
 
+import { CreateSessionForm } from "../../components/sessions/CreateSessionForm";
+import { SessionCard } from "../../components/sessions/SessionCard";
 import { cn } from "../../utils/cn";
 
 const baseTabs = [
@@ -47,6 +49,7 @@ export const GroupDetailPage = () => {
   const { isAuthenticated, user } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState("Overview");
+  const [showCreateSession, setShowCreateSession] = useState(false);
 
   const { data: group, isLoading } = useQuery({
     queryKey: ["group", id],
@@ -54,13 +57,14 @@ export const GroupDetailPage = () => {
     queryFn: () => groupApi.getById(id).then((r) => r.data.data),
   });
 
-  const { data: sessions } = useQuery({
+  const { data: sessions, isLoading: sessionsLoading } = useQuery({
     queryKey: ["group-sessions", id],
 
     queryFn: () =>
       sessionApi.list({ groupId: id, limit: 20 }).then((r) => r.data.data),
 
     enabled: activeTab === "Sessions",
+    refetchInterval: activeTab === "Sessions" ? 10000 : false,
   });
 
   const { data: resources } = useQuery({
@@ -105,6 +109,15 @@ export const GroupDetailPage = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["group", id] }),
   });
 
+  const createSessionMutation = useMutation({
+    mutationFn: (data) => sessionApi.create({ ...data, groupId: id }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["group-sessions", id] });
+      qc.invalidateQueries({ queryKey: ["notifications-unread-count"] });
+      setShowCreateSession(false);
+    },
+  });
+
   const isMember = group?.members?.some((m) => m.userId === user?.id);
 
   const canManage =
@@ -130,13 +143,7 @@ export const GroupDetailPage = () => {
     return result;
   }, [canManage]);
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <GroupDetailSkeleton />;
 
   if (!group) return <p className="p-8 text-center">Group not found</p>;
 
@@ -350,20 +357,43 @@ export const GroupDetailPage = () => {
 
       {activeTab === "Sessions" && (
         <div className="space-y-3">
-          {(sessions?.items || []).map((s) => (
-            <Link key={s.id} to={`/sessions/${s.id}`}>
-              <Card className="!p-4 transition hover:border-primary/30">
-                <p className="font-medium">{s.title}</p>
+          {sessionsLoading ? (
+            <GroupSessionsTabSkeleton canManage={canManage} />
+          ) : (
+            <>
+              {canManage && !showCreateSession && (
+                <Button
+                  className="gap-2"
+                  onClick={() => setShowCreateSession(true)}
+                >
+                  <Plus size={16} /> Create new session
+                </Button>
+              )}
 
-                <p className="text-sm text-muted">
-                  {formatDateTime(s.startTime)}
-                </p>
-              </Card>
-            </Link>
-          ))}
+              {canManage && showCreateSession && (
+                <CreateSessionForm
+                  loading={createSessionMutation.isPending}
+                  onCancel={() => setShowCreateSession(false)}
+                  onSubmit={(data, reset) =>
+                    createSessionMutation.mutate(data, { onSuccess: reset })
+                  }
+                />
+              )}
 
-          {!sessions?.items?.length && (
-            <p className="text-muted">No sessions scheduled.</p>
+              {(sessions?.items || []).map((s) => (
+                <SessionCard
+                  key={s.id}
+                  session={s}
+                  canManage={canManage}
+                  groupId={id}
+                  queryKey={["group-sessions", id]}
+                />
+              ))}
+
+              {!sessions?.items?.length && !showCreateSession && (
+                <p className="text-muted">No sessions scheduled.</p>
+              )}
+            </>
           )}
         </div>
       )}

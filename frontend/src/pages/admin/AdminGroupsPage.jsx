@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { groupApi } from '../../api/groupApi';
 import { Card } from '../../components/common/Card';
-import { Spinner } from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/skeletons/LoadingSkeletons';
 
 export const AdminGroupsPage = () => {
   const { data, isLoading } = useQuery({
@@ -9,13 +9,7 @@ export const AdminGroupsPage = () => {
     queryFn: () => groupApi.list({ limit: 100 }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <TableSkeleton rows={8} cols={4} />;
 
   const groups = data?.items || [];
 

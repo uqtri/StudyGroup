@@ -5,7 +5,7 @@ import { groupApi } from '../../api/groupApi';
 import { sessionApi } from '../../api/sessionApi';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
-import { Spinner } from '../../components/common/Spinner';
+import { MyGroupsSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { formatDateTime } from '../../utils/formatDate';
 
 export const MyGroupsPage = () => {
@@ -20,13 +20,7 @@ export const MyGroupsPage = () => {
       sessionApi.list({ mySessions: 'true', upcoming: 'true', limit: 5 }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <MyGroupsSkeleton />;
 
   const groups = data?.items || [];
   const sessions = sessionsData?.items || [];

@@ -7,7 +7,7 @@ import { groupApi } from '../../api/groupApi';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
-import { Spinner } from '../../components/common/Spinner';
+import { GroupsPageSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { Input } from '../../components/common/Input';
 
 export const GroupsPage = () => {
@@ -42,13 +42,7 @@ export const GroupsPage = () => {
     navigate(`/groups/${groupId}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <GroupsPageSkeleton />;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

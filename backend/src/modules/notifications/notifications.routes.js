@@ -9,6 +9,7 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/', asyncHandler(notificationsController.list));
+router.get('/unread-count', asyncHandler(notificationsController.unreadCount));
 router.patch('/read-all', asyncHandler(notificationsController.markAllRead));
 router.patch('/:id/read', [param('id').isUUID()], asyncHandler(notificationsController.markRead));
 

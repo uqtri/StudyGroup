@@ -6,4 +6,7 @@ export const sessionApi = {
   create: (data) => apiClient.post('/sessions', data),
   update: (id, data) => apiClient.patch(`/sessions/${id}`, data),
   remove: (id) => apiClient.delete(`/sessions/${id}`),
+  end: (id) => apiClient.post(`/sessions/${id}/end`),
+  notifyMembers: (id) => apiClient.post(`/sessions/${id}/notify`),
+  getLiveKitToken: (id) => apiClient.get(`/sessions/${id}/livekit-token`),
 };

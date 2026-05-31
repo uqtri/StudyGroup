@@ -10,6 +10,11 @@ const router = Router();
 router.use(authenticate);
 
 router.post(
+  '/:sessionId/join',
+  [param('sessionId').isUUID()],
+  asyncHandler(attendanceController.recordJoin),
+);
+router.post(
   '/:sessionId',
   markAttendanceValidation,
   asyncHandler(attendanceController.mark),

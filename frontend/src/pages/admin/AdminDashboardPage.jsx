@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Users, FolderOpen, Flag, TrendingUp } from 'lucide-react';
 import { dashboardApi } from '../../api/dashboardApi';
 import { StatCard } from '../../components/common/StatCard';
-import { Spinner } from '../../components/common/Spinner';
+import { AdminDashboardSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { BarChartCard } from '../../components/charts/BarChartCard';
 import { PieChartCard } from '../../components/charts/PieChartCard';
 import { Card } from '../../components/common/Card';
@@ -13,13 +13,7 @@ export const AdminDashboardPage = () => {
     queryFn: () => dashboardApi.getStats().then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <AdminDashboardSkeleton />;
 
   return (
     <div className="space-y-6">

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi } from '../../api/dashboardApi';
 import { groupApi } from '../../api/groupApi';
-import { Spinner } from '../../components/common/Spinner';
+import { AdminAnalyticsSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { BarChartCard } from '../../components/charts/BarChartCard';
 import { PieChartCard } from '../../components/charts/PieChartCard';
 import { Card } from '../../components/common/Card';
@@ -17,13 +17,7 @@ export const AdminAnalyticsPage = () => {
     queryFn: () => groupApi.list({ limit: 100 }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <AdminAnalyticsSkeleton />;
 
   const memberStats =
     groupsData?.items?.map((g) => ({

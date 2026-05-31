@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reportApi } from '../../api/reportApi';
 import { Card } from '../../components/common/Card';
-import { Spinner } from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { Button } from '../../components/common/Button';
 import { formatDate } from '../../utils/formatDate';
 
@@ -18,13 +18,7 @@ export const AdminReportsPage = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-reports'] }),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <TableSkeleton rows={8} cols={5} />;
 
   const reports = data?.items || [];
 

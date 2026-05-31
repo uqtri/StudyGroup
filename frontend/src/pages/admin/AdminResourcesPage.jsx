@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { resourceApi } from '../../api/resourceApi';
 import { Card } from '../../components/common/Card';
-import { Spinner } from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { formatDate } from '../../utils/formatDate';
 
 export const AdminResourcesPage = () => {
@@ -10,13 +10,7 @@ export const AdminResourcesPage = () => {
     queryFn: () => resourceApi.list({ limit: 100 }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <TableSkeleton rows={8} cols={4} />;
 
   const resources = data?.items || [];
 

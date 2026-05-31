@@ -9,11 +9,11 @@ import { useAuthStore } from '../../store/authStore';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
 import { Avatar } from '../../components/common/Avatar';
-import { Spinner } from '../../components/common/Spinner';
-import { Input } from '../../components/common/Input';
+import { GroupManageSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { BarChartCard } from '../../components/charts/BarChartCard';
+import { CreateSessionForm } from '../../components/sessions/CreateSessionForm';
+import { SessionCard } from '../../components/sessions/SessionCard';
 import { cn } from '../../utils/cn';
-import { formatDateTime } from '../../utils/formatDate';
 
 const tabs = ['Overview', 'Members', 'Requests', 'Sessions', 'Resources', 'Analytics'];
 
@@ -24,12 +24,6 @@ export const GroupManagePage = () => {
   const { user } = useAuthStore();
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState('Overview');
-  const [sessionForm, setSessionForm] = useState({
-    title: '',
-    startTime: '',
-    endTime: '',
-    meetingLink: '',
-  });
 
   const { data: group, isLoading } = useQuery({
     queryKey: ['group', id],
@@ -54,7 +48,11 @@ export const GroupManagePage = () => {
 
   const createSession = useMutation({
     mutationFn: (data) => sessionApi.create({ ...data, groupId: id }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['manage-sessions', id] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['manage-sessions', id] });
+      qc.invalidateQueries({ queryKey: ['group-sessions', id] });
+      qc.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+    },
   });
 
   const approveJoinRequest = useMutation({
@@ -71,13 +69,7 @@ export const GroupManagePage = () => {
     (m) => m.userId === user?.id && m.role === 'LEADER',
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <GroupManageSkeleton />;
 
   if (!isLeader) return <Navigate to={`/groups/${id}`} replace />;
 
@@ -183,53 +175,25 @@ export const GroupManagePage = () => {
 
       {activeTab === 'Sessions' && (
         <div className="mt-6 space-y-6">
-          <Card title="Create Session">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <Input
-                label="Title"
-                value={sessionForm.title}
-                onChange={(e) => setSessionForm((f) => ({ ...f, title: e.target.value }))}
-              />
-              <Input
-                label="Meeting Link"
-                value={sessionForm.meetingLink}
-                onChange={(e) => setSessionForm((f) => ({ ...f, meetingLink: e.target.value }))}
-              />
-              <Input
-                label="Start"
-                type="datetime-local"
-                value={sessionForm.startTime}
-                onChange={(e) => setSessionForm((f) => ({ ...f, startTime: e.target.value }))}
-              />
-              <Input
-                label="End"
-                type="datetime-local"
-                value={sessionForm.endTime}
-                onChange={(e) => setSessionForm((f) => ({ ...f, endTime: e.target.value }))}
-              />
-            </div>
-            <Button
-              className="mt-4"
-              loading={createSession.isPending}
-              onClick={() =>
-                createSession.mutate({
-                  ...sessionForm,
-                  startTime: new Date(sessionForm.startTime).toISOString(),
-                  endTime: new Date(sessionForm.endTime).toISOString(),
-                })
-              }
-            >
-              Create Session
-            </Button>
-          </Card>
-          <Card title="Scheduled Sessions">
+          <CreateSessionForm
+            loading={createSession.isPending}
+            onSubmit={(data, reset) => createSession.mutate(data, { onSuccess: reset })}
+          />
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold">Sessions</h2>
             {(sessions?.items || []).map((s) => (
-              <div key={s.id} className="border-b border-border py-3 last:border-0">
-                <p className="font-medium">{s.title}</p>
-                <p className="text-xs text-muted">{formatDateTime(s.startTime)} · {s.status}</p>
-              </div>
+              <SessionCard
+                key={s.id}
+                session={s}
+                canManage
+                groupId={id}
+                queryKey={['manage-sessions', id]}
+              />
             ))}
-          </Card>
+            {!sessions?.items?.length && (
+              <p className="text-muted">No sessions yet.</p>
+            )}
+          </div>
         </div>
       )}
 

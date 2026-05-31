@@ -11,9 +11,27 @@ export const createSessionValidation = [
   body('groupId').isUUID(),
   body('title').trim().isLength({ min: 3, max: 150 }),
   body('description').optional().isString(),
-  body('startTime').isISO8601(),
-  body('endTime').isISO8601(),
-  body('meetingLink').optional().isURL(),
+  body('startNow').optional().isBoolean(),
+  body('notifyMembers').optional().isBoolean(),
+  body('startTime')
+    .optional()
+    .isISO8601()
+    .custom((value, { req }) => {
+      if (!req.body.startNow && !value) {
+        throw new Error('Start time is required unless startNow is true');
+      }
+      return true;
+    }),
+  body('endTime')
+    .optional()
+    .isISO8601()
+    .custom((value, { req }) => {
+      if (!req.body.startNow && !value) {
+        throw new Error('End time is required unless startNow is true');
+      }
+      return true;
+    }),
+  body('meetingLink').optional({ values: 'null' }).isURL(),
 ];
 
 export const updateSessionValidation = [

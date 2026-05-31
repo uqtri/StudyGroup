@@ -6,13 +6,13 @@ export const attendanceRepository = {
       where: { sessionId_userId: { sessionId, userId } },
       update: data,
       create: { sessionId, userId, ...data },
-      include: { user: { select: { id: true, fullName: true } } },
+      include: { user: { select: { id: true, fullName: true, avatar: true } } },
     }),
 
   findBySession: (sessionId) =>
     prisma.attendance.findMany({
       where: { sessionId },
-      include: { user: { select: { id: true, fullName: true, email: true } } },
+      include: { user: { select: { id: true, fullName: true, email: true, avatar: true } } },
     }),
 
   getUserStats: async (userId) => {

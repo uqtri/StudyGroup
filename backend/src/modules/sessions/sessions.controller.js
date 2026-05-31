@@ -17,14 +17,7 @@ export const sessionsController = {
 
   create: async (req, res) => {
     validate(req);
-    const data = await sessionsService.create(
-      {
-        ...req.body,
-        startTime: new Date(req.body.startTime),
-        endTime: new Date(req.body.endTime),
-      },
-      req.user.id,
-    );
+    const data = await sessionsService.create(req.body, req.user.id);
     ApiResponse.success(res, { message: 'Session created', data, statusCode: 201 });
   },
 
@@ -35,6 +28,28 @@ export const sessionsController = {
     if (payload.endTime) payload.endTime = new Date(payload.endTime);
     const data = await sessionsService.update(req.params.id, payload, req.user.id);
     ApiResponse.success(res, { message: 'Session updated', data });
+  },
+
+  end: async (req, res) => {
+    validate(req);
+    const data = await sessionsService.end(req.params.id, req.user.id);
+    ApiResponse.success(res, { message: 'Session ended', data });
+  },
+
+  notifyMembers: async (req, res) => {
+    validate(req);
+    const data = await sessionsService.notifyMembers(req.params.id, req.user.id);
+    ApiResponse.success(res, { message: 'Members notified', data });
+  },
+
+  getLiveKitToken: async (req, res) => {
+    validate(req);
+    const data = await sessionsService.getLiveKitToken(
+      req.params.id,
+      req.user.id,
+      req.user.fullName,
+    );
+    ApiResponse.success(res, { message: 'LiveKit token generated', data });
   },
 
   remove: async (req, res) => {

@@ -5,7 +5,7 @@ import { Search, Upload, ExternalLink } from 'lucide-react';
 import { resourceApi } from '../../api/resourceApi';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
-import { Spinner } from '../../components/common/Spinner';
+import { ResourcesPageSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { Button } from '../../components/common/Button';
 import { Input } from '../../components/common/Input';
 import { formatDate } from '../../utils/formatDate';
@@ -45,13 +45,7 @@ export const ResourcesPage = () => {
       r.description?.toLowerCase().includes(search.toLowerCase()),
   );
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <ResourcesPageSkeleton />;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">

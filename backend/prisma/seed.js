@@ -132,6 +132,7 @@ async function main() {
         userId: student.id,
         title: 'New Session',
         message: `Upcoming session: ${session.title}`,
+        link: `/sessions/${session.id}`,
       },
       {
         userId: leader.id,

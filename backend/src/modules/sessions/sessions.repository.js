@@ -23,7 +23,7 @@ export const sessionsRepository = {
         group: { select: { id: true, name: true } },
         creator: { select: { id: true, fullName: true, email: true } },
         attendances: {
-          include: { user: { select: { id: true, fullName: true, email: true } } },
+          include: { user: { select: { id: true, fullName: true, email: true, avatar: true } } },
         },
       },
     }),

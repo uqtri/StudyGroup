@@ -15,6 +15,12 @@ export const attendanceController = {
     ApiResponse.success(res, { message: 'Attendance recorded', data });
   },
 
+  recordJoin: async (req, res) => {
+    validate(req);
+    const data = await attendanceService.recordJoin(req.params.sessionId, req.user.id);
+    ApiResponse.success(res, { message: 'Attendance recorded', data });
+  },
+
   list: async (req, res) => {
     const data = await attendanceService.listBySession(req.params.sessionId);
     ApiResponse.success(res, { message: 'Attendance list retrieved', data });

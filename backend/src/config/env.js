@@ -22,4 +22,9 @@ export const env = {
   },
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   isDev: (process.env.NODE_ENV || 'development') === 'development',
+  livekit: {
+    apiKey: process.env.LIVEKIT_API_KEY || '',
+    apiSecret: process.env.LIVEKIT_API_SECRET || '',
+    url: process.env.LIVEKIT_URL || '',
+  },
 };

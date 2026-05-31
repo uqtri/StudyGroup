@@ -5,7 +5,7 @@ import { Calendar, List } from 'lucide-react';
 import { sessionApi } from '../../api/sessionApi';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
-import { Spinner } from '../../components/common/Spinner';
+import { SessionsPageSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { formatDateTime, formatDate } from '../../utils/formatDate';
 import { cn } from '../../utils/cn';
 
@@ -17,13 +17,7 @@ export const SessionsPage = () => {
     queryFn: () => sessionApi.list({ limit: 50, mySessions: 'true' }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <SessionsPageSkeleton />;
 
   const sessions = data?.items || [];
 

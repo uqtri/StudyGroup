@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { userApi } from '../../api/userApi';
 import { Card } from '../../components/common/Card';
-import { Spinner } from '../../components/common/Spinner';
+import { TableSkeleton } from '../../components/skeletons/LoadingSkeletons';
 
 export const AdminUsersPage = () => {
   const { data, isLoading } = useQuery({
@@ -9,13 +9,7 @@ export const AdminUsersPage = () => {
     queryFn: () => userApi.list({ limit: 50 }).then((r) => r.data.data),
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner />
-      </div>
-    );
-  }
+  if (isLoading) return <TableSkeleton rows={8} cols={4} />;
 
   const users = data?.items || [];
 

@@ -54,6 +54,14 @@ export const groupsRepository = {
       where: { groupId, userId, deletedAt: null },
     }),
 
+  getMemberUserIds: (groupId) =>
+    prisma.groupMember
+      .findMany({
+        where: { groupId, deletedAt: null },
+        select: { userId: true },
+      })
+      .then((rows) => rows.map((r) => r.userId)),
+
   addMember: (data) => prisma.groupMember.create({ data }),
 
   createJoinRequest: (data) => prisma.joinRequest.create({ data }),
