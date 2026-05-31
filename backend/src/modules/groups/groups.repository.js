@@ -26,7 +26,7 @@ export const groupsRepository = {
         },
         joinRequests: {
           where: { status: 'PENDING' },
-          include: { user: { select: { id: true, fullName: true, email: true } } },
+          include: { user: { select: { id: true, fullName: true, email: true, avatar: true } } },
         },
         _count: { select: { sessions: true, resources: true, posts: true } },
       },
@@ -68,4 +68,6 @@ export const groupsRepository = {
       where: { id },
       include: { user: { select: { id: true, fullName: true } } },
     }),
+
+  deleteJoinRequest: (id) => prisma.joinRequest.delete({ where: { id } }),
 };

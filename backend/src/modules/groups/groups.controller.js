@@ -11,7 +11,7 @@ export const groupsController = {
 
   getById: async (req, res) => {
     validate(req);
-    const data = await groupsService.getById(req.params.id);
+    const data = await groupsService.getById(req.params.id, req.user?.id);
     ApiResponse.success(res, { message: 'Group retrieved', data });
   },
 
@@ -48,5 +48,23 @@ export const groupsController = {
       req.user.id,
     );
     ApiResponse.success(res, { message: 'Join request updated', data });
+  },
+
+  approveJoinRequest: async (req, res) => {
+    validate(req);
+    const data = await groupsService.approveJoinRequest(req.params.requestId, req.user.id);
+    ApiResponse.success(res, { message: 'Join request approved', data });
+  },
+
+  rejectJoinRequest: async (req, res) => {
+    validate(req);
+    const data = await groupsService.rejectJoinRequest(req.params.requestId, req.user.id);
+    ApiResponse.success(res, { message: 'Join request rejected', data });
+  },
+
+  cancelJoinRequest: async (req, res) => {
+    validate(req);
+    await groupsService.cancelJoinRequest(req.params.id, req.user.id);
+    ApiResponse.success(res, { message: 'Join request cancelled', data: null });
   },
 };

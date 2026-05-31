@@ -8,13 +8,16 @@ import { dashboardApi } from '../../api/dashboardApi';
 import { useAuthStore } from '../../store/authStore';
 import { Card } from '../../components/common/Card';
 import { Button } from '../../components/common/Button';
+import { Avatar } from '../../components/common/Avatar';
 import { Spinner } from '../../components/common/Spinner';
 import { Input } from '../../components/common/Input';
 import { BarChartCard } from '../../components/charts/BarChartCard';
 import { cn } from '../../utils/cn';
 import { formatDateTime } from '../../utils/formatDate';
 
-const tabs = ['Overview', 'Members', 'Join Requests', 'Sessions', 'Resources', 'Analytics'];
+const tabs = ['Overview', 'Members', 'Requests', 'Sessions', 'Resources', 'Analytics'];
+
+const formatBadgeCount = (count) => (count > 99 ? '99+' : String(count));
 
 export const GroupManagePage = () => {
   const { id } = useParams();
@@ -54,8 +57,13 @@ export const GroupManagePage = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['manage-sessions', id] }),
   });
 
-  const handleJoinRequest = useMutation({
-    mutationFn: ({ requestId, status }) => groupApi.handleJoinRequest(requestId, status),
+  const approveJoinRequest = useMutation({
+    mutationFn: (requestId) => groupApi.approveJoinRequest(requestId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['group', id] }),
+  });
+
+  const rejectJoinRequest = useMutation({
+    mutationFn: (requestId) => groupApi.rejectJoinRequest(requestId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['group', id] }),
   });
 
@@ -74,6 +82,8 @@ export const GroupManagePage = () => {
   if (!isLeader) return <Navigate to={`/groups/${id}`} replace />;
 
   const pendingRequests = group?.joinRequests || [];
+  const requestCount = pendingRequests.length;
+  const isRequestActionPending = approveJoinRequest.isPending || rejectJoinRequest.isPending;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -86,11 +96,23 @@ export const GroupManagePage = () => {
             type="button"
             onClick={() => setActiveTab(tab)}
             className={cn(
-              'rounded-lg px-3 py-2 text-sm font-medium',
+              'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium',
               activeTab === tab ? 'bg-primary text-white' : 'text-muted hover:bg-elevated',
             )}
           >
             {tab}
+            {tab === 'Requests' && requestCount > 0 && (
+              <span
+                className={cn(
+                  'inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-xs font-semibold',
+                  activeTab === tab
+                    ? 'bg-white/20 text-white'
+                    : 'bg-primary/10 text-primary',
+                )}
+              >
+                {formatBadgeCount(requestCount)}
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -109,7 +131,10 @@ export const GroupManagePage = () => {
           <ul className="divide-y divide-border">
             {group.members?.map((m) => (
               <li key={m.id} className="flex justify-between py-3 text-sm">
-                <span>{m.user.fullName}</span>
+                <span className="flex items-center gap-2.5">
+                  <Avatar src={m.user.avatar} name={m.user.fullName} />
+                  {m.user.fullName}
+                </span>
                 <span className="text-muted">{m.role}</span>
               </li>
             ))}
@@ -117,29 +142,32 @@ export const GroupManagePage = () => {
         </Card>
       )}
 
-      {activeTab === 'Join Requests' && (
+      {activeTab === 'Requests' && (
         <Card className="mt-6" title="Pending Join Requests">
           {pendingRequests.length ? (
             <ul className="space-y-3">
               {pendingRequests.map((req) => (
                 <li key={req.id} className="flex items-center justify-between rounded-lg border border-border p-3">
-                  <span>{req.user?.fullName}</span>
+                  <span className="flex items-center gap-2.5">
+                    <Avatar src={req.user?.avatar} name={req.user?.fullName} />
+                    {req.user?.fullName}
+                  </span>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
                       className="!py-1.5 !text-xs"
-                      onClick={() =>
-                        handleJoinRequest.mutate({ requestId: req.id, status: 'APPROVED' })
-                      }
+                      loading={approveJoinRequest.isPending}
+                      disabled={isRequestActionPending}
+                      onClick={() => approveJoinRequest.mutate(req.id)}
                     >
                       Approve
                     </Button>
                     <Button
                       variant="danger"
                       className="!py-1.5 !text-xs"
-                      onClick={() =>
-                        handleJoinRequest.mutate({ requestId: req.id, status: 'REJECTED' })
-                      }
+                      loading={rejectJoinRequest.isPending}
+                      disabled={isRequestActionPending}
+                      onClick={() => rejectJoinRequest.mutate(req.id)}
                     >
                       Reject
                     </Button>

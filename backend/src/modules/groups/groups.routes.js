@@ -6,6 +6,7 @@ import {
   updateGroupValidation,
   groupIdValidation,
   joinRequestValidation,
+  joinRequestIdValidation,
 } from './groups.validation.js';
 import { asyncHandler } from '../../utils/asyncHandler.js';
 import { authenticate } from '../../middlewares/auth.middleware.js';
@@ -26,6 +27,17 @@ router.delete(
   asyncHandler(groupsController.remove),
 );
 router.post('/:id/join', groupIdValidation, asyncHandler(groupsController.requestJoin));
+router.delete('/:id/join', groupIdValidation, asyncHandler(groupsController.cancelJoinRequest));
+router.post(
+  '/join-requests/:requestId/approve',
+  joinRequestIdValidation,
+  asyncHandler(groupsController.approveJoinRequest),
+);
+router.post(
+  '/join-requests/:requestId/reject',
+  joinRequestIdValidation,
+  asyncHandler(groupsController.rejectJoinRequest),
+);
 router.patch(
   '/join-requests/:requestId',
   [param('requestId').isUUID(), ...joinRequestValidation.slice(1)],

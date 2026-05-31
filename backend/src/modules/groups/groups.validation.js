@@ -25,6 +25,8 @@ export const updateGroupValidation = [
 
 export const groupIdValidation = [param('id').isUUID()];
 
+export const joinRequestIdValidation = [param('requestId').isUUID()];
+
 export const joinRequestValidation = [
   param('id').isUUID(),
   body('status').isIn(['APPROVED', 'REJECTED']),

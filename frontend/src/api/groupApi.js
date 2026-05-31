@@ -7,6 +7,11 @@ export const groupApi = {
   update: (id, data) => apiClient.patch(`/groups/${id}`, data),
   remove: (id) => apiClient.delete(`/groups/${id}`),
   requestJoin: (id) => apiClient.post(`/groups/${id}/join`),
+  cancelJoinRequest: (id) => apiClient.delete(`/groups/${id}/join`),
+  approveJoinRequest: (requestId) =>
+    apiClient.post(`/groups/join-requests/${requestId}/approve`),
+  rejectJoinRequest: (requestId) =>
+    apiClient.post(`/groups/join-requests/${requestId}/reject`),
   handleJoinRequest: (requestId, status) =>
     apiClient.patch(`/groups/join-requests/${requestId}`, { status }),
 };

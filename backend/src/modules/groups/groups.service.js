@@ -26,10 +26,27 @@ export const groupsService = {
     return buildPaginatedResult(items, total, { page, limit });
   },
 
-  getById: async (id) => {
+  getById: async (id, userId) => {
     const group = await groupsRepository.findById(id);
     if (!group) throw ApiError.notFound('Group not found');
-    return group;
+
+    const isLeader =
+      userId && group.members?.some((m) => m.userId === userId && m.role === 'LEADER');
+
+    const result = { ...group };
+
+    if (!isLeader) {
+      delete result.joinRequests;
+    }
+
+    if (userId) {
+      const request = await groupsRepository.findJoinRequest(id, userId);
+      if (request?.status === 'PENDING') {
+        result.myJoinRequest = request;
+      }
+    }
+
+    return result;
   },
 
   create: async (data, userId) => {
@@ -80,6 +97,9 @@ export const groupsService = {
   handleJoinRequest: async (requestId, status, userId) => {
     const request = await groupsRepository.findJoinRequestById(requestId);
     if (!request) throw ApiError.notFound('Join request not found');
+    if (request.status !== 'PENDING') {
+      throw ApiError.badRequest('Join request is no longer pending');
+    }
 
     const membership = await groupsRepository.isMember(request.groupId, userId);
     if (!membership || membership.role !== 'LEADER') {
@@ -95,5 +115,24 @@ export const groupsService = {
       });
     }
     return updated;
+  },
+
+  approveJoinRequest(requestId, userId) {
+    return this.handleJoinRequest(requestId, 'APPROVED', userId);
+  },
+
+  rejectJoinRequest(requestId, userId) {
+    return this.handleJoinRequest(requestId, 'REJECTED', userId);
+  },
+
+  cancelJoinRequest: async (groupId, userId) => {
+    const request = await groupsRepository.findJoinRequest(groupId, userId);
+    if (!request) throw ApiError.notFound('Join request not found');
+    if (request.status !== 'PENDING') {
+      throw ApiError.badRequest('Only pending join requests can be cancelled');
+    }
+
+    await groupsRepository.deleteJoinRequest(request.id);
+    return true;
   },
 };
