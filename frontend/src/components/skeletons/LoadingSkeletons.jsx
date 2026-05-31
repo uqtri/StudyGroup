@@ -288,9 +288,22 @@ export const MyGroupsSkeleton = () => (
 
 export const AdminDashboardSkeleton = () => (
   <div className="space-y-6">
-    <StatCardsSkeleton />
+    <StatCardsSkeleton count={3} />
     <ChartGridSkeleton />
-    <TableSkeleton rows={4} cols={4} />
+    <Skeleton className="h-64 w-full rounded-[var(--radius-card)]" />
+    <div className="surface-panel p-6">
+      <Skeleton className="mb-4 h-5 w-40" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Skeleton className="h-16 w-full" />
+        <Skeleton className="h-16 w-full" />
+      </div>
+    </div>
+  </div>
+);
+
+export const AdminGroupsSkeleton = () => (
+  <div className="space-y-6">
+    <CardGridSkeleton />
   </div>
 );
 
@@ -450,12 +463,7 @@ export const DashboardSkeleton = () => (
   </div>
 );
 
-export const AdminAnalyticsSkeleton = () => (
-  <div className="space-y-6">
-    <ChartGridSkeleton />
-    <ChartGridSkeleton />
-  </div>
-);
+export const AdminAnalyticsSkeleton = AdminDashboardSkeleton;
 
 export const NotificationListSkeleton = ({ count = 5 }) => (
   <>

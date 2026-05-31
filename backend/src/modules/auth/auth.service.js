@@ -60,6 +60,9 @@ export const authService = {
   login: async ({ email, password }) => {
     const user = await authRepository.findByEmail(email);
     if (!user) throw ApiError.unauthorized('Invalid credentials');
+    if (user.status === 'SUSPENDED') {
+      throw ApiError.forbidden('Your account has been banned. Contact support for help.');
+    }
     if (user.status !== 'ACTIVE') throw ApiError.forbidden('Account is not active');
 
     const valid = await bcrypt.compare(password, user.passwordHash);
@@ -89,6 +92,13 @@ export const authService = {
     const stored = await authRepository.findRefreshToken(tokenHash);
     if (!stored || stored.expiresAt < new Date()) {
       throw ApiError.unauthorized('Refresh token expired or revoked');
+    }
+
+    if (stored.user.status === 'SUSPENDED') {
+      throw ApiError.forbidden('Your account has been banned. Contact support for help.');
+    }
+    if (stored.user.status !== 'ACTIVE') {
+      throw ApiError.forbidden('Account is not active');
     }
 
     await authRepository.deleteRefreshToken(tokenHash);

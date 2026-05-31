@@ -52,4 +52,26 @@ export const usersService = {
     await usersRepository.softDelete(id);
     return true;
   },
+
+  setStatus: async (id, status, requesterId) => {
+    const requester = await usersRepository.findById(requesterId);
+    const isAdmin = requester?.roles?.some((r) => r.role.name === 'ADMIN');
+    if (!isAdmin) throw ApiError.forbidden();
+
+    if (id === requesterId) {
+      throw ApiError.badRequest('Cannot change your own account status');
+    }
+
+    const user = await usersRepository.findById(id);
+    if (!user) throw ApiError.notFound('User not found');
+
+    const targetIsAdmin = user.roles?.some((r) => r.role.name === 'ADMIN');
+    if (targetIsAdmin) throw ApiError.forbidden('Cannot change an admin account status');
+
+    const updated = await usersRepository.update(id, { status });
+    if (status === 'SUSPENDED') {
+      await usersRepository.revokeRefreshTokens(id);
+    }
+    return formatUser(updated);
+  },
 };

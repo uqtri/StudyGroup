@@ -1,12 +1,19 @@
 import { groupsRepository } from './groups.repository.js';
 import { ApiError } from '../../utils/ApiError.js';
 import { buildPaginatedResult, parsePagination, parseSort } from '../../utils/pagination.js';
+import { notificationsService } from '../notifications/notifications.service.js';
 
 export const groupsService = {
-  list: async (query, userId) => {
+  list: async (query, userId, isAdmin = false) => {
     const { page, limit, skip } = parsePagination(query);
     const orderBy = parseSort(query, ['createdAt', 'name', 'subject'], 'createdAt');
-    const where = { status: query.status || 'ACTIVE' };
+    const where = {};
+
+    if (query.status) {
+      where.status = query.status;
+    } else if (!isAdmin) {
+      where.status = 'ACTIVE';
+    }
 
     if (query.search) {
       where.OR = [
@@ -16,6 +23,7 @@ export const groupsService = {
     }
     if (query.myGroups === 'true' && userId) {
       where.members = { some: { userId, deletedAt: null } };
+      where.status = 'ACTIVE';
     }
 
     const [items, total] = await Promise.all([
@@ -26,9 +34,12 @@ export const groupsService = {
     return buildPaginatedResult(items, total, { page, limit });
   },
 
-  getById: async (id, userId) => {
+  getById: async (id, userId, isAdmin = false) => {
     const group = await groupsRepository.findById(id);
     if (!group) throw ApiError.notFound('Group not found');
+    if (group.status === 'ARCHIVED' && !isAdmin) {
+      throw ApiError.notFound('Group not found');
+    }
 
     const isLeader =
       userId && group.members?.some((m) => m.userId === userId && m.role === 'LEADER');
@@ -80,6 +91,9 @@ export const groupsService = {
   requestJoin: async (groupId, userId) => {
     const group = await groupsRepository.findById(groupId);
     if (!group) throw ApiError.notFound('Group not found');
+    if (group.status !== 'ACTIVE') {
+      throw ApiError.badRequest('This group is not accepting members');
+    }
 
     const existing = await groupsRepository.isMember(groupId, userId);
     if (existing) throw ApiError.conflict('Already a member');
@@ -134,5 +148,25 @@ export const groupsService = {
 
     await groupsRepository.deleteJoinRequest(request.id);
     return true;
+  },
+
+  setStatus: async (id, status, isAdmin) => {
+    if (!isAdmin) throw ApiError.forbidden();
+
+    const group = await groupsRepository.findById(id);
+    if (!group) throw ApiError.notFound('Group not found');
+
+    const updated = await groupsRepository.update(id, { status });
+
+    await notificationsService.notifyUsers([group.createdBy], {
+      title: status === 'ARCHIVED' ? 'Group banned' : 'Group restored',
+      message:
+        status === 'ARCHIVED'
+          ? `Your group "${group.name}" has been banned by an administrator.`
+          : `Your group "${group.name}" has been restored and is active again.`,
+      link: `/groups/${id}`,
+    });
+
+    return updated;
   },
 };

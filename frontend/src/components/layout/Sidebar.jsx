@@ -7,7 +7,6 @@ import {
   FileText,
   User,
   Shield,
-  Flag,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { ROLES } from '../../constants/roles';
@@ -36,7 +35,6 @@ export const Sidebar = ({ open, onClose }) => {
   const adminNav = [
     { to: '/admin/users', label: 'Users', icon: Shield },
     { to: '/admin/groups', label: 'All Groups', icon: FolderOpen },
-    { to: '/admin/reports', label: 'Reports', icon: Flag },
   ];
 
   return (

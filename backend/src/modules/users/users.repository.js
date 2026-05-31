@@ -42,4 +42,6 @@ export const usersRepository = {
       where: { id },
       data: { deletedAt: new Date(), status: 'INACTIVE' },
     }),
+
+  revokeRefreshTokens: (userId) => prisma.refreshToken.deleteMany({ where: { userId } }),
 };

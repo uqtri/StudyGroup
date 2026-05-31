@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Users, Calendar, TrendingUp, FileText, Shield, Flag } from 'lucide-react';
+import { Users, FolderOpen, TrendingUp, Shield } from 'lucide-react';
 import { dashboardApi } from '../../api/dashboardApi';
 import { StatCard } from '../../components/common/StatCard';
 import { DashboardSkeleton } from '../../components/skeletons/LoadingSkeletons';
@@ -101,27 +101,15 @@ const LeaderDashboard = ({ data }) => (
 const AdminDashboard = ({ data }) => (
   <div className="space-y-6">
     <h2 className="text-2xl font-bold tracking-tight text-foreground">Admin Dashboard</h2>
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       <StatCard label="Total Users" value={data.totalUsers} icon={Users} />
       <StatCard label="Active Groups" value={data.activeGroups} icon={Shield} />
-      <StatCard label="Pending Reports" value={data.pendingReports} icon={Flag} />
       <StatCard label="Platform Health" value="Good" icon={TrendingUp} trend="All systems operational" />
     </div>
     <div className="grid gap-6 lg:grid-cols-2">
       <PieChartCard title="Users by Status" data={data.charts?.usersByStatus || []} />
       <BarChartCard title="Groups by Subject" data={data.charts?.groupsBySubject || []} />
     </div>
-    <Card title="Recent Reports">
-      <ul className="space-y-2">
-        {data.recentReports?.map((r) => (
-          <li key={r.id} className="flex justify-between rounded-xl border border-border p-3 text-sm">
-            <span>
-              {r.reportedType} — {r.reason.slice(0, 50)}...
-            </span>
-            <span className="text-muted">{r.status}</span>
-          </li>
-        ))}
-      </ul>
-    </Card>
+    <BarChartCard title="Members per Group" data={data.charts?.membersPerGroup || []} />
   </div>
 );

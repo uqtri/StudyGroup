@@ -12,7 +12,6 @@ const breadcrumbMap = {
   '/profile': 'Profile',
   '/admin/users': 'Admin / Users',
   '/admin/groups': 'Admin / Groups',
-  '/admin/reports': 'Admin / Reports',
 };
 
 export const DashboardLayout = () => {

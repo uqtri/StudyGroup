@@ -9,8 +9,6 @@ const titles = {
   '/admin/groups': 'Study Groups',
   '/admin/sessions': 'Sessions',
   '/admin/resources': 'Resources',
-  '/admin/reports': 'Reports',
-  '/admin/analytics': 'Analytics',
   '/admin/settings': 'Settings',
 };
 

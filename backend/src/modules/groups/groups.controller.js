@@ -5,13 +5,15 @@ import { validate } from '../../utils/validationHandler.js';
 export const groupsController = {
   list: async (req, res) => {
     validate(req);
-    const data = await groupsService.list(req.query, req.user?.id);
+    const isAdmin = req.user?.roles?.includes('ADMIN');
+    const data = await groupsService.list(req.query, req.user?.id, isAdmin);
     ApiResponse.success(res, { message: 'Groups retrieved', data });
   },
 
   getById: async (req, res) => {
     validate(req);
-    const data = await groupsService.getById(req.params.id, req.user?.id);
+    const isAdmin = req.user?.roles?.includes('ADMIN');
+    const data = await groupsService.getById(req.params.id, req.user?.id, isAdmin);
     ApiResponse.success(res, { message: 'Group retrieved', data });
   },
 
@@ -66,5 +68,12 @@ export const groupsController = {
     validate(req);
     await groupsService.cancelJoinRequest(req.params.id, req.user.id);
     ApiResponse.success(res, { message: 'Join request cancelled', data: null });
+  },
+
+  setStatus: async (req, res) => {
+    validate(req);
+    const isAdmin = req.user.roles.includes('ADMIN');
+    const data = await groupsService.setStatus(req.params.id, req.body.status, isAdmin);
+    ApiResponse.success(res, { message: 'Group status updated', data });
   },
 };

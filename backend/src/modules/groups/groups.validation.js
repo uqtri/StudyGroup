@@ -5,6 +5,7 @@ export const listGroupsValidation = [
   query('limit').optional().isInt({ min: 1, max: 100 }),
   query('search').optional().isString(),
   query('myGroups').optional().isIn(['true', 'false']),
+  query('status').optional().isIn(['ACTIVE', 'ARCHIVED', 'DELETED']),
 ];
 
 export const createGroupValidation = [
@@ -30,4 +31,9 @@ export const joinRequestIdValidation = [param('requestId').isUUID()];
 export const joinRequestValidation = [
   param('id').isUUID(),
   body('status').isIn(['APPROVED', 'REJECTED']),
+];
+
+export const updateGroupStatusValidation = [
+  param('id').isUUID(),
+  body('status').isIn(['ACTIVE', 'ARCHIVED']),
 ];

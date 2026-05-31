@@ -1,18 +1,11 @@
 import { useState } from 'react';
-import {
-  File,
-  FileArchive,
-  FileImage,
-  FileSpreadsheet,
-  FileText,
-  Presentation,
-  X,
-} from 'lucide-react';
+import { X } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
 import {
   getFileCategory,
   getResourceViewUrl,
 } from '../../utils/cloudinaryUpload';
+import { getFileIconProps } from '../../utils/fileIcons';
 import { ResourceStarRating } from './ResourceStarRating';
 import { Button } from '../common/Button';
 import {
@@ -25,17 +18,6 @@ import {
 } from '../ui/popover';
 import { cn } from '../../utils/cn';
 
-const FILE_ICONS = {
-  pdf: { Icon: FileText, color: 'text-red-600', bg: 'bg-red-500/10' },
-  doc: { Icon: FileText, color: 'text-blue-600', bg: 'bg-blue-500/10' },
-  sheet: { Icon: FileSpreadsheet, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
-  slide: { Icon: Presentation, color: 'text-orange-600', bg: 'bg-orange-500/10' },
-  image: { Icon: FileImage, color: 'text-violet-600', bg: 'bg-violet-500/10' },
-  archive: { Icon: FileArchive, color: 'text-amber-600', bg: 'bg-amber-500/10' },
-  text: { Icon: FileText, color: 'text-slate-600', bg: 'bg-slate-500/10' },
-  file: { Icon: File, color: 'text-primary', bg: 'bg-primary/10' },
-};
-
 export const ResourceFileRow = ({
   resource,
   canDelete,
@@ -46,7 +28,7 @@ export const ResourceFileRow = ({
 }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const category = getFileCategory(resource.title, resource.fileType, resource.fileUrl);
-  const { Icon, color, bg } = FILE_ICONS[category] || FILE_ICONS.file;
+  const { Icon, color, bg } = getFileIconProps(category);
   const viewUrl = getResourceViewUrl(resource.fileUrl, resource.fileType);
 
   const handleConfirmDelete = () => {

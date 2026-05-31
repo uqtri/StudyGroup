@@ -14,4 +14,5 @@ export const groupApi = {
     apiClient.post(`/groups/join-requests/${requestId}/reject`),
   handleJoinRequest: (requestId, status) =>
     apiClient.patch(`/groups/join-requests/${requestId}`, { status }),
+  setStatus: (id, status) => apiClient.patch(`/groups/${id}/status`, { status }),
 };

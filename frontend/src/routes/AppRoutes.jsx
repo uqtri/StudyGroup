@@ -24,8 +24,6 @@ import { AdminUsersPage } from '../pages/admin/AdminUsersPage';
 import { AdminGroupsPage } from '../pages/admin/AdminGroupsPage';
 import { AdminSessionsPage } from '../pages/admin/AdminSessionsPage';
 import { AdminResourcesPage } from '../pages/admin/AdminResourcesPage';
-import { AdminReportsPage } from '../pages/admin/AdminReportsPage';
-import { AdminAnalyticsPage } from '../pages/admin/AdminAnalyticsPage';
 import { AdminSettingsPage } from '../pages/admin/AdminSettingsPage';
 
 export const AppRoutes = () => (
@@ -89,8 +87,6 @@ export const AppRoutes = () => (
         <Route path="/admin/groups" element={<AdminGroupsPage />} />
         <Route path="/admin/sessions" element={<AdminSessionsPage />} />
         <Route path="/admin/resources" element={<AdminResourcesPage />} />
-        <Route path="/admin/reports" element={<AdminReportsPage />} />
-        <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
         <Route path="/admin/settings" element={<AdminSettingsPage />} />
       </Route>
     </Route>

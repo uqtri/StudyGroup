@@ -26,4 +26,10 @@ export const usersController = {
     await usersService.remove(req.params.id);
     ApiResponse.success(res, { message: 'User deactivated', data: null });
   },
+
+  setStatus: async (req, res) => {
+    validate(req);
+    const data = await usersService.setStatus(req.params.id, req.body.status, req.user.id);
+    ApiResponse.success(res, { message: 'User status updated', data });
+  },
 };

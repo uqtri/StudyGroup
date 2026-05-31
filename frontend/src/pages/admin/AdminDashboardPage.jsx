@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Users, FolderOpen, Flag, TrendingUp } from 'lucide-react';
+import { Users, FolderOpen, TrendingUp } from 'lucide-react';
 import { dashboardApi } from '../../api/dashboardApi';
 import { StatCard } from '../../components/common/StatCard';
 import { AdminDashboardSkeleton } from '../../components/skeletons/LoadingSkeletons';
@@ -17,10 +17,9 @@ export const AdminDashboardPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard label="Total Users" value={data?.totalUsers || 0} icon={Users} />
         <StatCard label="Active Groups" value={data?.activeGroups || 0} icon={FolderOpen} />
-        <StatCard label="Pending Reports" value={data?.pendingReports || 0} icon={Flag} />
         <StatCard label="Platform Health" value="Good" icon={TrendingUp} trend="Operational" />
       </div>
 
@@ -29,31 +28,19 @@ export const AdminDashboardPage = () => {
         <BarChartCard title="Groups by Subject" data={data?.charts?.groupsBySubject || []} />
       </div>
 
-      <Card title="Recent Reports">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-border text-muted">
-                <th className="pb-2">Type</th>
-                <th className="pb-2">Reason</th>
-                <th className="pb-2">Reporter</th>
-                <th className="pb-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data?.recentReports?.map((r) => (
-                <tr key={r.id} className="border-b border-border">
-                  <td className="py-3">{r.reportedType}</td>
-                  <td className="max-w-xs truncate">{r.reason}</td>
-                  <td>{r.reporter?.fullName}</td>
-                  <td>
-                    <span className="rounded-full bg-elevated px-2 py-0.5 text-xs">{r.status}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <BarChartCard title="Members per Group" data={data?.charts?.membersPerGroup || []} />
+
+      <Card title="Platform Summary">
+        <dl className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <dt className="text-sm text-muted">Total Users</dt>
+            <dd className="text-2xl font-bold">{data?.totalUsers || 0}</dd>
+          </div>
+          <div>
+            <dt className="text-sm text-muted">Active Groups</dt>
+            <dd className="text-2xl font-bold">{data?.activeGroups || 0}</dd>
+          </div>
+        </dl>
       </Card>
     </div>
   );

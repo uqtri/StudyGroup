@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { sessionApi } from '../../api/sessionApi';
 import { Card } from '../../components/common/Card';
+import { GroupAvatar } from '../../components/common/GroupAvatar';
 import { TableSkeleton } from '../../components/skeletons/LoadingSkeletons';
 import { formatDateTime } from '../../utils/formatDate';
+import { StatusBadge, sessionStatusStyles } from '../../utils/statusStyles';
 
 export const AdminSessionsPage = () => {
   const { data, isLoading } = useQuery({
@@ -30,12 +32,15 @@ export const AdminSessionsPage = () => {
             {sessions.map((s) => (
               <tr key={s.id} className="border-b border-border">
                 <td className="py-3 font-medium">{s.title}</td>
-                <td>{s.group?.name}</td>
-                <td>{formatDateTime(s.startTime)}</td>
                 <td>
-                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                    {s.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <GroupAvatar name={s.group?.name} className="h-8 w-8 text-sm" />
+                    <span>{s.group?.name}</span>
+                  </div>
+                </td>
+                <td className="text-muted">{formatDateTime(s.startTime)}</td>
+                <td>
+                  <StatusBadge status={s.status} styles={sessionStatusStyles} />
                 </td>
               </tr>
             ))}
