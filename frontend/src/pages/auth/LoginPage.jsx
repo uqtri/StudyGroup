@@ -35,8 +35,8 @@ export const LoginPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-text">Welcome back</h2>
-      <p className="mt-1 text-sm text-slate-500">Sign in to your StudyHub account</p>
+      <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Welcome back</h2>
+      <p className="mt-1 text-sm text-muted">Sign in to your StudyHub account</p>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit((d) => mutation.mutate(d))}>
         <Input label="Email" type="email" error={errors.email?.message} {...register('email')} />
@@ -52,14 +52,14 @@ export const LoginPage = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-slate-500">
+      <p className="mt-4 text-center text-sm text-muted">
         No account?{' '}
-        <Link to="/register" className="font-medium text-primary hover:underline">
+        <Link to="/register" className="font-semibold text-primary hover:underline">
           Register
         </Link>
       </p>
 
-      <p className="mt-6 rounded-lg bg-slate-100 p-3 text-xs text-slate-600">
+      <p className="mt-6 rounded-xl border border-border bg-elevated/80 p-3 text-xs text-muted">
         Demo: admin@studyhub.com / leader@studyhub.com / student@studyhub.com — Password123!
       </p>
     </div>

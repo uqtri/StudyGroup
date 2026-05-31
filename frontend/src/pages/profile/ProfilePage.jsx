@@ -37,10 +37,10 @@ export const ProfilePage = () => {
 
   return (
     <div className="mx-auto max-w-lg space-y-6">
-      <h2 className="text-2xl font-bold text-text">Profile</h2>
+      <h2 className="text-2xl font-bold text-foreground">Profile</h2>
       <Card>
-        <p className="mb-4 text-sm text-slate-500">{profile?.email}</p>
-        <p className="mb-4 text-xs text-slate-400">Roles: {profile?.roles?.join(', ')}</p>
+        <p className="mb-4 text-sm text-muted">{profile?.email}</p>
+        <p className="mb-4 text-xs text-muted">Roles: {profile?.roles?.join(', ')}</p>
         <form
           className="space-y-4"
           onSubmit={handleSubmit((d) => mutation.mutate(d))}
@@ -48,9 +48,9 @@ export const ProfilePage = () => {
           <Input label="Full name" {...register('fullName')} />
           <Input label="Avatar URL" {...register('avatar')} />
           <div>
-            <label className="text-sm font-medium text-slate-700">Bio</label>
+            <label className="text-sm font-medium text-foreground">Bio</label>
             <textarea
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
               rows={3}
               {...register('bio')}
             />

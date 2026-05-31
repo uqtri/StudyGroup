@@ -15,8 +15,10 @@ import { cn } from '../../utils/cn';
 
 const linkClass = ({ isActive }) =>
   cn(
-    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition',
-    isActive ? 'bg-primary text-white' : 'text-slate-600 hover:bg-slate-100',
+    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200',
+    isActive
+      ? 'bg-gradient-brand text-white shadow-md shadow-primary/25'
+      : 'text-muted hover:bg-elevated hover:text-foreground',
   );
 
 export const Sidebar = ({ open, onClose }) => {
@@ -41,20 +43,20 @@ export const Sidebar = ({ open, onClose }) => {
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-40 bg-black/40 lg:hidden" onClick={onClose} />
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden" onClick={onClose} />
       )}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200 bg-white p-4 transition-transform lg:static lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-surface/95 p-4 backdrop-blur-xl transition-transform lg:static lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <div className="mb-8 px-2">
-          <h1 className="text-xl font-bold text-primary">StudyHub</h1>
-          <p className="text-xs text-slate-500">Group Study Management</p>
+          <h1 className="text-xl font-bold text-gradient-brand">StudyHub</h1>
+          <p className="text-xs text-muted">Group Study Management</p>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="flex-1 space-y-1">
           {nav.map((item) => (
             <NavLink key={item.to} to={item.to} className={linkClass} onClick={onClose}>
               <item.icon size={18} />
@@ -64,8 +66,10 @@ export const Sidebar = ({ open, onClose }) => {
         </nav>
 
         {isAdmin && (
-          <div className="mt-8">
-            <p className="mb-2 px-3 text-xs font-semibold uppercase text-slate-400">Admin</p>
+          <div className="mt-6">
+            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted">
+              Admin
+            </p>
             <nav className="space-y-1">
               {adminNav.map((item) => (
                 <NavLink key={item.to} to={item.to} className={linkClass} onClick={onClose}>
@@ -78,7 +82,7 @@ export const Sidebar = ({ open, onClose }) => {
         )}
 
         {isLeader && !isAdmin && (
-          <p className="mt-6 px-3 text-xs text-slate-500">Leader tools available on dashboard</p>
+          <p className="mt-4 px-3 text-xs text-muted">Leader tools on dashboard</p>
         )}
       </aside>
     </>

@@ -25,23 +25,23 @@ export const SessionDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-text">{session.title}</h2>
-      <p className="text-slate-500">{session.group?.name}</p>
+      <h2 className="text-2xl font-bold text-foreground">{session.title}</h2>
+      <p className="text-muted">{session.group?.name}</p>
       <p>{session.description}</p>
 
       <Card title="Schedule">
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <dt className="text-slate-500">Start</dt>
+            <dt className="text-muted">Start</dt>
             <dd>{formatDateTime(session.startTime)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-slate-500">End</dt>
+            <dt className="text-muted">End</dt>
             <dd>{formatDateTime(session.endTime)}</dd>
           </div>
           {session.meetingLink && (
             <div className="flex justify-between">
-              <dt className="text-slate-500">Meeting</dt>
+              <dt className="text-muted">Meeting</dt>
               <dd>
                 <a href={session.meetingLink} className="text-primary hover:underline" target="_blank" rel="noreferrer">
                   Join link
@@ -57,7 +57,7 @@ export const SessionDetailPage = () => {
           {session.attendances?.map((a) => (
             <li key={a.id} className="flex justify-between text-sm">
               <span>{a.user.fullName}</span>
-              <span className={a.status === 'PRESENT' ? 'text-success' : 'text-slate-500'}>
+              <span className={a.status === 'PRESENT' ? 'text-success' : 'text-muted'}>
                 {a.status}
               </span>
             </li>

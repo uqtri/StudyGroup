@@ -1,22 +1,107 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-primary: #2563eb;
-  --color-secondary: #60a5fa;
+  --color-background: var(--bg-page);
+  --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-border: var(--border-color);
+  --color-primary: var(--brand-500);
+  --color-secondary: var(--brand-300);
   --color-success: #22c55e;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  --color-background: #f8fafc;
-  --color-text: #1e293b;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Light theme */
+:root {
+  --brand-500: #2563eb;
+  --brand-300: #60a5fa;
+  --gradient-from: #2563eb;
+  --gradient-via: #6366f1;
+  --gradient-to: #06b6d4;
+  --bg-page: #f1f5f9;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f8fafc;
+  --text-primary: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --chart-grid: #e2e8f0;
+  --chart-bar: #2563eb;
+  --shadow-glow: 0 8px 32px rgb(37 99 235 / 0.15);
+}
+
+/* Dark theme */
+.dark {
+  --brand-500: #60a5fa;
+  --brand-300: #93c5fd;
+  --gradient-from: #3b82f6;
+  --gradient-via: #8b5cf6;
+  --gradient-to: #22d3ee;
+  --bg-page: #0b1220;
+  --bg-surface: #131c2e;
+  --bg-elevated: #1a2438;
+  --text-primary: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-color: #2a3548;
+  --chart-grid: #334155;
+  --chart-bar: #60a5fa;
+  --shadow-glow: 0 8px 32px rgb(59 130 246 / 0.2);
+}
+
+@utility bg-gradient-brand {
+  background-image: linear-gradient(
+    135deg,
+    var(--gradient-from) 0%,
+    var(--gradient-via) 50%,
+    var(--gradient-to) 100%
+  );
+}
+
+@utility text-gradient-brand {
+  background-image: linear-gradient(135deg, var(--gradient-from), var(--gradient-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility glass {
+  background: color-mix(in srgb, var(--bg-surface) 85%, transparent);
+  backdrop-filter: blur(12px);
 }
 
 body {
   margin: 0;
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    sans-serif;
-  background-color: var(--color-background);
-  color: var(--color-text);
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -30%, color-mix(in srgb, var(--gradient-from) 14%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 0%, color-mix(in srgb, var(--gradient-to) 10%, transparent), transparent),
+    radial-gradient(ellipse 40% 30% at 0% 100%, color-mix(in srgb, var(--gradient-via) 8%, transparent), transparent);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.dark body {
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% -30%, color-mix(in srgb, var(--gradient-via) 18%, transparent), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 0%, color-mix(in srgb, var(--gradient-to) 12%, transparent), transparent),
+    radial-gradient(ellipse 40% 30% at 0% 100%, color-mix(in srgb, var(--gradient-from) 10%, transparent), transparent);
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
 }

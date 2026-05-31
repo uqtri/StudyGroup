@@ -33,15 +33,15 @@ export const GroupDetailPage = () => {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-text">{group.name}</h2>
-          <p className="text-slate-500">{group.subject}</p>
+          <h2 className="text-2xl font-bold text-foreground">{group.name}</h2>
+          <p className="text-muted">{group.subject}</p>
         </div>
         <Button variant="outline" onClick={() => joinMutation.mutate()} loading={joinMutation.isPending}>
           Request to Join
         </Button>
       </div>
 
-      <p className="text-slate-600">{group.description}</p>
+      <p className="text-muted">{group.description}</p>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title={`Members (${group.members?.length || 0})`}>
@@ -49,7 +49,7 @@ export const GroupDetailPage = () => {
             {group.members?.map((m) => (
               <li key={m.id} className="flex justify-between text-sm">
                 <span>{m.user.fullName}</span>
-                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs">{m.role}</span>
+                <span className="rounded bg-elevated px-2 py-0.5 text-xs">{m.role}</span>
               </li>
             ))}
           </ul>
@@ -58,19 +58,19 @@ export const GroupDetailPage = () => {
         <Card title="Stats">
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <dt className="text-slate-500">Sessions</dt>
+              <dt className="text-muted">Sessions</dt>
               <dd>{group._count?.sessions || 0}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Resources</dt>
+              <dt className="text-muted">Resources</dt>
               <dd>{group._count?.resources || 0}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Posts</dt>
+              <dt className="text-muted">Posts</dt>
               <dd>{group._count?.posts || 0}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-slate-500">Leader</dt>
+              <dt className="text-muted">Leader</dt>
               <dd>{group.creator?.fullName}</dd>
             </div>
           </dl>

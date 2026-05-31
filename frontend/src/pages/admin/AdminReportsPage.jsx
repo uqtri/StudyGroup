@@ -30,7 +30,7 @@ export const AdminReportsPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-text">Reports</h2>
+      <h2 className="text-2xl font-bold text-foreground">Reports</h2>
       <div className="space-y-4">
         {reports.map((r) => (
           <Card key={r.id}>
@@ -39,8 +39,8 @@ export const AdminReportsPage = () => {
                 <p className="font-medium">
                   {r.reportedType} · {r.status}
                 </p>
-                <p className="mt-1 text-sm text-slate-600">{r.reason}</p>
-                <p className="mt-2 text-xs text-slate-400">
+                <p className="mt-1 text-sm text-muted">{r.reason}</p>
+                <p className="mt-2 text-xs text-muted">
                   By {r.reporter?.fullName} · {formatDate(r.createdAt)}
                 </p>
               </div>
@@ -63,7 +63,7 @@ export const AdminReportsPage = () => {
             </div>
           </Card>
         ))}
-        {!reports.length && <p className="text-slate-500">No reports.</p>}
+        {!reports.length && <p className="text-muted">No reports.</p>}
       </div>
     </div>
   );

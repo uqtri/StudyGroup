@@ -30,9 +30,9 @@ export const CreateGroupPage = () => {
         <Input label="Name" error={errors.name?.message} {...register('name')} />
         <Input label="Subject" error={errors.subject?.message} {...register('subject')} />
         <div>
-          <label className="text-sm font-medium text-slate-700">Description</label>
+          <label className="text-sm font-medium text-foreground">Description</label>
           <textarea
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-border bg-surface px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
             rows={4}
             {...register('description')}
           />

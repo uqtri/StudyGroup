@@ -35,8 +35,8 @@ export const RegisterPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-text">Create account</h2>
-      <p className="mt-1 text-sm text-slate-500">Join StudyHub and start learning together</p>
+      <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Create account</h2>
+      <p className="mt-1 text-sm text-muted">Join StudyHub and start learning together</p>
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit((d) => mutation.mutate(d))}>
         <Input
@@ -57,7 +57,7 @@ export const RegisterPage = () => {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-sm text-slate-500">
+      <p className="mt-4 text-center text-sm text-muted">
         Already have an account?{' '}
         <Link to="/login" className="font-medium text-primary hover:underline">
           Sign in

@@ -30,7 +30,7 @@ export const DashboardPage = () => {
 
 const StudentDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold text-text">Student Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Student Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard label="My Groups" value={data.totalGroups} icon={Users} />
       <StatCard label="Upcoming Sessions" value={data.upcomingSessions?.length || 0} icon={Calendar} />
@@ -47,24 +47,24 @@ const StudentDashboard = ({ data }) => (
       <Card title="Upcoming Sessions">
         <ul className="space-y-3">
           {data.upcomingSessions?.map((s) => (
-            <li key={s.id} className="rounded-lg border border-slate-100 p-3">
+            <li key={s.id} className="rounded-xl border border-border p-3">
               <p className="font-medium">{s.title}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted">
                 {s.group?.name} · {formatDateTime(s.startTime)}
               </p>
             </li>
           ))}
           {!data.upcomingSessions?.length && (
-            <p className="text-sm text-slate-500">No upcoming sessions</p>
+            <p className="text-sm text-muted">No upcoming sessions</p>
           )}
         </ul>
       </Card>
       <Card title="Recent Resources">
         <ul className="space-y-3">
           {data.recentResources?.map((r) => (
-            <li key={r.id} className="rounded-lg border border-slate-100 p-3">
+            <li key={r.id} className="rounded-xl border border-border p-3">
               <p className="font-medium">{r.title}</p>
-              <p className="text-xs text-slate-500">{r.group?.name}</p>
+              <p className="text-xs text-muted">{r.group?.name}</p>
             </li>
           ))}
         </ul>
@@ -75,7 +75,7 @@ const StudentDashboard = ({ data }) => (
 
 const LeaderDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold text-text">Leader Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Leader Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-3">
       <StatCard label="My Groups" value={data.groupCount} icon={Users} />
       <StatCard label="Total Members" value={data.totalMembers} icon={Users} />
@@ -92,9 +92,9 @@ const LeaderDashboard = ({ data }) => (
     <Card title="Your Groups">
       <div className="grid gap-3 sm:grid-cols-2">
         {data.groups?.map((g) => (
-          <div key={g.id} className="rounded-lg border border-slate-100 p-4">
+          <div key={g.id} className="rounded-xl border border-border p-4">
             <p className="font-semibold">{g.name}</p>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted">
               {g.members} members · {g.sessions} sessions
             </p>
           </div>
@@ -106,7 +106,7 @@ const LeaderDashboard = ({ data }) => (
 
 const AdminDashboard = ({ data }) => (
   <div className="space-y-6">
-    <h2 className="text-2xl font-bold text-text">Admin Dashboard</h2>
+    <h2 className="text-2xl font-bold tracking-tight text-gradient-brand">Admin Dashboard</h2>
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       <StatCard label="Total Users" value={data.totalUsers} icon={Users} />
       <StatCard label="Active Groups" value={data.activeGroups} icon={Shield} />
@@ -120,11 +120,11 @@ const AdminDashboard = ({ data }) => (
     <Card title="Recent Reports">
       <ul className="space-y-2">
         {data.recentReports?.map((r) => (
-          <li key={r.id} className="flex justify-between rounded-lg border border-slate-100 p-3 text-sm">
+          <li key={r.id} className="flex justify-between rounded-xl border border-border p-3 text-sm">
             <span>
               {r.reportedType} — {r.reason.slice(0, 50)}...
             </span>
-            <span className="text-slate-500">{r.status}</span>
+            <span className="text-muted">{r.status}</span>
           </li>
         ))}
       </ul>

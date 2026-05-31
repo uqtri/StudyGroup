@@ -23,14 +23,14 @@ export const ResourcesPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-text">Shared Resources</h2>
+      <h2 className="text-2xl font-bold text-foreground">Shared Resources</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {resources.map((r) => (
           <Card key={r.id}>
             <h3 className="font-semibold">{r.title}</h3>
-            <p className="mt-1 text-sm text-slate-500">{r.group?.name}</p>
+            <p className="mt-1 text-sm text-muted">{r.group?.name}</p>
             <p className="mt-2 line-clamp-2 text-sm">{r.description}</p>
-            <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
+            <div className="mt-4 flex items-center justify-between text-xs text-muted">
               <span>{formatDate(r.createdAt)}</span>
               <a
                 href={r.fileUrl}
@@ -44,7 +44,7 @@ export const ResourcesPage = () => {
           </Card>
         ))}
       </div>
-      {!resources.length && <p className="text-slate-500">No resources yet.</p>}
+      {!resources.length && <p className="text-muted">No resources yet.</p>}
     </div>
   );
 };

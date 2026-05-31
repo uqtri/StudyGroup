@@ -23,7 +23,7 @@ export const SessionsPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-text">Study Sessions</h2>
+      <h2 className="text-2xl font-bold text-foreground">Study Sessions</h2>
       <div className="space-y-3">
         {sessions.map((session) => (
           <Link key={session.id} to={`/sessions/${session.id}`}>
@@ -31,18 +31,18 @@ export const SessionsPage = () => {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h3 className="font-semibold">{session.title}</h3>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-muted">
                     {session.group?.name} · {formatDateTime(session.startTime)}
                   </p>
                 </div>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span className="rounded-full bg-gradient-brand/15 px-3 py-1 text-xs font-semibold text-primary">
                   {session.status}
                 </span>
               </div>
             </Card>
           </Link>
         ))}
-        {!sessions.length && <p className="text-slate-500">No sessions found.</p>}
+        {!sessions.length && <p className="text-muted">No sessions found.</p>}
       </div>
     </div>
   );

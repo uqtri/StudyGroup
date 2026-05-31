@@ -21,13 +21,13 @@ export const AdminGroupsPage = () => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-text">All Groups</h2>
+      <h2 className="text-2xl font-bold text-foreground">All Groups</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {groups.map((g) => (
           <Card key={g.id}>
             <h3 className="font-semibold">{g.name}</h3>
-            <p className="text-sm text-slate-500">{g.subject}</p>
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="text-sm text-muted">{g.subject}</p>
+            <p className="mt-2 text-xs text-muted">
               {g._count?.members} members · Status: {g.status}
             </p>
           </Card>
