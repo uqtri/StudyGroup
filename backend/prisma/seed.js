@@ -100,9 +100,21 @@ async function main() {
     },
   });
 
+  await prisma.resourceFolder.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000010' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000010',
+      groupId: group.id,
+      name: 'General',
+      createdBy: leader.id,
+    },
+  });
+
   await prisma.resource.create({
     data: {
       groupId: group.id,
+      folderId: '00000000-0000-0000-0000-000000000010',
       uploadedBy: leader.id,
       title: 'Binary Tree Cheatsheet',
       description: 'Quick reference for tree algorithms',

@@ -4,10 +4,12 @@ export const listResourcesValidation = [
   query('page').optional().isInt({ min: 1 }),
   query('limit').optional().isInt({ min: 1, max: 100 }),
   query('groupId').optional().isUUID(),
+  query('folderId').optional().isUUID(),
 ];
 
 export const createResourceValidation = [
   body('groupId').isUUID(),
+  body('folderId').isUUID(),
   body('title').trim().isLength({ min: 2, max: 150 }),
   body('description').optional().isString(),
   body('fileUrl').isURL(),

@@ -5,4 +5,5 @@ export const resourceApi = {
   getById: (id) => apiClient.get(`/resources/${id}`),
   create: (data) => apiClient.post('/resources', data),
   remove: (id) => apiClient.delete(`/resources/${id}`),
+  toggleStar: (id) => apiClient.post(`/resources/${id}/star`),
 };

@@ -114,6 +114,9 @@ All protected routes require: `Authorization: Bearer <accessToken>`
 | JWT_ACCESS_SECRET | Access token secret (32+ chars) |
 | JWT_REFRESH_SECRET | Refresh token secret (32+ chars) |
 | CORS_ORIGIN | Frontend URL |
+| CLOUDINARY_CLOUD_NAME | Cloudinary cloud name (resource uploads) |
+| CLOUDINARY_API_KEY | Cloudinary API key |
+| CLOUDINARY_API_SECRET | Cloudinary API secret |
 
 ### Frontend (`frontend/.env`)
 

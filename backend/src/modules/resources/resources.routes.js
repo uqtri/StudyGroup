@@ -15,6 +15,7 @@ router.use(authenticate);
 router.get('/', listResourcesValidation, asyncHandler(resourcesController.list));
 router.get('/:id', resourceIdValidation, asyncHandler(resourcesController.getById));
 router.post('/', createResourceValidation, asyncHandler(resourcesController.create));
+router.post('/:id/star', resourceIdValidation, asyncHandler(resourcesController.toggleStar));
 router.delete('/:id', resourceIdValidation, asyncHandler(resourcesController.remove));
 
 export default router;

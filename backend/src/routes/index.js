@@ -10,6 +10,8 @@ import commentsRoutes from '../modules/comments/comments.routes.js';
 import notificationsRoutes from '../modules/notifications/notifications.routes.js';
 import reportsRoutes from '../modules/reports/reports.routes.js';
 import dashboardRoutes from '../modules/dashboard/dashboard.routes.js';
+import uploadRoutes from '../modules/upload/upload.routes.js';
+import resourceFoldersRoutes from '../modules/resource-folders/resource-folders.routes.js';
 
 const router = Router();
 
@@ -23,10 +25,12 @@ router.use('/groups', groupsRoutes);
 router.use('/sessions', sessionsRoutes);
 router.use('/attendance', attendanceRoutes);
 router.use('/resources', resourcesRoutes);
+router.use('/resource-folders', resourceFoldersRoutes);
 router.use('/posts', postsRoutes);
 router.use('/comments', commentsRoutes);
 router.use('/notifications', notificationsRoutes);
 router.use('/reports', reportsRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/upload', uploadRoutes);
 
 export default router;

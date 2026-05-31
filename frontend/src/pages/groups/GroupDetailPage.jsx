@@ -10,15 +10,16 @@ import { groupApi } from "../../api/groupApi";
 
 import { sessionApi } from "../../api/sessionApi";
 
-import { resourceApi } from "../../api/resourceApi";
-
 import { postsApi } from "../../api/postsApi";
 
 import { useAuthStore } from "../../store/authStore";
 
 import { Card } from "../../components/common/Card";
 
-import { GroupDetailSkeleton, GroupSessionsTabSkeleton } from "../../components/skeletons/LoadingSkeletons";
+import {
+  GroupDetailSkeleton,
+  GroupSessionsTabSkeleton,
+} from "../../components/skeletons/LoadingSkeletons";
 
 import { Button } from "../../components/common/Button";
 import { Avatar } from "../../components/common/Avatar";
@@ -27,6 +28,7 @@ import { formatDate, formatDateTime } from "../../utils/formatDate";
 
 import { CreateSessionForm } from "../../components/sessions/CreateSessionForm";
 import { SessionCard } from "../../components/sessions/SessionCard";
+import { GroupResourcesTab } from "../../components/resources/GroupResourcesTab";
 import { cn } from "../../utils/cn";
 
 const baseTabs = [
@@ -65,15 +67,6 @@ export const GroupDetailPage = () => {
 
     enabled: activeTab === "Sessions",
     refetchInterval: activeTab === "Sessions" ? 10000 : false,
-  });
-
-  const { data: resources } = useQuery({
-    queryKey: ["group-resources", id],
-
-    queryFn: () =>
-      resourceApi.list({ groupId: id, limit: 20 }).then((r) => r.data.data),
-
-    enabled: activeTab === "Resources",
   });
 
   const { data: posts } = useQuery({
@@ -362,12 +355,14 @@ export const GroupDetailPage = () => {
           ) : (
             <>
               {canManage && !showCreateSession && (
-                <Button
-                  className="gap-2"
-                  onClick={() => setShowCreateSession(true)}
-                >
-                  <Plus size={16} /> Create new session
-                </Button>
+                <div className="flex justify-end">
+                  <Button
+                    className="gap-2"
+                    onClick={() => setShowCreateSession(true)}
+                  >
+                    <Plus size={16} /> Create new session
+                  </Button>
+                </div>
               )}
 
               {canManage && showCreateSession && (
@@ -399,30 +394,12 @@ export const GroupDetailPage = () => {
       )}
 
       {activeTab === "Resources" && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {(resources?.items || []).map((r) => (
-            <Card key={r.id}>
-              <h3 className="font-medium">{r.title}</h3>
-
-              <p className="mt-1 text-xs text-muted">
-                {formatDate(r.createdAt)}
-              </p>
-
-              <a
-                href={r.fileUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 text-sm text-primary hover:underline"
-              >
-                Download
-              </a>
-            </Card>
-          ))}
-
-          {!resources?.items?.length && (
-            <p className="text-muted">No resources shared yet.</p>
-          )}
-        </div>
+        <GroupResourcesTab
+          groupId={id}
+          isMember={isMember}
+          canManage={canManage}
+          userId={user?.id}
+        />
       )}
 
       {activeTab === "Discussions" && (

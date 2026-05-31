@@ -1,26 +1,16 @@
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Upload, ExternalLink } from 'lucide-react';
+import { Search, ExternalLink } from 'lucide-react';
 import { resourceApi } from '../../api/resourceApi';
 import { Card } from '../../components/common/Card';
 import { PageHeader } from '../../components/common/PageHeader';
 import { ResourcesPageSkeleton } from '../../components/skeletons/LoadingSkeletons';
-import { Button } from '../../components/common/Button';
-import { Input } from '../../components/common/Input';
+import { ResourceStarRating } from '../../components/resources/ResourceStarRating';
 import { formatDate } from '../../utils/formatDate';
 
 export const ResourcesPage = () => {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
-  const [showUpload, setShowUpload] = useState(false);
-  const [form, setForm] = useState({
-    groupId: '',
-    title: '',
-    description: '',
-    fileUrl: '',
-    fileType: 'application/pdf',
-  });
 
   const { data, isLoading } = useQuery({
     queryKey: ['resources', search],
@@ -30,12 +20,9 @@ export const ResourcesPage = () => {
         .then((r) => r.data.data),
   });
 
-  const upload = useMutation({
-    mutationFn: (payload) => resourceApi.create(payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['resources'] });
-      setShowUpload(false);
-    },
+  const starMutation = useMutation({
+    mutationFn: (id) => resourceApi.toggleStar(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['resources'] }),
   });
 
   const resources = (data?.items || []).filter(
@@ -51,12 +38,7 @@ export const ResourcesPage = () => {
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
         title="Resources"
-        description="Shared study materials from your groups"
-        action={
-          <Button className="gap-2" onClick={() => setShowUpload((s) => !s)}>
-            <Upload size={16} strokeWidth={1.75} /> Upload
-          </Button>
-        }
+        description="Shared study materials from your groups — upload via a group folder"
       />
 
       <div className="relative mb-8 max-w-md">
@@ -70,28 +52,25 @@ export const ResourcesPage = () => {
         />
       </div>
 
-      {showUpload && (
-        <Card className="mb-8" title="Upload Resource">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Input label="Group ID" value={form.groupId} onChange={(e) => setForm((f) => ({ ...f, groupId: e.target.value }))} />
-            <Input label="Title" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} />
-            <Input label="File URL" value={form.fileUrl} onChange={(e) => setForm((f) => ({ ...f, fileUrl: e.target.value }))} />
-            <Input label="File Type" value={form.fileType} onChange={(e) => setForm((f) => ({ ...f, fileType: e.target.value }))} />
-          </div>
-          <Button className="mt-4" loading={upload.isPending} onClick={() => upload.mutate(form)}>
-            Upload
-          </Button>
-        </Card>
-      )}
-
       <div className="grid gap-4 sm:grid-cols-2">
         {resources.map((r) => (
           <Card key={r.id}>
             <h3 className="font-semibold">{r.title}</h3>
-            <p className="mt-1 text-sm text-muted">{r.group?.name}</p>
+            <p className="mt-1 text-sm text-muted">
+              {r.group?.name}
+              {r.folder?.name ? ` · ${r.folder.name}` : ''}
+            </p>
             <p className="mt-2 line-clamp-2 text-sm">{r.description}</p>
-            <div className="mt-4 flex items-center justify-between text-xs text-muted">
-              <span>{formatDate(r.createdAt)}</span>
+            <div className="mt-4 flex items-center justify-between gap-2 text-xs text-muted">
+              <div className="flex items-center gap-2">
+                <ResourceStarRating
+                  starCount={r.starCount}
+                  starredByMe={r.starredByMe}
+                  onToggle={() => starMutation.mutate(r.id)}
+                  loading={starMutation.isPending}
+                />
+                <span>{formatDate(r.createdAt)}</span>
+              </div>
               <a
                 href={r.fileUrl}
                 target="_blank"

@@ -78,6 +78,8 @@ model User {
   createdSessions  StudySession[]   @relation("SessionCreator")
   attendances      Attendance[]
   resources        Resource[]
+  resourceFolders  ResourceFolder[]
+  resourceRatings  ResourceRating[]
   posts            Post[]
   comments         Comment[]
   notifications    Notification[]
@@ -119,6 +121,7 @@ model StudyGroup {
   joinRequests JoinRequest[]
   sessions     StudySession[]
   resources    Resource[]
+  folders      ResourceFolder[]
   posts        Post[]
 }
 
@@ -182,9 +185,27 @@ model Attendance {
   @@unique([sessionId, userId])
 }
 
+model ResourceFolder {
+  id          String    @id @default(uuid())
+  groupId     String
+  name        String
+  description String?
+  createdBy   String
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  group     StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  creator   User       @relation(fields: [createdBy], references: [id])
+  resources Resource[]
+
+  @@index([groupId])
+}
+
 model Resource {
   id          String    @id @default(uuid())
   groupId     String
+  folderId    String
   uploadedBy  String
   title       String
   description String?
@@ -194,8 +215,23 @@ model Resource {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  group    StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  uploader User       @relation(fields: [uploadedBy], references: [id])
+  group    StudyGroup     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  folder   ResourceFolder @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  uploader User           @relation(fields: [uploadedBy], references: [id])
+  ratings  ResourceRating[]
+}
+
+model ResourceRating {
+  id         String   @id @default(uuid())
+  resourceId String
+  userId     String
+  createdAt  DateTime @default(now())
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([resourceId, userId])
+  @@index([resourceId])
 }
 
 model Post {

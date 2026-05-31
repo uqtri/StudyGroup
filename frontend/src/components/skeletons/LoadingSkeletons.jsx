@@ -67,6 +67,67 @@ export const SessionCardSkeleton = () => (
   </div>
 );
 
+export const FolderGridSkeleton = ({ count = 6 }) => (
+  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: count }).map((_, i) => (
+      <div key={i} className="surface-panel p-5">
+        <div className="flex items-start gap-3">
+          <Skeleton className="h-11 w-11 rounded-xl" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-40" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+export const ResourceFileListSkeleton = ({ count = 5 }) => (
+  <div className="space-y-2">
+    {Array.from({ length: count }).map((_, i) => (
+      <div key={i} className="surface-panel flex items-center gap-3 p-4">
+        <Skeleton className="h-10 w-10 rounded-lg" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-3 w-36" />
+        </div>
+        <Skeleton className="h-7 w-12 rounded-lg" />
+      </div>
+    ))}
+  </div>
+);
+
+export const FolderDetailSkeleton = () => (
+  <div className="space-y-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <Skeleton className="h-5 w-24" />
+      <Skeleton className="h-10 w-32 rounded-[var(--radius-control)]" />
+    </div>
+    <div className="surface-panel p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <Skeleton className="h-14 w-14 rounded-2xl" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-7 w-48" />
+          <Skeleton className="h-4 w-full max-w-md" />
+        </div>
+      </div>
+    </div>
+    <ResourceFileListSkeleton count={5} />
+  </div>
+);
+
+export const GroupResourcesTabSkeleton = () => (
+  <div className="space-y-4">
+    <div className="flex justify-end">
+      <Skeleton className="h-10 w-44 rounded-[var(--radius-control)]" />
+    </div>
+    <FolderGridSkeleton />
+  </div>
+);
+
 export const GroupSessionsTabSkeleton = ({ canManage = false, count = 4 }) => (
   <div className="space-y-3">
     {canManage && (

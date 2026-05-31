@@ -11,7 +11,7 @@ export const resourcesController = {
 
   getById: async (req, res) => {
     validate(req);
-    const data = await resourcesService.getById(req.params.id);
+    const data = await resourcesService.getById(req.params.id, req.user.id);
     ApiResponse.success(res, { message: 'Resource retrieved', data });
   },
 
@@ -25,5 +25,11 @@ export const resourcesController = {
     validate(req);
     await resourcesService.remove(req.params.id, req.user.id);
     ApiResponse.success(res, { message: 'Resource deleted', data: null });
+  },
+
+  toggleStar: async (req, res) => {
+    validate(req);
+    const data = await resourcesService.toggleStar(req.params.id, req.user.id);
+    ApiResponse.success(res, { message: 'Rating updated', data });
   },
 };
