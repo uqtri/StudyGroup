@@ -122,7 +122,12 @@ export const GroupResourcesTab = ({
         </div>
 
         {folder && (
-          <FolderDetailHeader folder={folder} fileCount={fileCount} />
+          <FolderDetailHeader
+            folder={folder}
+            fileCount={fileCount}
+            canManage={canManage}
+            groupId={groupId}
+          />
         )}
 
         {showUpload && folder && (

@@ -20,4 +20,10 @@ export const resourceFoldersController = {
     const data = await resourceFoldersService.create(req.body, req.user.id);
     ApiResponse.success(res, { message: 'Folder created', data, statusCode: 201 });
   },
+
+  update: async (req, res) => {
+    validate(req);
+    const data = await resourceFoldersService.update(req.params.id, req.body, req.user.id);
+    ApiResponse.success(res, { message: 'Folder updated', data });
+  },
 };

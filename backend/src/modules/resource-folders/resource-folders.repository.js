@@ -34,4 +34,15 @@ export const resourceFoldersRepository = {
         _count: { select: { resources: { where: { deletedAt: null } } } },
       },
     }),
+
+  update: (id, data) =>
+    prisma.resourceFolder.update({
+      where: { id },
+      data,
+      include: {
+        creator: { select: { id: true, fullName: true } },
+        group: { select: { id: true, name: true } },
+        _count: { select: { resources: { where: { deletedAt: null } } } },
+      },
+    }),
 };

@@ -12,4 +12,10 @@ export const createResourceFolderValidation = [
   body('description').optional({ values: 'null' }).isString().isLength({ max: 500 }),
 ];
 
+export const updateResourceFolderValidation = [
+  param('id').isUUID(),
+  body('name').optional().trim().isLength({ min: 1, max: 100 }),
+  body('description').optional({ values: 'null' }).isString().isLength({ max: 500 }),
+];
+
 export const resourceFolderIdValidation = [param('id').isUUID()];

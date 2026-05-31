@@ -1,8 +1,9 @@
 import { Folder } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
+import { EditFolderPopover } from './EditFolderPopover';
 import { cn } from '../../utils/cn';
 
-export const FolderDetailHeader = ({ folder, fileCount }) => (
+export const FolderDetailHeader = ({ folder, fileCount, canManage, groupId }) => (
   <div className="overflow-hidden rounded-[var(--radius-card)] border border-primary/15 bg-gradient-to-br from-primary/8 via-surface to-surface shadow-soft">
     <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 items-start gap-4">
@@ -13,9 +14,16 @@ export const FolderDetailHeader = ({ folder, fileCount }) => (
           <p className="text-xs font-medium uppercase tracking-wide text-primary">
             Resource folder
           </p>
-          <h2 className="mt-1 truncate text-xl font-semibold text-foreground">
-            {folder.name}
-          </h2>
+          <div className="mt-1 flex items-center gap-2">
+            <h2 className="truncate text-xl font-semibold text-foreground">
+              {folder.name}
+            </h2>
+            {canManage && (
+              <div className="shrink-0">
+                <EditFolderPopover folder={folder} groupId={groupId} />
+              </div>
+            )}
+          </div>
           {folder.description ? (
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
               {folder.description}
