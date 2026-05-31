@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum GroupStatus {
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+
+enum GroupMemberRole {
+  LEADER
+  MEMBER
+}
+
+enum JoinRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SessionStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+  DISMISSED
+}
+
+enum ReportedType {
+  USER
+  GROUP
+  POST
+  COMMENT
+  RESOURCE
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  fullName     String
+  avatar       String?
+  bio          String?
+  status       UserStatus @default(ACTIVE)
+  deletedAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  roles            UserRole[]
+  createdGroups    StudyGroup[]     @relation("GroupCreator")
+  groupMemberships GroupMember[]
+  joinRequests     JoinRequest[]
+  createdSessions  StudySession[]   @relation("SessionCreator")
+  attendances      Attendance[]
+  resources        Resource[]
+  posts            Post[]
+  comments         Comment[]
+  notifications    Notification[]
+  reports          Report[]         @relation("Reporter")
+  refreshTokens    RefreshToken[]
+}
+
+model Role {
+  id   String @id @default(uuid())
+  name String @unique
+
+  users UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model StudyGroup {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  subject     String
+  maxMembers  Int         @default(20)
+  createdBy   String
+  status      GroupStatus @default(ACTIVE)
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  creator      User          @relation("GroupCreator", fields: [createdBy], references: [id])
+  members      GroupMember[]
+  joinRequests JoinRequest[]
+  sessions     StudySession[]
+  resources    Resource[]
+  posts        Post[]
+}
+
+model GroupMember {
+  id       String          @id @default(uuid())
+  groupId  String
+  userId   String
+  role     GroupMemberRole @default(MEMBER)
+  joinedAt DateTime        @default(now())
+  deletedAt DateTime?
+
+  group StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model JoinRequest {
+  id        String            @id @default(uuid())
+  groupId   String
+  userId    String
+  status    JoinRequestStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  group StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model StudySession {
+  id          String        @id @default(uuid())
+  groupId     String
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  meetingLink String?
+  createdBy   String
+  status      SessionStatus @default(SCHEDULED)
+  deletedAt   DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  group       StudyGroup   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  creator     User         @relation("SessionCreator", fields: [createdBy], references: [id])
+  attendances Attendance[]
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  sessionId String
+  userId    String
+  status    AttendanceStatus @default(ABSENT)
+  checkedAt DateTime?
+
+  session StudySession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+}
+
+model Resource {
+  id          String    @id @default(uuid())
+  groupId     String
+  uploadedBy  String
+  title       String
+  description String?
+  fileUrl     String
+  fileType    String
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  group    StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  uploader User       @relation(fields: [uploadedBy], references: [id])
+}
+
+model Post {
+  id        String    @id @default(uuid())
+  groupId   String
+  authorId  String
+  title     String
+  content   String
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  group    StudyGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  author   User       @relation(fields: [authorId], references: [id])
+  comments Comment[]
+}
+
+model Comment {
+  id              String    @id @default(uuid())
+  postId          String
+  authorId        String
+  parentCommentId String?
+  content         String
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  post    Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author  User      @relation(fields: [authorId], references: [id])
+  parent  Comment?  @relation("CommentReplies", fields: [parentCommentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id           String       @id @default(uuid())
+  reporterId   String
+  reportedType ReportedType
+  reportedId   String
+  reason       String
+  status       ReportStatus @default(PENDING)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  reporter User @relation("Reporter", fields: [reporterId], references: [id])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
