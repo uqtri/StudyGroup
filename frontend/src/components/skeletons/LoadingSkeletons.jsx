@@ -463,3 +463,16 @@ export const AdminAnalyticsSkeleton = () => (
     <ChartGridSkeleton />
   </div>
 );
+
+export const NotificationListSkeleton = ({ count = 5 }) => (
+  <>
+    {Array.from({ length: count }).map((_, i) => (
+      <li key={i} className="px-4 py-3">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="mt-1.5 h-3 w-full" />
+        <Skeleton className="mt-1 h-3 w-5/6" />
+        <Skeleton className="mt-2 h-2.5 w-20" />
+      </li>
+    ))}
+  </>
+);

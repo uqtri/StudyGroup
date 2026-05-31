@@ -5,6 +5,7 @@ import { Bell } from 'lucide-react';
 import { notificationApi } from '../../api/notificationApi';
 import { cn } from '../../utils/cn';
 import { formatDateTime } from '../../utils/formatDate';
+import { NotificationListSkeleton } from '../skeletons/LoadingSkeletons';
 
 const POLL_INTERVAL = 30000;
 
@@ -20,7 +21,7 @@ export const NotificationDropdown = () => {
     refetchInterval: POLL_INTERVAL,
   });
 
-  const { data: notifications } = useQuery({
+  const { data: notifications, isLoading: notificationsLoading } = useQuery({
     queryKey: ['notifications'],
     queryFn: () =>
       notificationApi.list({ limit: 20 }).then((r) => r.data.data),
@@ -100,7 +101,9 @@ export const NotificationDropdown = () => {
           </div>
 
           <ul className="max-h-80 overflow-y-auto">
-            {(notifications?.items || []).length ? (
+            {notificationsLoading ? (
+              <NotificationListSkeleton count={5} />
+            ) : (notifications?.items || []).length ? (
               notifications.items.map((n) => (
                 <li key={n.id}>
                   <button
