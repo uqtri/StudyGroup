@@ -1,0 +1,99 @@
+import request from 'supertest';
+import express from 'express';
+import { jest } from '@jest/globals';
+import reportsRoutes from './reports.routes.js';
+import { reportsService } from './reports.service.js';
+import { prisma } from '../../config/prisma.js';
+import { signAccessToken } from '../../utils/jwt.js';
+
+const app = express();
+app.use(express.json());
+app.use('/reports', reportsRoutes);
+
+app.use((err, req, res, next) => {
+  const status = err.statusCode || 500;
+  res.status(status).json({ success: false, message: err.message });
+});
+
+jest.spyOn(reportsService, 'list');
+jest.spyOn(reportsService, 'create');
+jest.spyOn(reportsService, 'updateStatus');
+jest.spyOn(prisma.user, 'findFirst');
+
+const TEST_UUID = '123e4567-e89b-12d3-a456-426614174000';
+const generateTestToken = () => signAccessToken({ userId: TEST_UUID, email: 'test@example.com' });
+
+const mockAuth = (roles = []) => {
+  prisma.user.findFirst.mockResolvedValue({
+    id: TEST_UUID, email: 'test@example.com', status: 'ACTIVE', roles: roles.map(r => ({ role: { name: r } }))
+  });
+};
+
+beforeAll(() => {
+  process.env.JWT_ACCESS_SECRET = 'test_secret';
+  process.env.JWT_ACCESS_EXPIRES_IN = '1h';
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+describe('Reports Controller', () => {
+  describe('GET /reports', () => {
+    it('should list reports for admin', async () => {
+      mockAuth(['ADMIN']);
+      reportsService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
+      const res = await request(app)
+        .get('/reports')
+        .set('Authorization', `Bearer ${generateTestToken()}`);
+        
+      expect(res.status).toBe(200);
+      expect(reportsService.list).toHaveBeenCalled();
+    });
+
+    it('should forbid non-admin', async () => {
+      mockAuth(['MEMBER']);
+      const res = await request(app)
+        .get('/reports')
+        .set('Authorization', `Bearer ${generateTestToken()}`);
+        
+      expect(res.status).toBe(403);
+    });
+  });
+
+  describe('POST /reports', () => {
+    it('should create report', async () => {
+      mockAuth();
+      reportsService.create.mockResolvedValue({ id: 'report1' });
+      const res = await request(app)
+        .post('/reports')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ reportedType: 'POST', reportedId: TEST_UUID, reason: 'This is a test spam report' });
+        
+      expect(res.status).toBe(201);
+    });
+  });
+
+  describe('PATCH /reports/:id', () => {
+    it('should update status if admin', async () => {
+      mockAuth(['ADMIN']);
+      reportsService.updateStatus.mockResolvedValue({ id: TEST_UUID, status: 'RESOLVED' });
+      const res = await request(app)
+        .patch(`/reports/${TEST_UUID}`)
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ status: 'RESOLVED' });
+        
+      expect(res.status).toBe(200);
+    });
+
+    it('should forbid non-admin', async () => {
+      mockAuth(['MEMBER']);
+      const res = await request(app)
+        .patch(`/reports/${TEST_UUID}`)
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ status: 'RESOLVED' });
+        
+      expect(res.status).toBe(403);
+    });
+  });
+});

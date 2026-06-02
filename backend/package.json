@@ -14,7 +14,11 @@
     "db:seed": "node prisma/seed.js",
     "db:studio": "prisma studio",
     "lint": "eslint src --ext .js",
-    "format": "prettier --write \"src/**/*.js\" \"prisma/**/*.js\""
+    "format": "prettier --write \"src/**/*.js\" \"prisma/**/*.js\"",
+    "test:service": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.service.test.js\"",
+    "test:api": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.controller.test.js\"",
+    "test:e2e": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.e2e.test.js\"",
+    "test:cov": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
@@ -34,9 +38,13 @@
     "seed": "node prisma/seed.js"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "eslint": "^9.28.0",
+    "jest": "^30.4.2",
+    "jest-mock-extended": "^4.0.1",
     "nodemon": "^3.1.14",
     "prettier": "^3.5.3",
-    "prisma": "^6.8.2"
+    "prisma": "^6.8.2",
+    "supertest": "^7.2.2"
   }
 }

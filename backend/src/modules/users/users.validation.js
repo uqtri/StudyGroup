@@ -18,5 +18,5 @@ export const userIdValidation = [param('id').isUUID()];
 
 export const updateUserStatusValidation = [
   param('id').isUUID(),
-  body('status').isIn(['ACTIVE', 'SUSPENDED']),
+  body('status').isIn(['ACTIVE', 'INACTIVE', 'SUSPENDED']),
 ];
