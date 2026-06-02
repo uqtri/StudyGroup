@@ -1,5 +1,6 @@
 export default {
   testEnvironment: 'node',
+  testPathIgnorePatterns: ['<rootDir>/tests/'],
   transform: {},
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
