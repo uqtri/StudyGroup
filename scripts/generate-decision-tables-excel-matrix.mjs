@@ -1,14 +1,18 @@
 /**
  * Generates Decision_Tables_Excel_Matrix.md — single merged matrix per function.
- * Source: Decision_Tables.md
+ * Condition rows are mapped to UTCIDs per the Condition Mapping Rule.
  * Run: node scripts/generate-decision-tables-excel-matrix.mjs
  */
-import { readFileSync, writeFileSync } from 'fs';
+import { writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import {
+  getAllFunctionDefinitions,
+  resolveConditionMarks,
+  validateMappings,
+} from './condition-mapping-engine.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const SRC = join(__dirname, '..', 'Decision_Tables.md');
 const OUT = join(__dirname, '..', 'Decision_Tables_Excel_Matrix.md');
 
 const UTCID_LABELS = {
@@ -19,170 +23,58 @@ const UTCID_LABELS = {
   UTCID05: 'Exception / Dependency Failure',
 };
 
-const DECISION_CATEGORY_MAP = {
-  'Input Validation': 'Input (req.body)',
-  Input: 'Input (req.body)',
-  Repository: 'Repository',
-  Security: 'Security',
-  'Business Rule': 'Business Rule',
-  'Primary Path': 'Business Rule',
-  Function: 'Business Rule',
-};
-
-function parseTableLines(lines) {
-  const rows = [];
-  for (const line of lines) {
-    if (!line.startsWith('|') || line.includes('---')) continue;
-    const cells = line
-      .split('|')
-      .slice(1, -1)
-      .map((c) => c.trim());
-    if (cells.length >= 2) rows.push(cells);
-  }
-  return rows;
-}
-
-function parseMarkdownTables(content) {
-  const sections = [];
-  const lines = content.split(/\r?\n/);
-  let i = 0;
-
-  while (i < lines.length) {
-    const heading = lines[i].match(/^#### (.+)$/);
-    if (heading && i + 2 < lines.length && lines[i + 2].startsWith('|')) {
-      const name = heading[1];
-      const tableLines = [];
-      i += 2;
-      while (i < lines.length && lines[i].startsWith('|')) {
-        tableLines.push(lines[i]);
-        i++;
-      }
-      sections.push({ name, rows: parseTableLines(tableLines) });
-      continue;
-    }
-    i++;
-  }
-  return sections;
-}
-
-function parseFunctions(md) {
-  const normalized = md.replace(/\r\n/g, '\n');
-  const chunks = normalized.split(/^### Function Code: `/m).slice(1);
-  return chunks.map((chunk) => {
-    const codeEnd = chunk.indexOf('`');
-    const code = chunk.slice(0, codeEnd);
-    const body = chunk.slice(codeEnd + 1);
-    const serviceMatch = body.match(/\*\*Service:\*\* (.+)/);
-    const service = serviceMatch ? serviceMatch[1].trim() : '';
-    const moduleMatch = normalized.slice(0, normalized.indexOf(`### Function Code: \`${code}\``)).match(/## Module: (.+)\s*$/m);
-    const module = moduleMatch ? moduleMatch[1].trim() : '';
-    const sections = parseMarkdownTables(body);
-    return { module, code, service, sections };
-  });
-}
-
-function catalogSub(category, sub) {
-  return sub.includes(category) || category === sub ? sub : `${category}: ${sub}`;
-}
-
-function extractUtcids(sections) {
-  const decision = sections.find((s) => s.name === 'Decision Table');
-  if (!decision?.rows.length) return ['UTCID01', 'UTCID02', 'UTCID03', 'UTCID04', 'UTCID05'];
-  return decision.rows[0].slice(2);
-}
-
-function sectionRows(name, rows, utcids, withMarks = false) {
-  return rows.slice(1).map((row) => {
-    const category = row[0];
-    const sub = row[1];
-    const marks = withMarks ? row.slice(2) : utcids.map(() => '');
-    return {
-      condition: name,
-      sub: withMarks ? `${category}: ${sub}` : catalogSub(category, sub),
-      marks,
-    };
-  });
-}
-
-function confirmRows(name, rows, utcids) {
-  return rows.slice(1).map((row) => ({
-    condition: name,
-    sub: row[0],
-    marks: row.slice(1),
-  }));
-}
-
 function padMarks(marks, len) {
   const out = marks.slice(0, len);
   while (out.length < len) out.push('');
   return out;
 }
 
+function confirmMarks(rows, utcids) {
+  const ids = utcids.map((u) => u.id);
+  return (rows || []).map((row) => ({
+    condition: row._confirmGroup,
+    sub: row.label,
+    marks: padMarks(ids.map((id) => row[id] || ''), ids.length),
+  }));
+}
+
 function buildMatrix(fn) {
-  const sections = Object.fromEntries(fn.sections.map((s) => [s.name, s.rows]));
-  const utcids = extractUtcids(fn.sections);
+  const utcids = fn.utcids.map((u) => u.id);
+  const ctx = resolveConditionMarks(fn);
   const matrixRows = [];
 
   const add = (condition, sub, marks = []) => {
     matrixRows.push({ condition, sub, marks: padMarks(marks, utcids.length) });
   };
 
-  // — Condition —
   add('— Condition —', '');
 
-  if (sections['1. Precondition']) {
-    for (const row of sectionRows('Precondition', sections['1. Precondition'], utcids)) add(row.condition, row.sub);
+  for (const row of ctx.catalog) {
+    add(row.group, row.sub, ctx.getMarks(row.group, row.sub));
   }
 
-  const inputSection = sections['2. Input (req.body / req.params / req.query)'];
-  if (inputSection) {
-    for (const row of sectionRows('Input (req.body)', inputSection, utcids)) add(row.condition, row.sub);
-  }
-
-  const repoSection = sections['3. Repository / Database Conditions'];
-  if (repoSection) {
-    for (const row of sectionRows('Repository', repoSection, utcids)) add(row.condition, row.sub);
-  }
-
-  const secSection = sections['4. Security Conditions'];
-  if (secSection) {
-    for (const row of sectionRows('Security', secSection, utcids)) add(row.condition, row.sub);
-  }
-
-  const bizSection = sections['5. Business Rule Conditions'];
-  if (bizSection) {
-    for (const row of sectionRows('Business Rule', bizSection, utcids)) add(row.condition, row.sub);
-  }
-
-  if (sections['Decision Table']) {
-    for (const row of sections['Decision Table'].slice(1)) {
-      const category = row[0];
-      const sub = row[1];
-      const marks = padMarks(row.slice(2), utcids.length);
-      const group = DECISION_CATEGORY_MAP[category] || 'Business Rule';
-      add(group, sub, marks);
-    }
-  }
-
-  // — Confirm —
   add('— Confirm —', '');
 
-  for (const key of ['Return Status', 'Return Body', 'Exception', 'Log Message']) {
-    const sec = sections[`Confirm: ${key}`];
-    if (sec) {
-      for (const row of confirmRows(key, sec, utcids)) add(row.condition, row.sub, row.marks);
-    }
+  for (const row of confirmMarks(fn.returnStatus?.map((r) => ({ ...r, _confirmGroup: 'Return Status' })), fn.utcids)) {
+    add(row.condition, row.sub, row.marks);
+  }
+  for (const row of confirmMarks(fn.returnBody?.map((r) => ({ ...r, _confirmGroup: 'Return Body' })), fn.utcids)) {
+    add(row.condition, row.sub, row.marks);
+  }
+  for (const row of confirmMarks(fn.exceptions?.map((r) => ({ ...r, _confirmGroup: 'Exception' })), fn.utcids)) {
+    add(row.condition, row.sub, row.marks);
+  }
+  for (const row of confirmMarks(fn.logs?.map((r) => ({ ...r, _confirmGroup: 'Log Message' })), fn.utcids)) {
+    add(row.condition, row.sub, row.marks);
   }
 
-  // — Result —
   add('— Result —', '');
-
-  add('Type', '', utcids.map((id) => UTCID_LABELS[id] || id));
+  add('Type', '', utcids.map((id) => fn.utcids.find((u) => u.id === id)?.label || UTCID_LABELS[id] || id));
   add('Pass/Fail', '', utcids.map(() => ''));
   add('Executed Date', '', utcids.map(() => ''));
   add('Defect ID', '', utcids.map(() => ''));
 
-  return { utcids, matrixRows };
+  return { utcids, matrixRows, ctx };
 }
 
 function renderMatrixTable(utcids, matrixRows) {
@@ -204,13 +96,14 @@ function renderFunction(fn) {
   return out;
 }
 
-const md = readFileSync(SRC, 'utf8');
-const functions = parseFunctions(md);
+const functions = getAllFunctionDefinitions();
+const warnings = [];
 
 let out = `# Excel Matrix Format
 
 > Single merged decision matrix per function code.
-> Generated from \`Decision_Tables.md\`.
+> **Condition Mapping Rule:** every reachable sub-condition row is marked \`O\` on the UTCID columns that use it.
+> A reviewer can reconstruct each test case by reading only the rows marked \`O\` for that UTCID.
 > UTCID convention: **UTCID01** = Happy Path | **UTCID02** = Validation Error | **UTCID03** = Business Rule Error | **UTCID04** = Authorization Error | **UTCID05** = Exception / Dependency Failure | Additional UTCIDs for extra branches.
 
 **Column structure:** \`Condition\` | \`Sub Condition\` | \`UTCID01\` … \`UTCID0N\`
@@ -224,6 +117,10 @@ let out = `# Excel Matrix Format
 
 let currentModule = '';
 for (const fn of functions) {
+  const { ctx } = buildMatrix(fn);
+  const unmapped = validateMappings(fn, ctx);
+  if (unmapped.length) warnings.push({ code: fn.code, unmapped });
+
   if (fn.module !== currentModule) {
     currentModule = fn.module;
     out += `\n## Module: ${currentModule}\n\n`;
@@ -233,3 +130,10 @@ for (const fn of functions) {
 
 writeFileSync(OUT, out, 'utf8');
 console.log(`Written ${functions.length} Excel matrix tables to ${OUT}`);
+if (warnings.length) {
+  console.warn(`\n${warnings.length} function(s) have unmapped (possibly unreachable) condition rows:`);
+  for (const w of warnings.slice(0, 5)) {
+    console.warn(`  ${w.code}: ${w.unmapped.length} row(s) — e.g. ${w.unmapped.slice(0, 2).join('; ')}`);
+  }
+  if (warnings.length > 5) console.warn(`  ... and ${warnings.length - 5} more`);
+}
