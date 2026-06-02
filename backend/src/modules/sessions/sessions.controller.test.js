@@ -46,7 +46,9 @@ afterEach(() => {
 
 describe('Sessions Controller', () => {
   describe('GET /sessions', () => {
-    it('should list sessions without auth', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list sessions without auth', async () => {
       sessionsService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app).get('/sessions');
       expect(res.status).toBe(200);
@@ -55,16 +57,26 @@ describe('Sessions Controller', () => {
   });
 
   describe('GET /sessions/:id', () => {
-    it('should return session', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should return session', async () => {
       sessionsService.getById.mockResolvedValue({ id: TEST_UUID, title: 'Test' });
       const res = await request(app).get(`/sessions/${TEST_UUID}`);
       expect(res.status).toBe(200);
       expect(sessionsService.getById).toHaveBeenCalledWith(TEST_UUID);
     });
+
+    it('UTCID02 - should return 400 for invalid session id UUID', async () => {
+      const res = await request(app).get('/sessions/not-a-valid-uuid');
+      expect(res.status).toBe(400);
+      expect(sessionsService.getById).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /sessions', () => {
-    it('should create session', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should create session', async () => {
       mockAuth();
       sessionsService.create.mockResolvedValue({ id: TEST_UUID, title: 'New' });
       const res = await request(app)
@@ -74,10 +86,23 @@ describe('Sessions Controller', () => {
         
       expect(res.status).toBe(201);
     });
+
+    it('UTCID02 - should return 400 when title is too short', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/sessions')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ groupId: GROUP_UUID, title: 'AB', startNow: true });
+
+      expect(res.status).toBe(400);
+      expect(sessionsService.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('PATCH /sessions/:id', () => {
-    it('should update session', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should update session', async () => {
       mockAuth();
       sessionsService.update.mockResolvedValue({ id: TEST_UUID, title: 'Updated' });
       const res = await request(app)
@@ -90,7 +115,9 @@ describe('Sessions Controller', () => {
   });
 
   describe('POST /sessions/:id/end', () => {
-    it('should end session', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should end session', async () => {
       mockAuth();
       sessionsService.end.mockResolvedValue({ id: TEST_UUID, status: 'COMPLETED' });
       const res = await request(app)
@@ -102,7 +129,9 @@ describe('Sessions Controller', () => {
   });
 
   describe('POST /sessions/:id/notify', () => {
-    it('should notify members', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should notify members', async () => {
       mockAuth();
       sessionsService.notifyMembers.mockResolvedValue({ notified: 5 });
       const res = await request(app)
@@ -114,7 +143,9 @@ describe('Sessions Controller', () => {
   });
 
   describe('GET /sessions/:id/livekit-token', () => {
-    it('should get livekit token', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should get livekit token', async () => {
       mockAuth();
       sessionsService.getLiveKitToken.mockResolvedValue({ token: 'abc' });
       const res = await request(app)
@@ -126,7 +157,9 @@ describe('Sessions Controller', () => {
   });
 
   describe('DELETE /sessions/:id', () => {
-    it('should delete session', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should delete session', async () => {
       mockAuth();
       sessionsService.remove.mockResolvedValue(true);
       const res = await request(app)

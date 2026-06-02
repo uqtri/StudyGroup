@@ -41,7 +41,9 @@ afterEach(() => {
 
 describe('Attendance Controller', () => {
   describe('POST /attendance/:sessionId', () => {
-    it('should mark attendance', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should mark attendance', async () => {
       mockAuth();
       attendanceService.mark.mockResolvedValue({ status: 'PRESENT' });
       const res = await request(app)
@@ -52,10 +54,23 @@ describe('Attendance Controller', () => {
       expect(res.status).toBe(200);
       expect(attendanceService.mark).toHaveBeenCalled();
     });
+
+    it('UTCID02 - should return 400 for invalid status', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post(`/attendance/${SESSION_UUID}`)
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ status: 'INVALID' });
+
+      expect(res.status).toBe(400);
+      expect(attendanceService.mark).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /attendance/:sessionId/join', () => {
-    it('should record join', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should record join', async () => {
       mockAuth();
       attendanceService.recordJoin.mockResolvedValue({ status: 'PRESENT' });
       const res = await request(app)
@@ -68,7 +83,9 @@ describe('Attendance Controller', () => {
   });
 
   describe('GET /attendance/:sessionId', () => {
-    it('should list attendance', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list attendance', async () => {
       mockAuth();
       attendanceService.listBySession.mockResolvedValue([{ userId: TEST_UUID, status: 'PRESENT' }]);
       const res = await request(app)

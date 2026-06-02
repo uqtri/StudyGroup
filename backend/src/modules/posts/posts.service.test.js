@@ -31,7 +31,9 @@ afterEach(() => {
 
 describe('Posts Service', () => {
   describe('list', () => {
-    it('should list posts ordered by createdAt', async () => {
+    /* UTCIDs: UTCID01, UTCID02, UTCID05 */
+
+    it('UTCID01 - should list posts ordered by createdAt', async () => {
       postsRepository.findMany.mockResolvedValue([mockPost]);
       postsRepository.count.mockResolvedValue(1);
 
@@ -40,30 +42,39 @@ describe('Posts Service', () => {
       expect(result.pagination.total).toBe(1);
     });
 
-    it('should list posts ordered by votes', async () => {
+    it('UTCID02 - should list posts ordered by votes', async () => {
       postsRepository.findManyForVoteSort.mockResolvedValue([mockPost]);
 
       const result = await postsService.list({ page: 1, limit: 10, sortBy: 'votes' }, 'user1');
       expect(result.items).toHaveLength(1);
     });
+
+    it('UTCID05 - should propagate error when findMany fails', async () => {
+      postsRepository.findMany.mockRejectedValue(new Error('DB error'));
+      await expect(postsService.list({ page: 1, limit: 10, sortBy: 'createdAt' }, 'user1')).rejects.toThrow('DB error');
+    });
   });
 
   describe('getById', () => {
-    it('should return post', async () => {
+    /* UTCIDs: UTCID01, UTCID03 */
+
+    it('UTCID01 - should return post', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       const result = await postsService.getById('post1', 'user1');
       expect(result.id).toBe('post1');
       expect(result.commentCount).toBe(2);
     });
 
-    it('should throw if not found', async () => {
+    it('UTCID03 - should throw if not found', async () => {
       postsRepository.findById.mockResolvedValue(null);
       await expect(postsService.getById('post1', 'user1')).rejects.toThrow('Post not found');
     });
   });
 
   describe('create', () => {
-    it('should create post if member', async () => {
+    /* UTCIDs: UTCID01, UTCID04, UTCID05 */
+
+    it('UTCID01 - should create post if member', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       postsRepository.create.mockResolvedValue(mockPost);
       
@@ -71,14 +82,22 @@ describe('Posts Service', () => {
       expect(result.id).toBe('post1');
     });
 
-    it('should throw if not member', async () => {
+    it('UTCID04 - should throw if not member', async () => {
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(postsService.create({ groupId: 'group1' }, 'user1')).rejects.toThrow('Must be a group member');
+    });
+
+    it('UTCID05 - should propagate error when create fails', async () => {
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      postsRepository.create.mockRejectedValue(new Error('DB error'));
+      await expect(postsService.create({ groupId: 'group1', title: 'New', content: 'Content' }, 'user1')).rejects.toThrow('DB error');
     });
   });
 
   describe('update', () => {
-    it('should update post if author and member', async () => {
+    /* UTCIDs: UTCID01, UTCID04, UTCID03 */
+
+    it('UTCID01 - should update post if author and member', async () => {
       postsRepository.findById.mockResolvedValue(mockPost); // authorId: 'user1'
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       postsRepository.update.mockResolvedValue({ ...mockPost, title: 'Updated' });
@@ -87,19 +106,21 @@ describe('Posts Service', () => {
       expect(result.title).toBe('Updated');
     });
 
-    it('should throw if not author', async () => {
+    it('UTCID04 - should throw if not author', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       await expect(postsService.update('post1', { title: 'Updated' }, 'user2')).rejects.toThrow();
     });
 
-    it('should throw if nothing to update', async () => {
+    it('UTCID03 - should throw if nothing to update', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       await expect(postsService.update('post1', {}, 'user1')).rejects.toThrow('Nothing to update');
     });
   });
 
   describe('vote', () => {
-    it('should add upvote if no vote exists', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should add upvote if no vote exists', async () => {
       postsRepository.findById.mockResolvedValue(mockPost).mockResolvedValueOnce(mockPost).mockResolvedValueOnce({ ...mockPost, votes: [{ userId: 'user3', value: 1 }] });
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       
@@ -108,7 +129,7 @@ describe('Posts Service', () => {
       expect(result.voteScore).toBe(1);
     });
 
-    it('should remove vote if clicking same vote again', async () => {
+    it('UTCID02 - should remove vote if clicking same vote again', async () => {
       postsRepository.findById.mockResolvedValue(mockPost).mockResolvedValueOnce(mockPost).mockResolvedValueOnce({ ...mockPost, votes: [] });
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       
@@ -119,7 +140,9 @@ describe('Posts Service', () => {
   });
 
   describe('remove', () => {
-    it('should remove if author', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should remove if author', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       await postsService.remove('post1', 'user1');
       expect(postsRepository.softDelete).toHaveBeenCalledWith('post1');

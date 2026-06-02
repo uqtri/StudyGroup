@@ -43,7 +43,9 @@ afterEach(() => {
 
 describe('Upload Controller', () => {
   describe('GET /upload/cloudinary-signature', () => {
-    it('should throw if cloudinary not configured', async () => {
+    /* UTCIDs: UTCID02, UTCID01, UTCID05 */
+
+    it('UTCID02 - should throw if cloudinary not configured', async () => {
       mockAuth();
       isCloudinaryConfigured.mockReturnValue(false);
       
@@ -55,7 +57,7 @@ describe('Upload Controller', () => {
       expect(res.body.message).toBe('Cloudinary is not configured');
     });
 
-    it('should return signature if configured', async () => {
+    it('UTCID01 - should return signature if configured', async () => {
       mockAuth();
       isCloudinaryConfigured.mockReturnValue(true);
       getUploadSignature.mockReturnValue({ signature: '123', timestamp: 123 });
@@ -66,6 +68,18 @@ describe('Upload Controller', () => {
         
       expect(res.status).toBe(200);
       expect(res.body.data.signature).toBe('123');
+    });
+
+    it('UTCID05 - should return 500 when getUploadSignature throws', async () => {
+      mockAuth();
+      isCloudinaryConfigured.mockReturnValue(true);
+      getUploadSignature.mockImplementation(() => { throw new Error('Signature error'); });
+
+      const res = await request(app)
+        .get('/upload/cloudinary-signature')
+        .set('Authorization', `Bearer ${generateTestToken()}`);
+
+      expect(res.status).toBe(500);
     });
   });
 });

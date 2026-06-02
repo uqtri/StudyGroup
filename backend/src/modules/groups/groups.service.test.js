@@ -35,7 +35,9 @@ afterEach(() => {
 
 describe('Groups Service', () => {
   describe('list', () => {
-    it('should return paginated list of groups', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should return paginated list of groups', async () => {
       groupsRepository.findMany.mockResolvedValue([mockGroup]);
       groupsRepository.count.mockResolvedValue(1);
 
@@ -44,27 +46,36 @@ describe('Groups Service', () => {
       expect(result.pagination.total).toBe(1);
       expect(groupsRepository.findMany).toHaveBeenCalled();
     });
+
+    it('UTCID05 - should propagate error when findMany fails', async () => {
+      groupsRepository.findMany.mockRejectedValue(new Error('DB query failed'));
+      groupsRepository.count.mockResolvedValue(0);
+
+      await expect(groupsService.list({ page: 1, limit: 10 }, 1, false)).rejects.toThrow('DB query failed');
+    });
   });
 
   describe('getById', () => {
-    it('should return group with join requests if user is leader', async () => {
+    /* UTCIDs: UTCID01, UTCID07, UTCID06 */
+
+    it('UTCID01 - should return group with join requests if user is leader', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, joinRequests: [] });
       const result = await groupsService.getById(1, 1, false);
       expect(result.joinRequests).toBeDefined();
     });
 
-    it('should not return join requests if user is not leader', async () => {
+    it('UTCID01 - should not return join requests if user is not leader', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, joinRequests: [] });
       const result = await groupsService.getById(1, 2, false); // User 2 is not leader
       expect(result.joinRequests).toBeUndefined();
     });
 
-    it('should throw not found if group archived and not admin', async () => {
+    it('UTCID07 - should throw not found if group archived and not admin', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, status: 'ARCHIVED' });
       await expect(groupsService.getById(1, 1, false)).rejects.toThrow('Group not found');
     });
 
-    it('should return group if archived and user is admin', async () => {
+    it('UTCID06 - should return group if archived and user is admin', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, status: 'ARCHIVED' });
       const result = await groupsService.getById(1, 1, true); // isAdmin = true
       expect(result.status).toBe('ARCHIVED');
@@ -72,51 +83,64 @@ describe('Groups Service', () => {
   });
 
   describe('create', () => {
-    it('should create a group', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should create a group', async () => {
       groupsRepository.create.mockResolvedValue(mockGroup);
       const result = await groupsService.create({ name: 'New' }, 1);
       expect(result.name).toBe('Test Group');
       expect(groupsRepository.create).toHaveBeenCalled();
     });
+
+    it('UTCID05 - should propagate error when create fails', async () => {
+      groupsRepository.create.mockRejectedValue(new Error('DB write failed'));
+      await expect(groupsService.create({ name: 'New' }, 1)).rejects.toThrow('DB write failed');
+    });
   });
 
   describe('update', () => {
-    it('should update group if leader', async () => {
+    /* UTCIDs: UTCID01, UTCID04 */
+
+    it('UTCID01 - should update group if leader', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'LEADER' });
       groupsRepository.update.mockResolvedValue({ ...mockGroup, name: 'Updated' });
       const result = await groupsService.update(1, { name: 'Updated' }, 1);
       expect(result.name).toBe('Updated');
     });
 
-    it('should throw forbidden if not leader', async () => {
+    it('UTCID04 - should throw forbidden if not leader', async () => {
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(groupsService.update(1, { name: 'Updated' }, 2)).rejects.toThrow('Only group leaders can update');
     });
   });
 
   describe('remove', () => {
-    it('should soft delete if creator', async () => {
+    /* UTCIDs: UTCID01, UTCID04 */
+
+    it('UTCID01 - should soft delete if creator', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup); // createdBy: 1
       groupsRepository.softDelete.mockResolvedValue(true);
       await groupsService.remove(1, 1, false);
       expect(groupsRepository.softDelete).toHaveBeenCalledWith(1);
     });
 
-    it('should soft delete if admin (even if not creator)', async () => {
+    it('UTCID01 - should soft delete if admin (even if not creator)', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup); // createdBy: 1
       groupsRepository.softDelete.mockResolvedValue(true);
       await groupsService.remove(1, 2, true); // userId: 2, isAdmin: true
       expect(groupsRepository.softDelete).toHaveBeenCalledWith(1);
     });
 
-    it('should throw forbidden if not creator and not admin', async () => {
+    it('UTCID04 - should throw forbidden if not creator and not admin', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup); // createdBy: 1
       await expect(groupsService.remove(1, 2, false)).rejects.toThrow(ApiError);
     });
   });
 
   describe('requestJoin', () => {
-    it('should create join request', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID06 */
+
+    it('UTCID01 - should create join request', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup);
       groupsRepository.isMember.mockResolvedValue(null);
       groupsRepository.findJoinRequest.mockResolvedValue(null);
@@ -126,18 +150,18 @@ describe('Groups Service', () => {
       expect(result.id).toBe(1);
     });
 
-    it('should throw if group not ACTIVE', async () => {
+    it('UTCID03 - should throw if group not ACTIVE', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, status: 'ARCHIVED' });
       await expect(groupsService.requestJoin(1, 2)).rejects.toThrow('This group is not accepting members');
     });
 
-    it('should throw if already member', async () => {
+    it('UTCID06 - should throw if already member', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       await expect(groupsService.requestJoin(1, 2)).rejects.toThrow('Already a member');
     });
 
-    it('should throw if group full', async () => {
+    it('UTCID03 - should throw if group full', async () => {
       groupsRepository.findById.mockResolvedValue({ ...mockGroup, maxMembers: 1, members: [1] });
       groupsRepository.isMember.mockResolvedValue(null);
       groupsRepository.findJoinRequest.mockResolvedValue(null);
@@ -146,7 +170,9 @@ describe('Groups Service', () => {
   });
 
   describe('handleJoinRequest', () => {
-    it('should approve and add member', async () => {
+    /* UTCIDs: UTCID01, UTCID06, UTCID04 */
+
+    it('UTCID01 - should approve and add member', async () => {
       groupsRepository.findJoinRequestById.mockResolvedValue({ id: 1, status: 'PENDING', groupId: 1, userId: 2 });
       groupsRepository.isMember.mockResolvedValue({ role: 'LEADER' }); // Requester is leader
       groupsRepository.updateJoinRequest.mockResolvedValue({ id: 1, status: 'APPROVED' });
@@ -157,7 +183,7 @@ describe('Groups Service', () => {
       expect(groupsRepository.addMember).toHaveBeenCalledWith({ groupId: 1, userId: 2, role: 'MEMBER' });
     });
 
-    it('should reject without adding member', async () => {
+    it('UTCID06 - should reject without adding member', async () => {
       groupsRepository.findJoinRequestById.mockResolvedValue({ id: 1, status: 'PENDING', groupId: 1, userId: 2 });
       groupsRepository.isMember.mockResolvedValue({ role: 'LEADER' }); // Requester is leader
       groupsRepository.updateJoinRequest.mockResolvedValue({ id: 1, status: 'REJECTED' });
@@ -167,7 +193,7 @@ describe('Groups Service', () => {
       expect(groupsRepository.addMember).not.toHaveBeenCalled();
     });
 
-    it('should throw forbidden if not leader', async () => {
+    it('UTCID04 - should throw forbidden if not leader', async () => {
       groupsRepository.findJoinRequestById.mockResolvedValue({ id: 1, status: 'PENDING', groupId: 1, userId: 2 });
       groupsRepository.isMember.mockResolvedValue(null); // Requester not leader
       await expect(groupsService.handleJoinRequest(1, 'APPROVED', 3)).rejects.toThrow(ApiError);
@@ -175,21 +201,25 @@ describe('Groups Service', () => {
   });
 
   describe('cancelJoinRequest', () => {
-    it('should delete join request', async () => {
+    /* UTCIDs: UTCID01, UTCID03 */
+
+    it('UTCID01 - should delete join request', async () => {
       groupsRepository.findJoinRequest.mockResolvedValue({ id: 1, status: 'PENDING' });
       groupsRepository.deleteJoinRequest.mockResolvedValue(true);
       await groupsService.cancelJoinRequest(1, 2);
       expect(groupsRepository.deleteJoinRequest).toHaveBeenCalledWith(1);
     });
 
-    it('should throw if not pending', async () => {
+    it('UTCID03 - should throw if not pending', async () => {
       groupsRepository.findJoinRequest.mockResolvedValue({ id: 1, status: 'APPROVED' });
       await expect(groupsService.cancelJoinRequest(1, 2)).rejects.toThrow('Only pending join requests can be cancelled');
     });
   });
 
   describe('setStatus', () => {
-    it('should update status and notify users', async () => {
+    /* UTCIDs: UTCID01, UTCID04 */
+
+    it('UTCID01 - should update status and notify users', async () => {
       groupsRepository.findById.mockResolvedValue(mockGroup);
       groupsRepository.update.mockResolvedValue({ ...mockGroup, status: 'ARCHIVED' });
       
@@ -198,7 +228,7 @@ describe('Groups Service', () => {
       expect(notificationsService.notifyUsers).toHaveBeenCalled();
     });
 
-    it('should throw forbidden if not admin', async () => {
+    it('UTCID04 - should throw forbidden if not admin', async () => {
       await expect(groupsService.setStatus(1, 'ARCHIVED', false)).rejects.toThrow(ApiError);
     });
   });

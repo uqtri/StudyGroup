@@ -35,7 +35,9 @@ afterEach(() => {
 
 describe('Comments Service', () => {
   describe('listByPost', () => {
-    it('should return comments tree', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID04 */
+
+    it('UTCID01 - should return comments tree', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       commentsRepository.findAllByPostId.mockResolvedValue([mockComment]);
@@ -44,12 +46,12 @@ describe('Comments Service', () => {
       expect(result).toHaveLength(1);
     });
 
-    it('should throw if post not found', async () => {
+    it('UTCID03 - should throw if post not found', async () => {
       postsRepository.findById.mockResolvedValue(null);
       await expect(commentsService.listByPost('post1', {}, 'user1')).rejects.toThrow('Post not found');
     });
 
-    it('should throw if not group member', async () => {
+    it('UTCID04 - should throw if not group member', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(commentsService.listByPost('post1', {}, 'user1')).rejects.toThrow('Must be a group member');
@@ -57,7 +59,9 @@ describe('Comments Service', () => {
   });
 
   describe('create', () => {
-    it('should create comment and notify mentions', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID05 */
+
+    it('UTCID01 - should create comment and notify mentions', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       groupsRepository.getMemberUserIds.mockResolvedValue(['user1', 'user2']);
@@ -70,17 +74,26 @@ describe('Comments Service', () => {
       expect(notificationsService.notifyUsers).toHaveBeenCalled();
     });
 
-    it('should throw if replying to invalid parent', async () => {
+    it('UTCID03 - should throw if replying to invalid parent', async () => {
       postsRepository.findById.mockResolvedValue(mockPost);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       commentsRepository.findById.mockResolvedValue({ postId: 'otherPost' });
 
       await expect(commentsService.create({ postId: 'post1', parentCommentId: 'parent1' }, 'user1')).rejects.toThrow('Invalid parent comment');
     });
+
+    it('UTCID05 - should propagate error when create fails', async () => {
+      postsRepository.findById.mockResolvedValue(mockPost);
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      commentsRepository.create.mockRejectedValue(new Error('DB error'));
+      await expect(commentsService.create({ postId: 'post1', content: 'Test' }, 'user1')).rejects.toThrow('DB error');
+    });
   });
 
   describe('update', () => {
-    it('should update comment if author', async () => {
+    /* UTCIDs: UTCID01, UTCID04 */
+
+    it('UTCID01 - should update comment if author', async () => {
       commentsRepository.findById.mockResolvedValue(mockComment); // author: user1
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       commentsRepository.update.mockResolvedValue({ ...mockComment, content: 'Updated' });
@@ -89,14 +102,16 @@ describe('Comments Service', () => {
       expect(result.content).toBe('Updated');
     });
 
-    it('should throw if not author', async () => {
+    it('UTCID04 - should throw if not author', async () => {
       commentsRepository.findById.mockResolvedValue({ ...mockComment, authorId: 'user2' });
       await expect(commentsService.update('comment1', { content: 'Updated' }, 'user1')).rejects.toThrow();
     });
   });
 
   describe('vote', () => {
-    it('should add vote if new', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should add vote if new', async () => {
       commentsRepository.findById.mockResolvedValue(mockComment);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       commentsRepository.findByIdDetailed.mockResolvedValue(mockComment).mockResolvedValueOnce(mockComment).mockResolvedValueOnce({ ...mockComment, votes: [{ userId: 'user2', value: 1 }] });
@@ -106,7 +121,7 @@ describe('Comments Service', () => {
       expect(result.voteScore).toBe(1);
     });
 
-    it('should remove vote if same', async () => {
+    it('UTCID02 - should remove vote if same', async () => {
       commentsRepository.findById.mockResolvedValue(mockComment);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       commentsRepository.findByIdDetailed.mockResolvedValue({ ...mockComment, votes: [{ userId: 'user2', value: 1 }] }).mockResolvedValueOnce({ ...mockComment, votes: [{ userId: 'user2', value: 1 }] }).mockResolvedValueOnce(mockComment);
@@ -118,7 +133,9 @@ describe('Comments Service', () => {
   });
 
   describe('remove', () => {
-    it('should remove if author', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should remove if author', async () => {
       commentsRepository.findById.mockResolvedValue(mockComment);
       await commentsService.remove('comment1', 'user1');
       expect(commentsRepository.softDelete).toHaveBeenCalledWith('comment1');

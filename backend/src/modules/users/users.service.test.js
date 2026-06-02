@@ -32,7 +32,9 @@ afterEach(() => {
 
 describe('Users Service', () => {
   describe('list', () => {
-    it('should return paginated list of users', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should return paginated list of users', async () => {
       usersRepository.findMany.mockResolvedValue([mockUser]);
       usersRepository.count.mockResolvedValue(1);
 
@@ -42,51 +44,69 @@ describe('Users Service', () => {
       expect(result.items[0].roles).toContain('MEMBER');
       expect(usersRepository.findMany).toHaveBeenCalled();
     });
+
+    it('UTCID05 - should propagate error when findMany fails', async () => {
+      usersRepository.findMany.mockRejectedValue(new Error('DB error'));
+      await expect(usersService.list({ page: 1, limit: 10 })).rejects.toThrow('DB error');
+    });
   });
 
   describe('getById', () => {
-    it('should return user by id', async () => {
+    /* UTCIDs: UTCID01, UTCID03 */
+
+    it('UTCID01 - should return user by id', async () => {
       usersRepository.findById.mockResolvedValue(mockUser);
       const result = await usersService.getById(1);
       expect(result.email).toBe('test@example.com');
     });
 
-    it('should throw not found if user missing', async () => {
+    it('UTCID03 - should throw not found if user missing', async () => {
       usersRepository.findById.mockResolvedValue(null);
       await expect(usersService.getById(999)).rejects.toThrow('User not found');
     });
   });
 
   describe('update', () => {
-    it('should update user if requester is the user', async () => {
+    /* UTCIDs: UTCID01, UTCID02, UTCID04 */
+
+    it('UTCID01 - should update user if requester is the user', async () => {
       usersRepository.update.mockResolvedValue({ ...mockUser, fullName: 'Updated Name' });
       const result = await usersService.update(1, { fullName: 'Updated Name' }, 1);
       expect(result.fullName).toBe('Updated Name');
     });
 
-    it('should update user if requester is admin', async () => {
+    it('UTCID02 - should update user if requester is admin', async () => {
       usersRepository.findById.mockResolvedValue(mockAdmin);
       usersRepository.update.mockResolvedValue({ ...mockUser, fullName: 'Admin Updated' });
       const result = await usersService.update(1, { fullName: 'Admin Updated' }, 99);
       expect(result.fullName).toBe('Admin Updated');
     });
 
-    it('should throw forbidden if requester is not user and not admin', async () => {
+    it('UTCID04 - should throw forbidden if requester is not user and not admin', async () => {
       usersRepository.findById.mockResolvedValue(mockUser); // Requester (id: 2) is just MEMBER
       await expect(usersService.update(1, { fullName: 'Hacker' }, 2)).rejects.toThrow(ApiError);
     });
   });
 
   describe('remove', () => {
-    it('should call softDelete on repository', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should call softDelete on repository', async () => {
       usersRepository.softDelete.mockResolvedValue(true);
       await usersService.remove(1);
       expect(usersRepository.softDelete).toHaveBeenCalledWith(1);
     });
+
+    it('UTCID05 - should propagate error when softDelete fails', async () => {
+      usersRepository.softDelete.mockRejectedValue(new Error('DB error'));
+      await expect(usersService.remove(1)).rejects.toThrow('DB error');
+    });
   });
 
   describe('setStatus', () => {
-    it('should update status if requester is admin', async () => {
+    /* UTCIDs: UTCID01, UTCID06, UTCID04, UTCID03 */
+
+    it('UTCID01 - should update status if requester is admin', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockAdmin); // Requester
       usersRepository.findById.mockResolvedValueOnce(mockUser); // Target User
       usersRepository.update.mockResolvedValue({ ...mockUser, status: 'INACTIVE' });
@@ -95,7 +115,7 @@ describe('Users Service', () => {
       expect(result.status).toBe('INACTIVE');
     });
 
-    it('should revoke tokens if status set to SUSPENDED', async () => {
+    it('UTCID06 - should revoke tokens if status set to SUSPENDED', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockAdmin);
       usersRepository.findById.mockResolvedValueOnce(mockUser);
       usersRepository.update.mockResolvedValue({ ...mockUser, status: 'SUSPENDED' });
@@ -105,23 +125,23 @@ describe('Users Service', () => {
       expect(usersRepository.revokeRefreshTokens).toHaveBeenCalledWith(1);
     });
 
-    it('should throw forbidden if requester is not admin', async () => {
+    it('UTCID04 - should throw forbidden if requester is not admin', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockUser); // Requester is not admin
       await expect(usersService.setStatus(2, 'INACTIVE', 1)).rejects.toThrow(ApiError);
     });
 
-    it('should throw bad request if changing own status', async () => {
+    it('UTCID03 - should throw bad request if changing own status', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockAdmin);
       await expect(usersService.setStatus(99, 'INACTIVE', 99)).rejects.toThrow('Cannot change your own account status');
     });
 
-    it('should throw not found if target user missing', async () => {
+    it('UTCID03 - should throw not found if target user missing', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockAdmin); // Requester
       usersRepository.findById.mockResolvedValueOnce(null); // Target
       await expect(usersService.setStatus(2, 'INACTIVE', 99)).rejects.toThrow('User not found');
     });
 
-    it('should throw forbidden if targeting another admin', async () => {
+    it('UTCID03 - should throw forbidden if targeting another admin', async () => {
       usersRepository.findById.mockResolvedValueOnce(mockAdmin); // Requester
       usersRepository.findById.mockResolvedValueOnce({ ...mockUser, id: 2, roles: [{ role: { name: 'ADMIN' } }] }); // Target Admin
       await expect(usersService.setStatus(2, 'INACTIVE', 99)).rejects.toThrow('Cannot change an admin account status');

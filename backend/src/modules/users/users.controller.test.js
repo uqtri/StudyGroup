@@ -42,12 +42,14 @@ const mockAuth = () => {
 
 describe('Users Controller', () => {
   describe('GET /users', () => {
-    it('should return 401 if not authenticated', async () => {
+    /* UTCIDs: UTCID04, UTCID01 */
+
+    it('UTCID04 - should return 401 if not authenticated', async () => {
       const res = await request(app).get('/users');
       expect(res.status).toBe(401);
     });
 
-    it('should return paginated list of users', async () => {
+    it('UTCID01 - should return paginated list of users', async () => {
       mockAuth();
       usersService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app)
@@ -60,7 +62,9 @@ describe('Users Controller', () => {
   });
 
   describe('GET /users/:id', () => {
-    it('should return user by id', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should return user by id', async () => {
       mockAuth();
       usersService.getById.mockResolvedValue({ id: TEST_UUID, email: 'user2@example.com' });
       const res = await request(app)
@@ -70,10 +74,22 @@ describe('Users Controller', () => {
       expect(res.status).toBe(200);
       expect(res.body.data.id).toBe(TEST_UUID);
     });
+
+    it('UTCID02 - should return 400 for invalid user id UUID', async () => {
+      mockAuth();
+      const res = await request(app)
+        .get('/users/not-a-uuid')
+        .set('Authorization', `Bearer ${generateTestToken()}`);
+
+      expect(res.status).toBe(400);
+      expect(usersService.getById).not.toHaveBeenCalled();
+    });
   });
 
   describe('PATCH /users/:id', () => {
-    it('should call update and return updated user', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should call update and return updated user', async () => {
       mockAuth();
       usersService.update.mockResolvedValue({ id: TEST_UUID, fullName: 'New Name' });
       const res = await request(app)
@@ -87,7 +103,9 @@ describe('Users Controller', () => {
   });
 
   describe('DELETE /users/:id', () => {
-    it('should call remove on user', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should call remove on user', async () => {
       mockAuth();
       usersService.remove.mockResolvedValue(true);
       const res = await request(app)
@@ -100,7 +118,9 @@ describe('Users Controller', () => {
   });
 
   describe('PATCH /users/:id/status', () => {
-    it('should update user status', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should update user status', async () => {
       mockAuth();
       usersService.setStatus.mockResolvedValue({ id: TEST_UUID, status: 'INACTIVE' });
       const res = await request(app)
