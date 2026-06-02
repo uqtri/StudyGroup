@@ -33,7 +33,9 @@ afterEach(() => {
 
 describe('Resources Service', () => {
   describe('list', () => {
-    it('should list resources in group if member', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should list resources in group if member', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourcesRepository.findMany.mockResolvedValue([mockResource]);
       resourcesRepository.count.mockResolvedValue(1);
@@ -42,7 +44,7 @@ describe('Resources Service', () => {
       expect(result.items).toHaveLength(1);
     });
 
-    it('should list resources in folder if member', async () => {
+    it('UTCID01 - should list resources in folder if member', async () => {
       resourceFoldersRepository.findById.mockResolvedValue({ groupId: 'group1' });
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourcesRepository.findMany.mockResolvedValue([mockResource]);
@@ -51,19 +53,29 @@ describe('Resources Service', () => {
       expect(result.items).toHaveLength(1);
     });
 
-    it('should throw if folder not found', async () => {
+    it('UTCID03 - should throw if folder not found', async () => {
       resourceFoldersRepository.findById.mockResolvedValue(null);
       await expect(resourcesService.list({ folderId: 'folder1' }, 'user1')).rejects.toThrow('Folder not found');
     });
 
-    it('should throw if not group member', async () => {
+    it('UTCID04 - should throw if not group member', async () => {
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(resourcesService.list({ groupId: 'group1' }, 'user1')).rejects.toThrow('Must be a group member');
+    });
+
+    it('UTCID05 - should propagate error when findMany fails', async () => {
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      resourcesRepository.findMany.mockRejectedValue(new Error('DB query failed'));
+      resourcesRepository.count.mockResolvedValue(0);
+
+      await expect(resourcesService.list({ groupId: 'group1' }, 'user1')).rejects.toThrow('DB query failed');
     });
   });
 
   describe('getById', () => {
-    it('should return resource if member', async () => {
+    /* UTCIDs: UTCID01, UTCID03 */
+
+    it('UTCID01 - should return resource if member', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       
@@ -71,14 +83,16 @@ describe('Resources Service', () => {
       expect(result.id).toBe('res1');
     });
 
-    it('should throw if resource not found', async () => {
+    it('UTCID03 - should throw if resource not found', async () => {
       resourcesRepository.findById.mockResolvedValue(null);
       await expect(resourcesService.getById('res1', 'user1')).rejects.toThrow('Resource not found');
     });
   });
 
   describe('create', () => {
-    it('should create resource', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID05 */
+
+    it('UTCID01 - should create resource', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourceFoldersRepository.findById.mockResolvedValue({ groupId: 'group1' });
       resourcesRepository.create.mockResolvedValue(mockResource);
@@ -87,16 +101,28 @@ describe('Resources Service', () => {
       expect(result.id).toBe('res1');
     });
 
-    it('should throw if folder belongs to different group', async () => {
+    it('UTCID03 - should throw if folder belongs to different group', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourceFoldersRepository.findById.mockResolvedValue({ groupId: 'group2' }); // Mismatch
 
       await expect(resourcesService.create({ groupId: 'group1', folderId: 'folder1' }, 'user1')).rejects.toThrow('Invalid folder for this group');
     });
+
+    it('UTCID05 - should propagate error when create fails', async () => {
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      resourceFoldersRepository.findById.mockResolvedValue({ groupId: 'group1' });
+      resourcesRepository.create.mockRejectedValue(new Error('DB write failed'));
+
+      await expect(
+        resourcesService.create({ groupId: 'group1', folderId: 'folder1', title: 'Test' }, 'user1'),
+      ).rejects.toThrow('DB write failed');
+    });
   });
 
   describe('remove', () => {
-    it('should remove if uploader', async () => {
+    /* UTCIDs: UTCID01, UTCID02, UTCID04 */
+
+    it('UTCID01 - should remove if uploader', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource); // uploadedBy: user1
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       groupsRepository.findById.mockResolvedValue({ createdBy: 'user2' });
@@ -105,7 +131,7 @@ describe('Resources Service', () => {
       expect(resourcesRepository.softDelete).toHaveBeenCalledWith('res1');
     });
 
-    it('should remove and notify if leader (but not uploader)', async () => {
+    it('UTCID02 - should remove and notify if leader (but not uploader)', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource); // uploadedBy: user1
       groupsRepository.isMember.mockResolvedValue({ role: 'LEADER' }); // user2 is leader
       groupsRepository.findById.mockResolvedValue({ createdBy: 'user3' });
@@ -115,7 +141,7 @@ describe('Resources Service', () => {
       expect(notificationsService.notifyUsers).toHaveBeenCalled();
     });
 
-    it('should throw if not uploader and not leader', async () => {
+    it('UTCID04 - should throw if not uploader and not leader', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource); // uploadedBy: user1
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       groupsRepository.findById.mockResolvedValue({ createdBy: 'user3' });
@@ -125,7 +151,9 @@ describe('Resources Service', () => {
   });
 
   describe('toggleStar', () => {
-    it('should add star if not starred', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should add star if not starred', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourcesRepository.findRating.mockResolvedValue(null);
@@ -135,7 +163,7 @@ describe('Resources Service', () => {
       expect(resourcesRepository.createRating).toHaveBeenCalled();
     });
 
-    it('should remove star if already starred', async () => {
+    it('UTCID02 - should remove star if already starred', async () => {
       resourcesRepository.findById.mockResolvedValue(mockResource);
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       resourcesRepository.findRating.mockResolvedValue({ id: 'rating1' });

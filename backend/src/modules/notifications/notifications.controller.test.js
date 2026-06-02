@@ -41,7 +41,9 @@ afterEach(() => {
 
 describe('Notifications Controller', () => {
   describe('GET /notifications', () => {
-    it('should list notifications', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list notifications', async () => {
       mockAuth();
       notificationsService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app)
@@ -54,7 +56,9 @@ describe('Notifications Controller', () => {
   });
 
   describe('GET /notifications/unread-count', () => {
-    it('should return unread count', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should return unread count', async () => {
       mockAuth();
       notificationsService.getUnreadCount.mockResolvedValue(5);
       const res = await request(app)
@@ -67,7 +71,9 @@ describe('Notifications Controller', () => {
   });
 
   describe('PATCH /notifications/:id/read', () => {
-    it('should mark as read', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should mark as read', async () => {
       mockAuth();
       notificationsService.markRead.mockResolvedValue(true);
       const res = await request(app)
@@ -79,7 +85,9 @@ describe('Notifications Controller', () => {
   });
 
   describe('PATCH /notifications/read-all', () => {
-    it('should mark all as read', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should mark all as read', async () => {
       mockAuth();
       notificationsService.markAllRead.mockResolvedValue(true);
       const res = await request(app)

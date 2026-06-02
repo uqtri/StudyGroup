@@ -38,7 +38,9 @@ afterEach(() => {
 
 describe('Auth Service', () => {
   describe('register', () => {
-    it('should register a new user successfully', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID04, UTCID05 */
+
+    it('UTCID01 - should register a new user successfully', async () => {
       authRepository.findByEmail.mockResolvedValue(null);
       authRepository.findRoleByName.mockResolvedValue({ id: 2, name: 'MEMBER' });
       authRepository.createUser.mockResolvedValue(mockUser);
@@ -56,22 +58,34 @@ describe('Auth Service', () => {
       expect(authRepository.createUser).toHaveBeenCalled();
     });
 
-    it('should throw conflict if email exists', async () => {
+    it('UTCID03 - should throw conflict if email exists', async () => {
       authRepository.findByEmail.mockResolvedValue(mockUser);
       await expect(authService.register({ email: 'test@example.com', password: 'pw', fullName: 'Test' }))
         .rejects.toThrow(ApiError);
     });
 
-    it('should throw error if default role not found', async () => {
+    it('UTCID04 - should throw error if default role not found', async () => {
       authRepository.findByEmail.mockResolvedValue(null);
       authRepository.findRoleByName.mockResolvedValue(null);
       await expect(authService.register({ email: 'test@example.com', password: 'pw', fullName: 'Test' }))
         .rejects.toThrow(ApiError);
     });
+
+    it('UTCID05 - should propagate error when createUser fails', async () => {
+      authRepository.findByEmail.mockResolvedValue(null);
+      authRepository.findRoleByName.mockResolvedValue({ id: 2, name: 'MEMBER' });
+      authRepository.createUser.mockRejectedValue(new Error('DB connection lost'));
+
+      await expect(
+        authService.register({ email: 'new@example.com', password: 'Password1', fullName: 'New User' }),
+      ).rejects.toThrow('DB connection lost');
+    });
   });
 
   describe('login', () => {
-    it('should login successfully', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID04, UTCID06 */
+
+    it('UTCID01 - should login successfully', async () => {
       authRepository.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(true);
       authRepository.createRefreshToken.mockResolvedValue({});
@@ -81,19 +95,19 @@ describe('Auth Service', () => {
       expect(result.accessToken).toBeDefined();
     });
 
-    it('should throw unauthorized if user not found', async () => {
+    it('UTCID03 - should throw unauthorized if user not found', async () => {
       authRepository.findByEmail.mockResolvedValue(null);
       await expect(authService.login({ email: 'test@example.com', password: 'pw' }))
         .rejects.toThrow('Invalid credentials');
     });
 
-    it('should throw forbidden if account suspended', async () => {
+    it('UTCID04 - should throw forbidden if account suspended', async () => {
       authRepository.findByEmail.mockResolvedValue({ ...mockUser, status: 'SUSPENDED' });
       await expect(authService.login({ email: 'test@example.com', password: 'pw' }))
         .rejects.toThrow('Your account has been banned');
     });
 
-    it('should throw unauthorized if wrong password', async () => {
+    it('UTCID06 - should throw unauthorized if wrong password', async () => {
       authRepository.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValueOnce(false);
       await expect(authService.login({ email: 'test@example.com', password: 'wrong' }))
@@ -102,26 +116,30 @@ describe('Auth Service', () => {
   });
 
   describe('getProfile', () => {
-    it('should return sanitized user profile', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should return sanitized user profile', async () => {
       authRepository.findById.mockResolvedValue(mockUser);
       const result = await authService.getProfile(1);
       expect(result.email).toBe('test@example.com');
       expect(result.passwordHash).toBeUndefined(); // Should be sanitized out
     });
 
-    it('should throw not found if user does not exist', async () => {
+    it('UTCID05 - should throw not found if user does not exist', async () => {
       authRepository.findById.mockResolvedValue(null);
       await expect(authService.getProfile(999)).rejects.toThrow('User not found');
     });
   });
 
   describe('refresh', () => {
+    /* UTCIDs: UTCID03, UTCID04 */
+
     // Note: this uses real jwt.verify and jwt.sign, which relies on the mock environment variables
-    it('should throw unauthorized if no token', async () => {
+    it('UTCID03 - should throw unauthorized if no token', async () => {
       await expect(authService.refresh(null)).rejects.toThrow('Refresh token required');
     });
 
-    it('should throw unauthorized if invalid token signature', async () => {
+    it('UTCID04 - should throw unauthorized if invalid token signature', async () => {
       await expect(authService.refresh('invalid-token')).rejects.toThrow('Invalid refresh token');
     });
 
@@ -129,13 +147,15 @@ describe('Auth Service', () => {
   });
 
   describe('logout', () => {
-    it('should delete token if refreshToken provided', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should delete token if refreshToken provided', async () => {
       authRepository.deleteRefreshToken.mockResolvedValue({});
       await authService.logout('some-token');
       expect(authRepository.deleteRefreshToken).toHaveBeenCalled();
     });
 
-    it('should delete all user tokens if userId provided', async () => {
+    it('UTCID02 - should delete all user tokens if userId provided', async () => {
       authRepository.deleteUserRefreshTokens.mockResolvedValue({});
       await authService.logout(null, 1);
       expect(authRepository.deleteUserRefreshTokens).toHaveBeenCalledWith(1);

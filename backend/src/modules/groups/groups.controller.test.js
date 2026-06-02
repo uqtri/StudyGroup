@@ -48,7 +48,9 @@ afterEach(() => {
 
 describe('Groups Controller', () => {
   describe('GET /groups', () => {
-    it('should list groups without auth if not protected', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list groups without auth if not protected', async () => {
       groupsService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app).get('/groups');
       expect(res.status).toBe(200);
@@ -57,16 +59,26 @@ describe('Groups Controller', () => {
   });
 
   describe('GET /groups/:id', () => {
-    it('should get group by id without auth', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should get group by id without auth', async () => {
       groupsService.getById.mockResolvedValue({ id: TEST_UUID, name: 'Test' });
       const res = await request(app).get(`/groups/${TEST_UUID}`);
       expect(res.status).toBe(200);
       expect(groupsService.getById).toHaveBeenCalled();
     });
+
+    it('UTCID02 - should return 400 for invalid group id UUID', async () => {
+      const res = await request(app).get('/groups/not-a-valid-uuid');
+      expect(res.status).toBe(400);
+      expect(groupsService.getById).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /groups', () => {
-    it('should create group if authenticated', async () => {
+    /* UTCIDs: UTCID01, UTCID02, UTCID04 */
+
+    it('UTCID01 - should create group if authenticated', async () => {
       mockAuth();
       groupsService.create.mockResolvedValue({ id: TEST_UUID, name: 'New' });
       const res = await request(app)
@@ -78,14 +90,27 @@ describe('Groups Controller', () => {
       expect(groupsService.create).toHaveBeenCalled();
     });
 
-    it('should return 401 if not auth', async () => {
+    it('UTCID04 - should return 401 if not auth', async () => {
       const res = await request(app).post('/groups').send({ name: 'New' });
       expect(res.status).toBe(401);
+    });
+
+    it('UTCID02 - should return 400 when subject is missing', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/groups')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ name: 'Valid Group Name' });
+
+      expect(res.status).toBe(400);
+      expect(groupsService.create).not.toHaveBeenCalled();
     });
   });
 
   describe('PATCH /groups/:id', () => {
-    it('should update group', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should update group', async () => {
       mockAuth();
       groupsService.update.mockResolvedValue({ id: TEST_UUID, name: 'Updated' });
       const res = await request(app)
@@ -96,10 +121,23 @@ describe('Groups Controller', () => {
       expect(res.status).toBe(200);
       expect(groupsService.update).toHaveBeenCalled();
     });
+
+    it('UTCID02 - should return 400 for invalid group id UUID', async () => {
+      mockAuth();
+      const res = await request(app)
+        .patch('/groups/invalid-id')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ name: 'Updated Group Name' });
+
+      expect(res.status).toBe(400);
+      expect(groupsService.update).not.toHaveBeenCalled();
+    });
   });
 
   describe('DELETE /groups/:id', () => {
-    it('should delete group', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should delete group', async () => {
       mockAuth();
       groupsService.remove.mockResolvedValue(true);
       const res = await request(app)
@@ -111,7 +149,9 @@ describe('Groups Controller', () => {
   });
 
   describe('POST /groups/:id/join', () => {
-    it('should request join', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should request join', async () => {
       mockAuth();
       groupsService.requestJoin.mockResolvedValue({ id: TEST_UUID });
       const res = await request(app)
@@ -123,7 +163,9 @@ describe('Groups Controller', () => {
   });
 
   describe('POST /groups/join-requests/:requestId/approve', () => {
-    it('should approve join request', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should approve join request', async () => {
       mockAuth();
       groupsService.approveJoinRequest.mockResolvedValue({ status: 'APPROVED' });
       const res = await request(app)
@@ -135,7 +177,9 @@ describe('Groups Controller', () => {
   });
 
   describe('POST /groups/join-requests/:requestId/reject', () => {
-    it('should reject join request', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should reject join request', async () => {
       mockAuth();
       groupsService.rejectJoinRequest.mockResolvedValue({ status: 'REJECTED' });
       const res = await request(app)
@@ -147,7 +191,9 @@ describe('Groups Controller', () => {
   });
 
   describe('DELETE /groups/:id/join', () => {
-    it('should cancel join request', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should cancel join request', async () => {
       mockAuth();
       groupsService.cancelJoinRequest.mockResolvedValue(true);
       const res = await request(app)
@@ -159,7 +205,9 @@ describe('Groups Controller', () => {
   });
 
   describe('PATCH /groups/:id/status', () => {
-    it('should set status if admin', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should set status if admin', async () => {
       mockAuth(true); // isAdmin
       groupsService.setStatus.mockResolvedValue({ id: TEST_UUID, status: 'ARCHIVED' });
       const res = await request(app)

@@ -40,7 +40,9 @@ afterEach(() => {
 
 describe('Dashboard Controller', () => {
   describe('GET /dashboard/stats', () => {
-    it('should get stats', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should get stats', async () => {
       mockAuth();
       dashboardService.getStats.mockResolvedValue({ role: 'MEMBER' });
       const res = await request(app)
@@ -54,7 +56,9 @@ describe('Dashboard Controller', () => {
   });
 
   describe('GET /dashboard/groups/:groupId/stats', () => {
-    it('should return 403 if not admin', async () => {
+    /* UTCIDs: UTCID04, UTCID01 */
+
+    it('UTCID04 - should return 403 if not admin', async () => {
       mockAuth(['MEMBER']);
       const res = await request(app)
         .get(`/dashboard/groups/${GROUP_UUID}/stats`)
@@ -63,7 +67,7 @@ describe('Dashboard Controller', () => {
       expect(res.status).toBe(403);
     });
 
-    it('should get group stats if admin', async () => {
+    it('UTCID01 - should get group stats if admin', async () => {
       mockAuth(['ADMIN']);
       dashboardService.getGroupStats.mockResolvedValue({});
       const res = await request(app)

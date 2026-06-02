@@ -44,7 +44,9 @@ afterEach(() => {
 
 describe('Posts Controller', () => {
   describe('GET /posts', () => {
-    it('should list posts', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list posts', async () => {
       mockAuth();
       postsService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app)
@@ -57,7 +59,9 @@ describe('Posts Controller', () => {
   });
 
   describe('GET /posts/:id', () => {
-    it('should get post', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should get post', async () => {
       mockAuth();
       postsService.getById.mockResolvedValue({ id: TEST_UUID, title: 'Test' });
       const res = await request(app)
@@ -70,7 +74,9 @@ describe('Posts Controller', () => {
   });
 
   describe('POST /posts', () => {
-    it('should create post', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should create post', async () => {
       mockAuth();
       postsService.create.mockResolvedValue({ id: TEST_UUID });
       const res = await request(app)
@@ -80,10 +86,23 @@ describe('Posts Controller', () => {
         
       expect(res.status).toBe(201);
     });
+
+    it('UTCID02 - should return 400 when title is too short', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/posts')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ groupId: GROUP_UUID, title: 'ab', content: 'Content' });
+
+      expect(res.status).toBe(400);
+      expect(postsService.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('PATCH /posts/:id', () => {
-    it('should update post', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should update post', async () => {
       mockAuth();
       postsService.update.mockResolvedValue({ id: TEST_UUID, title: 'Updated' });
       const res = await request(app)
@@ -96,7 +115,9 @@ describe('Posts Controller', () => {
   });
 
   describe('POST /posts/:id/vote', () => {
-    it('should vote on post', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should vote on post', async () => {
       mockAuth();
       postsService.vote.mockResolvedValue({ voteScore: 1 });
       const res = await request(app)
@@ -109,7 +130,9 @@ describe('Posts Controller', () => {
   });
 
   describe('DELETE /posts/:id', () => {
-    it('should delete post', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should delete post', async () => {
       mockAuth();
       postsService.remove.mockResolvedValue(true);
       const res = await request(app)

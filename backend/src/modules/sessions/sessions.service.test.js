@@ -45,7 +45,9 @@ afterEach(() => {
 
 describe('Sessions Service', () => {
   describe('list', () => {
-    it('should return paginated list of sessions', async () => {
+    /* UTCIDs: UTCID01, UTCID05 */
+
+    it('UTCID01 - should return paginated list of sessions', async () => {
       sessionsRepository.findMany.mockResolvedValue([mockSession]);
       sessionsRepository.count.mockResolvedValue(1);
 
@@ -53,23 +55,34 @@ describe('Sessions Service', () => {
       expect(result.items).toHaveLength(1);
       expect(result.pagination.total).toBe(1);
     });
+
+    it('UTCID05 - should propagate error when findMany fails', async () => {
+      sessionsRepository.findMany.mockRejectedValue(new Error('DB query failed'));
+      sessionsRepository.count.mockResolvedValue(0);
+
+      await expect(sessionsService.list({ page: 1, limit: 10 }, 'user1')).rejects.toThrow('DB query failed');
+    });
   });
 
   describe('getById', () => {
-    it('should return session by id', async () => {
+    /* UTCIDs: UTCID01, UTCID03 */
+
+    it('UTCID01 - should return session by id', async () => {
       sessionsRepository.findById.mockResolvedValue(mockSession);
       const result = await sessionsService.getById('sess1');
       expect(result.id).toBe('sess1');
     });
 
-    it('should throw not found', async () => {
+    it('UTCID03 - should throw not found', async () => {
       sessionsRepository.findById.mockResolvedValue(null);
       await expect(sessionsService.getById('sess2')).rejects.toThrow('Session not found');
     });
   });
 
   describe('create', () => {
-    it('should create a scheduled session', async () => {
+    /* UTCIDs: UTCID01, UTCID02, UTCID04, UTCID05 */
+
+    it('UTCID01 - should create a scheduled session', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       sessionsRepository.create.mockResolvedValue(mockSession);
       
@@ -80,7 +93,7 @@ describe('Sessions Service', () => {
       expect(sessionsRepository.create).toHaveBeenCalled();
     });
 
-    it('should create an immediate session and notify', async () => {
+    it('UTCID01 - should create an immediate session and notify', async () => {
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       sessionsRepository.create.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
@@ -92,14 +105,40 @@ describe('Sessions Service', () => {
       expect(notificationsService.notifyUsers).toHaveBeenCalled();
     });
 
-    it('should throw forbidden if not group member', async () => {
+    it('UTCID04 - should throw forbidden if not group member', async () => {
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(sessionsService.create({ groupId: 'group1' }, 'user1')).rejects.toThrow('Must be a group member');
+    });
+
+    it('UTCID02 - should throw bad request if scheduled session missing end time', async () => {
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+
+      await expect(
+        sessionsService.create(
+          {
+            groupId: 'group1',
+            title: 'Scheduled',
+            startTime: new Date().toISOString(),
+          },
+          'user1',
+        ),
+      ).rejects.toThrow('End time is required for scheduled sessions');
+    });
+
+    it('UTCID05 - should propagate error when create fails', async () => {
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      sessionsRepository.create.mockRejectedValue(new Error('DB write failed'));
+
+      await expect(
+        sessionsService.create({ groupId: 'group1', title: 'Test', startNow: true }, 'user1'),
+      ).rejects.toThrow('DB write failed');
     });
   });
 
   describe('update', () => {
-    it('should update session if creator', async () => {
+    /* UTCIDs: UTCID01, UTCID04 */
+
+    it('UTCID01 - should update session if creator', async () => {
       sessionsRepository.findById.mockResolvedValue(mockSession); // createdBy: 'user1'
       sessionsRepository.update.mockResolvedValue({ ...mockSession, title: 'Updated' });
       
@@ -107,7 +146,7 @@ describe('Sessions Service', () => {
       expect(result.title).toBe('Updated');
     });
 
-    it('should update session if leader', async () => {
+    it('UTCID01 - should update session if leader', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, createdBy: 'user2' });
       groupsRepository.isMember.mockResolvedValue({ role: 'LEADER' }); // user1 is leader
       sessionsRepository.update.mockResolvedValue({ ...mockSession, title: 'Updated' });
@@ -116,7 +155,7 @@ describe('Sessions Service', () => {
       expect(result.title).toBe('Updated');
     });
 
-    it('should throw forbidden if not creator and not leader', async () => {
+    it('UTCID04 - should throw forbidden if not creator and not leader', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, createdBy: 'user2' });
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       
@@ -125,7 +164,9 @@ describe('Sessions Service', () => {
   });
 
   describe('end', () => {
-    it('should end session and delete livekit room if live', async () => {
+    /* UTCIDs: UTCID01, UTCID05, UTCID06 */
+
+    it('UTCID01 - should end session and delete livekit room if live', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
       sessionsRepository.update.mockResolvedValue({ ...mockSession, status: 'COMPLETED' });
       
@@ -134,17 +175,26 @@ describe('Sessions Service', () => {
       expect(mockDeleteLiveKitRoom).toHaveBeenCalledWith('sess1');
     });
 
-    it('should cancel scheduled session', async () => {
+    it('UTCID06 - should cancel scheduled session', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'SCHEDULED' });
       sessionsRepository.update.mockResolvedValue({ ...mockSession, status: 'CANCELLED' });
       
       const result = await sessionsService.end('sess1', 'user1');
       expect(result.status).toBe('CANCELLED');
     });
+
+    it('UTCID05 - should propagate error when deleteLiveKitRoom fails', async () => {
+      sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
+      mockDeleteLiveKitRoom.mockRejectedValueOnce(new Error('LiveKit unavailable'));
+
+      await expect(sessionsService.end('sess1', 'user1')).rejects.toThrow('LiveKit unavailable');
+    });
   });
 
   describe('getLiveKitToken', () => {
-    it('should return token if session is live', async () => {
+    /* UTCIDs: UTCID01, UTCID03, UTCID04, UTCID05 */
+
+    it('UTCID01 - should return token if session is live', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
       groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
       
@@ -152,15 +202,23 @@ describe('Sessions Service', () => {
       expect(result.token).toBe('token123');
     });
 
-    it('should throw if session not in progress', async () => {
+    it('UTCID03 - should throw if session not in progress', async () => {
       sessionsRepository.findById.mockResolvedValue(mockSession);
       await expect(sessionsService.getLiveKitToken('sess1', 'user2', 'Test')).rejects.toThrow('Session is not in progress');
     });
 
-    it('should throw if not group member', async () => {
+    it('UTCID04 - should throw if not group member', async () => {
       sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
       groupsRepository.isMember.mockResolvedValue(null);
       await expect(sessionsService.getLiveKitToken('sess1', 'user2', 'Test')).rejects.toThrow('Must be a group member to join');
+    });
+
+    it('UTCID05 - should propagate error when createLiveKitToken fails', async () => {
+      sessionsRepository.findById.mockResolvedValue({ ...mockSession, status: 'IN_PROGRESS' });
+      groupsRepository.isMember.mockResolvedValue({ role: 'MEMBER' });
+      mockCreateLiveKitToken.mockRejectedValueOnce(new Error('LiveKit token error'));
+
+      await expect(sessionsService.getLiveKitToken('sess1', 'user2', 'Test')).rejects.toThrow('LiveKit token error');
     });
   });
 });

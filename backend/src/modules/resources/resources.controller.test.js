@@ -44,7 +44,9 @@ afterEach(() => {
 
 describe('Resources Controller', () => {
   describe('GET /resources', () => {
-    it('should list resources', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list resources', async () => {
       mockAuth();
       resourcesService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app)
@@ -57,7 +59,9 @@ describe('Resources Controller', () => {
   });
 
   describe('GET /resources/:id', () => {
-    it('should get resource', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should get resource', async () => {
       mockAuth();
       resourcesService.getById.mockResolvedValue({ id: TEST_UUID, title: 'Test' });
       const res = await request(app)
@@ -66,10 +70,22 @@ describe('Resources Controller', () => {
         
       expect(res.status).toBe(200);
     });
+
+    it('UTCID02 - should return 400 for invalid resource id UUID', async () => {
+      mockAuth();
+      const res = await request(app)
+        .get('/resources/not-a-valid-uuid')
+        .set('Authorization', `Bearer ${generateTestToken()}`);
+
+      expect(res.status).toBe(400);
+      expect(resourcesService.getById).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /resources', () => {
-    it('should create resource', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should create resource', async () => {
       mockAuth();
       resourcesService.create.mockResolvedValue({ id: TEST_UUID });
       const res = await request(app)
@@ -79,10 +95,29 @@ describe('Resources Controller', () => {
         
       expect(res.status).toBe(201);
     });
+
+    it('UTCID02 - should return 400 when fileUrl is invalid', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/resources')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({
+          groupId: GROUP_UUID,
+          folderId: FOLDER_UUID,
+          title: 'New Res',
+          fileUrl: 'not-a-url',
+          fileType: 'pdf',
+        });
+
+      expect(res.status).toBe(400);
+      expect(resourcesService.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('POST /resources/:id/star', () => {
-    it('should toggle star', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should toggle star', async () => {
       mockAuth();
       resourcesService.toggleStar.mockResolvedValue({ starred: true });
       const res = await request(app)
@@ -94,7 +129,9 @@ describe('Resources Controller', () => {
   });
 
   describe('DELETE /resources/:id', () => {
-    it('should delete resource', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should delete resource', async () => {
       mockAuth();
       resourcesService.remove.mockResolvedValue(true);
       const res = await request(app)

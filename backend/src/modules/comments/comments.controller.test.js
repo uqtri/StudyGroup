@@ -43,7 +43,9 @@ afterEach(() => {
 
 describe('Comments Controller', () => {
   describe('GET /comments/post/:postId', () => {
-    it('should list comments', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list comments', async () => {
       mockAuth();
       commentsService.listByPost.mockResolvedValue([]);
       const res = await request(app)
@@ -56,7 +58,9 @@ describe('Comments Controller', () => {
   });
 
   describe('POST /comments', () => {
-    it('should create comment', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should create comment', async () => {
       mockAuth();
       commentsService.create.mockResolvedValue({ id: TEST_UUID });
       const res = await request(app)
@@ -66,10 +70,23 @@ describe('Comments Controller', () => {
         
       expect(res.status).toBe(201);
     });
+
+    it('UTCID02 - should return 400 when content is empty', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/comments')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ postId: POST_UUID, content: '' });
+
+      expect(res.status).toBe(400);
+      expect(commentsService.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('PATCH /comments/:id', () => {
-    it('should update comment', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should update comment', async () => {
       mockAuth();
       commentsService.update.mockResolvedValue({ id: TEST_UUID, content: 'Updated' });
       const res = await request(app)
@@ -82,7 +99,9 @@ describe('Comments Controller', () => {
   });
 
   describe('POST /comments/:id/vote', () => {
-    it('should vote on comment', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should vote on comment', async () => {
       mockAuth();
       commentsService.vote.mockResolvedValue({ voteScore: 1 });
       const res = await request(app)
@@ -95,7 +114,9 @@ describe('Comments Controller', () => {
   });
 
   describe('DELETE /comments/:id', () => {
-    it('should delete comment', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should delete comment', async () => {
       mockAuth();
       commentsService.remove.mockResolvedValue(true);
       const res = await request(app)

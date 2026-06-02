@@ -42,7 +42,9 @@ afterEach(() => {
 
 describe('Resource Folders Controller', () => {
   describe('GET /resource-folders', () => {
-    it('should list folders', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should list folders', async () => {
       mockAuth();
       resourceFoldersService.list.mockResolvedValue({ items: [], pagination: { total: 0 } });
       const res = await request(app)
@@ -55,7 +57,9 @@ describe('Resource Folders Controller', () => {
   });
 
   describe('GET /resource-folders/:id', () => {
-    it('should get folder', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should get folder', async () => {
       mockAuth();
       resourceFoldersService.getById.mockResolvedValue({ id: TEST_UUID, name: 'Test' });
       const res = await request(app)
@@ -68,7 +72,9 @@ describe('Resource Folders Controller', () => {
   });
 
   describe('POST /resource-folders', () => {
-    it('should create folder', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should create folder', async () => {
       mockAuth();
       resourceFoldersService.create.mockResolvedValue({ id: TEST_UUID, name: 'New Folder' });
       const res = await request(app)
@@ -78,10 +84,23 @@ describe('Resource Folders Controller', () => {
         
       expect(res.status).toBe(201);
     });
+
+    it('UTCID02 - should return 400 when name is empty', async () => {
+      mockAuth();
+      const res = await request(app)
+        .post('/resource-folders')
+        .set('Authorization', `Bearer ${generateTestToken()}`)
+        .send({ groupId: GROUP_UUID, name: '' });
+
+      expect(res.status).toBe(400);
+      expect(resourceFoldersService.create).not.toHaveBeenCalled();
+    });
   });
 
   describe('PATCH /resource-folders/:id', () => {
-    it('should update folder', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should update folder', async () => {
       mockAuth();
       resourceFoldersService.update.mockResolvedValue({ id: TEST_UUID, name: 'Updated' });
       const res = await request(app)

@@ -36,7 +36,9 @@ const generateTestToken = () => signAccessToken({ userId: 1, email: 'test@exampl
 
 describe('Auth Controller', () => {
   describe('POST /auth/register', () => {
-    it('should validate request body and call register', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should validate request body and call register', async () => {
       authService.register.mockResolvedValue({ id: 1, email: 'test@test.com' });
       
       const res = await request(app)
@@ -48,7 +50,7 @@ describe('Auth Controller', () => {
       expect(authService.register).toHaveBeenCalled();
     });
 
-    it('should return 400 for invalid email', async () => {
+    it('UTCID02 - should return 400 for invalid email', async () => {
       const res = await request(app)
         .post('/auth/register')
         .send({ email: 'invalid', password: 'Password123!', fullName: 'Test' });
@@ -59,7 +61,9 @@ describe('Auth Controller', () => {
   });
 
   describe('POST /auth/login', () => {
-    it('should call login and return data', async () => {
+    /* UTCIDs: UTCID01, UTCID02 */
+
+    it('UTCID01 - should call login and return data', async () => {
       authService.login.mockResolvedValue({ accessToken: 'token' });
       const res = await request(app)
         .post('/auth/login')
@@ -68,15 +72,26 @@ describe('Auth Controller', () => {
       expect(res.status).toBe(200);
       expect(res.body.data.accessToken).toBe('token');
     });
+
+    it('UTCID02 - should return 400 when password is missing', async () => {
+      const res = await request(app)
+        .post('/auth/login')
+        .send({ email: 'test@test.com' });
+
+      expect(res.status).toBe(400);
+      expect(authService.login).not.toHaveBeenCalled();
+    });
   });
 
   describe('GET /auth/me', () => {
-    it('should require authentication', async () => {
+    /* UTCIDs: UTCID04, UTCID01 */
+
+    it('UTCID04 - should require authentication', async () => {
       const res = await request(app).get('/auth/me');
       expect(res.status).toBe(401);
     });
 
-    it('should return user profile if authenticated', async () => {
+    it('UTCID01 - should return user profile if authenticated', async () => {
       prisma.user.findFirst.mockResolvedValue({
         id: 1, email: 'test@test.com', status: 'ACTIVE', roles: []
       });
@@ -92,7 +107,9 @@ describe('Auth Controller', () => {
   });
 
   describe('POST /auth/logout', () => {
-    it('should logout user', async () => {
+    /* UTCIDs: UTCID01 */
+
+    it('UTCID01 - should logout user', async () => {
       prisma.user.findFirst.mockResolvedValue({
         id: 1, email: 'test@test.com', status: 'ACTIVE', roles: []
       });
