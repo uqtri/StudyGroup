@@ -15,12 +15,15 @@
     "db:studio": "prisma studio",
     "lint": "eslint src --ext .js",
     "format": "prettier --write \"src/**/*.js\" \"prisma/**/*.js\"",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:service": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.service.test.js\"",
-    "test:api": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.controller.test.js\"",
-    "test:e2e": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testMatch=\"**/*.e2e.test.js\"",
-    "test:cov": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "test": "vitest run --config automation-tests/vitest.config.js",
+    "test:watch": "vitest --config automation-tests/vitest.config.js",
+    "test:all": "npm run test && npm run test:jest",
+    "test:jest": "npm run test:service && npm run test:api && npm run test:e2e",
+    "test:service": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config automation-tests/jest.config.js --testPathPatterns=service.test",
+    "test:api": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config automation-tests/jest.config.js --testPathPatterns=controller.test",
+    "test:e2e": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config automation-tests/jest.config.js --testPathPatterns=e2e.test",
+    "test:cov": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --config automation-tests/jest.config.js --coverage",
+    "test:cov:vitest": "vitest run --config automation-tests/vitest.config.js --coverage"
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",

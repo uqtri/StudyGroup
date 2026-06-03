@@ -416,10 +416,11 @@ function annotateFile(filePath) {
 }
 
 const dirs = [
-  join(ROOT, 'backend', 'src', 'modules'),
-  join(ROOT, 'backend', 'tests', 'modules'),
-  join(ROOT, 'backend', 'tests', 'utils'),
-  join(ROOT, 'backend', 'tests', 'middlewares'),
+  join(ROOT, 'backend', 'automation-tests', 'jest', 'modules'),
+  join(ROOT, 'backend', 'automation-tests', 'jest', 'e2e'),
+  join(ROOT, 'backend', 'automation-tests', 'vitest', 'modules'),
+  join(ROOT, 'backend', 'automation-tests', 'vitest', 'utils'),
+  join(ROOT, 'backend', 'automation-tests', 'vitest', 'middlewares'),
 ];
 
 let count = 0;

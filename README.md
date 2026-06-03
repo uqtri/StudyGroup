@@ -131,6 +131,7 @@ All protected routes require: `Authorization: Bearer <accessToken>`
 - `npm run db:migrate` — Run Prisma migrations
 - `npm run db:seed` — Seed roles and demo data
 - `npm run db:studio` — Prisma Studio GUI
+- `npm test` / `npm run test:all` — Automation tests (see `backend/automation-tests/`)
 
 ### Frontend
 - `npm run dev` — Vite dev server
