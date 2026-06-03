@@ -16,7 +16,7 @@ const { sessionsService } = await import('../../../../src/modules/sessions/sessi
 const { sessionsRepository } = await import('../../../../src/modules/sessions/sessions.repository.js');
 const { groupsRepository } = await import('../../../../src/modules/groups/groups.repository.js');
 const { notificationsService } = await import('../../../../src/modules/notifications/notifications.service.js');
-const { ApiError } = await import('../../utils/ApiError.js');
+const { ApiError } = await import('../../../../src/utils/ApiError.js');
 
 jest.spyOn(sessionsRepository, 'findMany').mockResolvedValue([]);
 jest.spyOn(sessionsRepository, 'count').mockResolvedValue(0);

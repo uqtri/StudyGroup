@@ -7,10 +7,10 @@ jest.unstable_mockModule('../../../../src/utils/cloudinary.js', () => ({
   getUploadSignature: jest.fn()
 }));
 
-const { isCloudinaryConfigured, getUploadSignature } = await import('../../utils/cloudinary.js');
+const { isCloudinaryConfigured, getUploadSignature } = await import('../../../../src/utils/cloudinary.js');
 const uploadRoutes = (await import('../../../../src/modules/upload/upload.routes.js')).default;
-const { prisma } = await import('../../config/prisma.js');
-const { signAccessToken } = await import('../../utils/jwt.js');
+const { prisma } = await import('../../../../src/config/prisma.js');
+const { signAccessToken } = await import('../../../../src/utils/jwt.js');
 
 const app = express();
 app.use(express.json());

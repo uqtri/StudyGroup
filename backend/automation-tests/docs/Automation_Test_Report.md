@@ -26,7 +26,7 @@ Generated: 2026-06-03
 
 | Framework | Installed | Purpose |
 |-----------|-----------|---------|
-| **Vitest** | Yes (`vitest@^4.1.7`) | Unit tests under `backend/tests/` (utils, middlewares, legacy service specs) |
+| **Vitest** | Yes (`vitest@^4.1.7`) | Unit tests under `backend/automation-tests/vitest/` |
 | **Jest** | Yes (`jest@^30.4.2`) | Service, controller (API), and E2E tests colocated in `backend/src/modules/` |
 | **Supertest** | Yes (`supertest@^7.2.2`) | HTTP integration / controller tests |
 | **jest-mock-extended** | Yes | Deep mocks (available) |
@@ -44,9 +44,9 @@ Generated: 2026-06-03
 
 **Infrastructure fixes applied (not new packages):**
 
-- `backend/tests/jest.setup.js` — loads test env vars before Jest runs
-- `backend/tests/mocks/prisma-client.js` — stable Prisma mock for ESM + Jest
-- `backend/jest.config.js` — `setupFiles`, `@prisma/client` mapper
+- `backend/automation-tests/jest.setup.js` — loads test env vars before Jest runs
+- `backend/automation-tests/mocks/prisma-client.js` — stable Prisma mock for ESM + Jest
+- `backend/automation-tests/jest.config.js` — `setupFiles`, `@prisma/client` mapper
 
 ---
 
@@ -131,30 +131,32 @@ Base API prefix: `/api`
 
 | Module | Service Tests | Controller (API) Tests | E2E Tests |
 |--------|---------------|------------------------|-----------|
-| auth | `src/modules/auth/auth.service.test.js` | `src/modules/auth/auth.controller.test.js` | `src/modules/auth/auth.e2e.test.js` |
-| users | `src/modules/users/users.service.test.js` | `src/modules/users/users.controller.test.js` | — |
-| groups | `src/modules/groups/groups.service.test.js` | `src/modules/groups/groups.controller.test.js` | `src/modules/groups/groups.e2e.test.js` |
-| sessions | `src/modules/sessions/sessions.service.test.js` | `src/modules/sessions/sessions.controller.test.js` | — |
-| attendance | `src/modules/attendance/attendance.service.test.js` | `src/modules/attendance/attendance.controller.test.js` | `src/modules/attendance/attendance.e2e.test.js` |
-| resource-folders | `src/modules/resource-folders/resource-folders.service.test.js` | `src/modules/resource-folders/resource-folders.controller.test.js` | — |
-| resources | `src/modules/resources/resources.service.test.js` | `src/modules/resources/resources.controller.test.js` | `src/modules/resources/resources.e2e.test.js` |
-| posts | `src/modules/posts/posts.service.test.js` | `src/modules/posts/posts.controller.test.js` | `src/modules/posts/posts.e2e.test.js` |
-| comments | `src/modules/comments/comments.service.test.js` | `src/modules/comments/comments.controller.test.js` | — |
-| notifications | `src/modules/notifications/notifications.service.test.js` | `src/modules/notifications/notifications.controller.test.js` | — |
-| dashboard | `src/modules/dashboard/dashboard.service.test.js` | `src/modules/dashboard/dashboard.controller.test.js` | — |
-| reports | `src/modules/reports/reports.service.test.js` | `src/modules/reports/reports.controller.test.js` | — |
-| upload | — | `src/modules/upload/upload.controller.test.js` | — |
+| auth | `automation-tests/jest/modules/auth/auth.service.test.js` | `automation-tests/jest/modules/auth/auth.controller.test.js` | `automation-tests/jest/e2e/auth/auth.e2e.test.js` |
+| users | `automation-tests/jest/modules/users/users.service.test.js` | `automation-tests/jest/modules/users/users.controller.test.js` | — |
+| groups | `automation-tests/jest/modules/groups/groups.service.test.js` | `automation-tests/jest/modules/groups/groups.controller.test.js` | `automation-tests/jest/e2e/groups/groups.e2e.test.js` |
+| sessions | `automation-tests/jest/modules/sessions/sessions.service.test.js` | `automation-tests/jest/modules/sessions/sessions.controller.test.js` | — |
+| attendance | `automation-tests/jest/modules/attendance/attendance.service.test.js` | `automation-tests/jest/modules/attendance/attendance.controller.test.js` | `automation-tests/jest/e2e/attendance/attendance.e2e.test.js` |
+| resource-folders | `automation-tests/jest/modules/resource-folders/...` | `automation-tests/jest/modules/resource-folders/...` | — |
+| resources | `automation-tests/jest/modules/resources/...` | `automation-tests/jest/modules/resources/...` | `automation-tests/jest/e2e/resources/...` |
+| posts | `automation-tests/jest/modules/posts/...` | `automation-tests/jest/modules/posts/...` | `automation-tests/jest/e2e/posts/...` |
+| comments | `automation-tests/jest/modules/comments/...` | `automation-tests/jest/modules/comments/...` | — |
+| notifications | `automation-tests/jest/modules/notifications/...` | `automation-tests/jest/modules/notifications/...` | — |
+| dashboard | `automation-tests/jest/modules/dashboard/...` | `automation-tests/jest/modules/dashboard/...` | — |
+| reports | `automation-tests/jest/modules/reports/...` | `automation-tests/jest/modules/reports/...` | — |
+| upload | — | `automation-tests/jest/modules/upload/upload.controller.test.js` | — |
 
-### Vitest (supplementary — `backend/tests/`)
+### Vitest (supplementary — `automation-tests/vitest/`)
 
-- `tests/modules/*/…service.test.js` — 12 module service specs
-- `tests/middlewares/*.test.js` — auth role, error middleware
-- `tests/utils/*.test.js` — jwt, pagination, ApiResponse, voteHelpers, etc.
+- `vitest/modules/*/…service.test.js` — 12 module service specs
+- `vitest/middlewares/*.test.js` — auth role, error middleware
+- `vitest/utils/*.test.js` — jwt, pagination, ApiResponse, voteHelpers, etc.
 
-### Test support files (this run)
+### Test support files
 
-- `backend/tests/mocks/prisma-client.js`
-- `backend/tests/jest.setup.js`
+- `automation-tests/mocks/prisma-client.js`
+- `automation-tests/jest.setup.js`
+- `automation-tests/setup.js`
+- `automation-tests/helpers/fixtures.js`
 
 ### Test categories per function code
 
