@@ -4,6 +4,12 @@
  */
 import { AUTH_DEFINITIONS } from './decision-table-auth.mjs';
 import { FUNCTION_DEFINITIONS } from './decision-table-data.mjs';
+import {
+  assignConditionRows,
+  enforceExclusivePerColumn,
+  mapOrphanConditions,
+  enforceConfirmExclusive,
+} from './matrix-rules-engine.mjs';
 
 export const PRECONDITIONS = [
   ['Can connect with server', 'DB Connection OK'],
@@ -86,6 +92,12 @@ class MappingContext {
 
   markOkPreconditions(utcidId) {
     for (const sub of OK_PRECONDITIONS) this.set(GROUP.PRE, sub, utcidId);
+  }
+
+  markFailPreconditions(utcidId) {
+    for (const row of this.catalog.filter((r) => r.group === GROUP.PRE && /fail|error/i.test(r.sub))) {
+      this.set(row.group, row.sub, utcidId);
+    }
   }
 
   markCatalog(group, category, sub, utcidId) {
@@ -171,7 +183,7 @@ const EXPLICIT_HANDLERS = {
       ctx.markBiz(id, (r) => r.sub.includes('MEMBER Role Missing'));
     },
     'Repository|createUser/createRefreshToken: Query Error'(ctx, id) {
-      ctx.markOkPreconditions(id);
+      ctx.markFailPreconditions(id);
       ctx.markCatalog(GROUP.INPUT, 'Input: email', 'valid@email.com', id);
       ctx.markCatalog(GROUP.INPUT, 'Input: password', 'validPassword123 (8+ chars, uppercase, digit)', id);
       ctx.markCatalog(GROUP.INPUT, 'Input: fullName', 'valid name (2-100 chars)', id);
@@ -241,7 +253,7 @@ const EXPLICIT_HANDLERS = {
       ctx.markBiz(id, (r) => r.sub.includes('Password Mismatch'));
     },
     'Repository|Query Error'(ctx, id) {
-      ctx.markOkPreconditions(id);
+      ctx.markFailPreconditions(id);
       ctx.markCatalog(GROUP.INPUT, 'Input: email', 'valid@email.com', id);
       ctx.markCatalog(GROUP.INPUT, 'Input: password', 'validPassword123', id);
       ctx.markRepo(id, (r) => r.sub.includes('findByEmail') && r.sub.includes('Query Error'));
@@ -295,12 +307,12 @@ function resolveGeneric(ctx, category, sub, utcidId) {
 
   if (/invalid|missing fields|not string when|absent \/ null|wrong|invalid uuid|invalid page|invalid name|invalid id|invalid field|invalid status|invalid email/.test(s)) {
     ctx.markOkPreconditions(utcidId);
-    ctx.markInputs(utcidId, (r) => /invalid|null \/ missing|empty|wrong|absent|fail|not string/.test(r.sub.toLowerCase()));
+    ctx.markFirstInputMatching(utcidId, (r) => /invalid|wrong/.test(r.sub.toLowerCase()) && !/null|missing|empty/.test(r.sub.toLowerCase()));
     return;
   }
 
   if (/query error|notify.*error|softdelete error|update.*error|delete.*error|create.*error|addmember error|findmany.*error|expired|stored null/.test(s)) {
-    ctx.markOkPreconditions(utcidId);
+    ctx.markFailPreconditions(utcidId);
     ctx.markInputs(utcidId, (r) => /valid|existing|present/.test(r.sub.toLowerCase()) && !/invalid|wrong|absent/.test(r.sub.toLowerCase()));
     ctx.markRepo(utcidId, (r) => /query error|error|expired|< now|not found/.test(r.sub.toLowerCase()));
     if (/livekit|deleteLiveKitRoom/.test(s)) {
@@ -393,16 +405,18 @@ export function resolveConditionMarks(fn) {
         }
       }
     }
+    enforceExclusivePerColumn(ctx, fn);
+    mapOrphanConditions(ctx, fn);
     return ctx;
   }
 
-  for (const cond of fn.conditions || []) {
-    for (const utcidId of ctx.utcids) {
-      if (cond[utcidId] === 'O') {
-        applyCondition(ctx, cond.category, cond.sub, utcidId);
-      }
-    }
+  enforceConfirmExclusive(fn);
+  const assignments = assignConditionRows(fn);
+  for (const { utcidId, condition } of assignments) {
+    applyCondition(ctx, condition.category, condition.sub, utcidId);
   }
+  mapOrphanConditions(ctx, fn);
+  enforceExclusivePerColumn(ctx, fn);
   return ctx;
 }
 

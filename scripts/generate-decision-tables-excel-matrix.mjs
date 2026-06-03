@@ -102,8 +102,7 @@ const warnings = [];
 let out = `# Excel Matrix Format
 
 > Single merged decision matrix per function code.
-> **Condition Mapping Rule:** every reachable sub-condition row is marked \`O\` on the UTCID columns that use it.
-> A reviewer can reconstruct each test case by reading only the rows marked \`O\` for that UTCID.
+> **Decision Table Rules:** (1) Each UTCID = one execution path. (2) Within the same condition group, only one mutually-exclusive sub-condition is \`O\` per UTCID. (3) Every \`O\` maps to a real scenario. (4) Every condition row is mapped to at least one UTCID. (5) Sections: Precondition, Input, Repository, Security, Business Rule, Confirm, Result. (6) Preserve UTCIDs and scenarios.
 > UTCID convention: **UTCID01** = Happy Path | **UTCID02** = Validation Error | **UTCID03** = Business Rule Error | **UTCID04** = Authorization Error | **UTCID05** = Exception / Dependency Failure | Additional UTCIDs for extra branches.
 
 **Column structure:** \`Condition\` | \`Sub Condition\` | \`UTCID01\` … \`UTCID0N\`
