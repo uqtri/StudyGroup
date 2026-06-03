@@ -799,36 +799,35 @@
 
 #### Decision Table
 
-| Condition Category | Sub Condition | UTCID01 | UTCID02 | UTCID03 | UTCID04 | UTCID05 |
+| Condition Category | Sub Condition | UTCID01 | UTCID06 | UTCID02 | UTCID04 | UTCID05 |
 |-------------------|---------------|---|---|---|---|---|
-| Input Validation | Valid fields + self update | O |  |  |  |  |
-| Input Validation | Invalid UUID/fields |  | O |  |  |  |
-| Security | Admin updates other user | O |  |  |  |  |
-| Security | Non-admin updates other |  |  |  | O |  |
-| Repository | update Query Error |  |  |  |  | O |
+| Security | Self update (id === requesterId) | O |  |  |  |  |
+| Security | Admin updates another user |  | O |  |  |  |
+| Input Validation | Invalid UUID or body fields |  |  | O |  |  |
+| Security | Non-admin updates another user |  |  |  | O |  |
+| Repository | usersRepository.update Query Error |  |  |  |  | O |
 
 #### Confirm: Return Status
 
-| Return Status | UTCID01 | UTCID02 | UTCID03 | UTCID04 | UTCID05 |
+| Return Status | UTCID01 | UTCID06 | UTCID02 | UTCID04 | UTCID05 |
 |---|---|---|---|---|---|
-| 200 | O |  |  |  |  |
-| 400 |  | O | O |  |  |
+| 200 | O | O |  |  |  |
+| 400 |  |  | O |  |  |
 | 403 |  |  |  | O |  |
 | 500 |  |  |  |  | O |
 
 #### Confirm: Return Body
 
-| Return Body | UTCID01 | UTCID02 | UTCID03 | UTCID04 | UTCID05 |
+| Return Body | UTCID01 | UTCID06 | UTCID02 | UTCID04 | UTCID05 |
 |---|---|---|---|---|---|
-| Updated user | O |  |  |  |  |
+| Updated user | O | O |  |  |  |
 
 #### Confirm: Exception
 
-| Exception | UTCID01 | UTCID02 | UTCID03 | UTCID04 | UTCID05 |
+| Exception | UTCID01 | UTCID06 | UTCID02 | UTCID04 | UTCID05 |
 |---|---|---|---|---|---|
-| None | O |  |  |  |  |
-| ApiError.badRequest (Validation) |  | O |  |  |  |
-| ApiError.notFound |  |  | O |  |  |
+| None | O | O |  |  |  |
+| ApiError.badRequest (Validation) |  |  | O |  |  |
 | ApiError.forbidden |  |  |  | O |  |
 | Repository/Dependency Error |  |  |  |  | O |
 

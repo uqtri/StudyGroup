@@ -260,6 +260,45 @@ const EXPLICIT_HANDLERS = {
     },
   },
 
+  updateUser: {
+    'Security|Self update (id === requesterId)': (ctx, id) => {
+      if (id !== 'UTCID01') return;
+      ctx.markOkPreconditions(id);
+      ctx.markInputs(id, (r) => /input:/i.test(r.sub));
+      ctx.set(GROUP.INPUT, 'Input: requesterId: same as id (self) / different', id);
+      ctx.markRepo(id, (r) => r.sub.includes('Not called when id === requesterId'));
+      ctx.markRepo(id, (r) => r.sub.includes('usersRepository.update') && /Success/.test(r.sub));
+      ctx.markSec(id, (r) => r.sub.includes('Self Update'));
+      ctx.markBiz(id, (r) => r.sub.includes('Update Fields'));
+    },
+    'Security|Admin updates another user': (ctx, id) => {
+      if (id !== 'UTCID06') return;
+      ctx.markOkPreconditions(id);
+      ctx.markInputs(id, (r) => /input:/i.test(r.sub));
+      ctx.set(GROUP.INPUT, 'Input: requesterId: same as id (self) / different', id);
+      ctx.markRepo(id, (r) => r.sub.includes('findById (requester)') && r.sub.includes('Found (ADMIN)'));
+      ctx.markRepo(id, (r) => r.sub.includes('usersRepository.update') && /Success/.test(r.sub));
+      ctx.markSec(id, (r) => r.sub.includes('Admin Update'));
+      ctx.markBiz(id, (r) => r.sub.includes('Update Fields'));
+    },
+    'Input Validation|Invalid UUID or body fields': (ctx, id) => {
+      if (id !== 'UTCID02') return;
+      ctx.markOkPreconditions(id);
+      ctx.markInputs(id, (r) => /\/ invalid|invalid uuid/i.test(r.sub));
+    },
+    'Security|Non-admin updates another user': (ctx, id) => {
+      if (id !== 'UTCID04') return;
+      ctx.markOkPreconditions(id);
+      ctx.markRepo(id, (r) => r.sub.includes('Found (non-ADMIN)'));
+      ctx.markSec(id, (r) => r.sub.includes('Forbidden'));
+    },
+    'Repository|usersRepository.update Query Error': (ctx, id) => {
+      if (id !== 'UTCID05') return;
+      ctx.markFailPreconditions(id);
+      ctx.markRepo(id, (r) => r.sub.includes('usersRepository.update') && r.sub.includes('Query Error'));
+    },
+  },
+
   logout: {
     'Security|authenticate PASS + refreshToken present'(ctx, id) {
       ctx.markOkPreconditions(id);

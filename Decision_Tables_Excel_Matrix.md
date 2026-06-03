@@ -574,7 +574,7 @@
 
 #### Excel Matrix
 
-| Condition | Sub Condition | UTCID01 | UTCID02 | UTCID03 | UTCID04 | UTCID05 |
+| Condition | Sub Condition | UTCID01 | UTCID06 | UTCID02 | UTCID04 | UTCID05 |
 |-----------|---------------|---|---|---|---|---|
 | — Condition — |  |  |  |  |  |  |
 | Precondition | Can connect with server: DB Connection OK | O | O | O | O |  |
@@ -588,35 +588,36 @@
 | Precondition | Cloudinary Service Fail |  |  |  |  | O |
 | Precondition | LiveKit Service OK | O | O | O | O |  |
 | Precondition | LiveKit Service Fail |  |  |  |  | O |
-| Input (req.body) | Input: id (param): valid UUID | O | O |  |  | O |
-| Input (req.body) | Input: fullName (body): optional 2-100 / invalid |  | O |  |  |  |
-| Input (req.body) | Input: bio (body): optional max 500 / invalid |  | O |  |  |  |
-| Input (req.body) | Input: avatar (body): optional valid URL / invalid |  | O |  |  |  |
-| Input (req.body) | Input: requesterId: same as id (self) / different | O |  |  |  |  |
-| Repository | usersRepository.findById (requester): Found when id !== requesterId | O | O | O |  |  |
-| Repository | usersRepository.update: Success / Query Error |  |  | O |  | O |
+| Input (req.body) | Input: id (param): valid UUID / invalid UUID | O | O | O |  |  |
+| Input (req.body) | Input: fullName (body): optional 2-100 / invalid | O | O | O |  |  |
+| Input (req.body) | Input: bio (body): optional max 500 / invalid | O | O | O |  |  |
+| Input (req.body) | Input: avatar (body): optional valid URL / invalid | O | O | O |  |  |
+| Input (req.body) | Input: requesterId: same as id (self) / different | O | O |  |  |  |
+| Repository | usersRepository.findById (requester): Found (ADMIN) when id !== requesterId |  | O |  |  |  |
+| Repository | usersRepository.findById (requester): Found (non-ADMIN) when id !== requesterId |  |  |  | O |  |
+| Repository | usersRepository.findById (requester): Not called when id === requesterId | O |  |  |  |  |
+| Repository | usersRepository.update: Success | O | O |  |  |  |
+| Repository | usersRepository.update: Query Error |  |  |  |  | O |
 | Security | Self Update: id === requesterId → allowed | O |  |  |  |  |
-| Security | Admin Update: requester roles includes ADMIN | O | O | O | O |  |
-| Security | Forbidden: Non-admin updating other user |  |  | O | O |  |
-| Business Rule | Update Fields: fullName, bio, avatar only | O |  |  |  |  |
+| Security | Admin Update: requester roles includes ADMIN |  | O |  |  |  |
+| Security | Forbidden: Non-admin updating other user |  |  |  | O |  |
+| Business Rule | Update Fields: fullName, bio, avatar only (status not via this endpoint) | O | O |  |  |  |
 | — Confirm — |  |  |  |  |  |  |
-| Return Status | 200 | O |  |  |  |  |
-| Return Status | 400 |  | O | O |  |  |
+| Return Status | 200 | O | O |  |  |  |
+| Return Status | 400 |  |  | O |  |  |
 | Return Status | 403 |  |  |  | O |  |
 | Return Status | 500 |  |  |  |  | O |
-| Return Body | Updated user | O |  |  |  |  |
-| Exception | None | O |  |  |  |  |
-| Exception | ApiError.badRequest (Validation) |  | O |  |  |  |
-| Exception | ApiError.notFound |  |  | O |  |  |
+| Return Body | Updated user | O | O |  |  |  |
+| Exception | None | O | O |  |  |  |
+| Exception | ApiError.badRequest (Validation) |  |  | O |  |  |
 | Exception | ApiError.forbidden |  |  |  | O |  |
 | Exception | Repository/Dependency Error |  |  |  |  | O |
-| Log Message | Operation successful | O |  |  |  |  |
-| Log Message | Validation failed |  | O |  |  |  |
-| Log Message | Business rule rejected |  |  | O |  |  |
+| Log Message | Operation successful | O | O |  |  |  |
+| Log Message | Validation failed |  |  | O |  |  |
 | Log Message | Authorization denied |  |  |  | O |  |
 | Log Message | Unhandled exception |  |  |  |  | O |
 | — Result — |  |  |  |  |  |  |
-| Type |  | Happy Path | Validation Error | Business Rule Error | Authorization Error | Exception / Dependency Failure |
+| Type |  | Happy Path - Self Update | Happy Path - Admin Updates Other | Validation Error | Authorization Error | Exception / Dependency Failure |
 | Pass/Fail |  |  |  |  |  |  |
 | Executed Date |  |  |  |  |  |  |
 | Defect ID |  |  |  |  |  |  |
