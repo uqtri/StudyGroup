@@ -119,10 +119,15 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 ### 🗄️ Database
 - PostgreSQL (Neon cloud or local via Docker Compose)
 
-### 🧪 Testing
+### 🧪 Testing — Backend
 - Vitest (service, utility, middleware unit tests)
 - Jest (service, controller/API, E2E tests)
 - Supertest (HTTP integration tests)
+
+### 🧪 Testing — Frontend
+- Vitest + jsdom (unit tests)
+- React Testing Library + @testing-library/user-event (component tests)
+- Playwright (E2E / automation tests)
 
 ### 🐳 Deployment (infrastructure)
 - Docker (multi-stage builds)
@@ -187,15 +192,39 @@ StudyGroup/
 │   ├── Dockerfile
 │   └── package.json
 ├── frontend/
+│   ├── e2e/                    # Playwright E2E test suites
+│   │   ├── auth/               # Login, register flows
+│   │   ├── groups/             # Group browse / management
+│   │   ├── sessions/           # Session flows
+│   │   ├── resources/          # Resource flows
+│   │   ├── user/               # Profile flows
+│   │   ├── admin/              # Admin portal flows
+│   │   └── fixtures/           # factories.js, helpers.js
 │   ├── src/
 │   │   ├── api/                # Axios API clients
+│   │   │   └── __tests__/      # API module unit tests
 │   │   ├── components/
+│   │   │   └── common/
+│   │   │       └── __tests__/  # Component unit tests
+│   │   ├── hooks/
+│   │   │   └── __tests__/      # Hook unit tests
 │   │   ├── pages/
-│   │   ├── layouts/
+│   │   │   └── */
+│   │   │       └── __tests__/  # Page unit tests
 │   │   ├── routes/
-│   │   ├── store/
+│   │   │   └── __tests__/      # Route guard unit tests
 │   │   ├── schemas/
-│   │   └── utils/
+│   │   │   └── __tests__/      # Zod schema unit tests
+│   │   ├── store/
+│   │   │   └── __tests__/      # Zustand store unit tests
+│   │   ├── utils/
+│   │   │   └── __tests__/      # Utility unit tests
+│   │   ├── layouts/
+│   │   └── test/               # Shared test infrastructure
+│   │       ├── setup.js        # Vitest global setup
+│   │       ├── utils.jsx       # renderWithProviders helper
+│   │       └── factories.js    # Test data factories
+│   ├── playwright.config.js
 │   ├── Dockerfile
 │   ├── nginx.conf
 │   └── package.json
@@ -214,6 +243,8 @@ StudyGroup/
 | `frontend/src/pages` | Route-level UI pages (auth, groups, admin, sessions) |
 | `frontend/src/api` | Typed HTTP clients for each backend module |
 | `frontend/src/layouts` | Website, admin, auth, and dashboard shells |
+| `frontend/src/test` | Shared test infrastructure (setup, providers, factories) |
+| `frontend/e2e` | Playwright end-to-end test suites |
 | `scripts` | Decision-table and test-annotation tooling (QA artifacts) |
 
 ---
@@ -421,9 +452,9 @@ Protected routes require: `Authorization: Bearer <accessToken>`
 
 ## 🧪 Testing
 
-Tests run from the `backend/` directory.
+### 🖥️ Backend tests (from `backend/`)
 
-### ⚡ Vitest (default `npm test`)
+#### ⚡ Vitest (default `npm test`)
 
 ```bash
 cd backend
@@ -432,7 +463,7 @@ npm run test:watch
 npm run test:cov:vitest
 ```
 
-### 🎯 Jest (service, API/controller, E2E)
+#### 🎯 Jest (service, API/controller, E2E)
 
 ```bash
 npm run test:jest
@@ -442,15 +473,67 @@ npm run test:e2e
 npm run test:cov
 ```
 
-### ✅ All tests
+#### ✅ All backend tests
 
 ```bash
 npm run test:all
 ```
 
-Frameworks in use: **Vitest**, **Jest**, **Supertest**. No Cypress or Playwright suites are present.
+Frameworks: **Vitest**, **Jest**, **Supertest**.
 
 See `backend/automation-tests/README.md` for layout and QA documentation references.
+
+---
+
+### 💻 Frontend tests (from `frontend/`)
+
+#### ⚡ Vitest unit tests
+
+```bash
+cd frontend
+npm test                  # run once
+npm run test:watch        # watch mode
+npm run test:coverage     # with HTML coverage report
+```
+
+#### 🎭 Playwright E2E tests
+
+Requires the backend API and frontend dev server to be running (Playwright starts the frontend automatically via `webServer`):
+
+```bash
+npm run test:e2e          # headless (Chrome + Firefox)
+npm run test:e2e:headed   # with visible browser
+npm run test:e2e:ui       # Playwright interactive UI
+npm run test:e2e:report   # open last HTML report
+```
+
+#### 📊 Frontend test coverage (unit tests)
+
+| Layer | Test Files | Test Cases |
+|---|---|---|
+| API services | 7 | 38 |
+| Zustand stores | 2 | 13 |
+| Hooks | 1 | 4 |
+| Zod schemas | 1 | 9 |
+| Utility functions | 2 | 12 |
+| Common components | 5 | 39 |
+| Pages | 7 | 57 |
+| Route guards | 1 | 8 |
+| **Total** | **27 files** | **204 tests** |
+
+#### 🎭 Frontend E2E coverage (Playwright)
+
+| Feature | Spec File | Scenarios |
+|---|---|---|
+| Login | `e2e/auth/login.spec.js` | Page render, validation, success, error, session persistence, logout |
+| Register | `e2e/auth/register.spec.js` | Page render, 5 validation rules, success, duplicate email |
+| Groups | `e2e/groups/groups.spec.js` | Browse, create, my-groups, detail, access control, search |
+| Profile | `e2e/user/profile.spec.js` | Render, stats, edit, save, access control |
+| Sessions | `e2e/sessions/sessions.spec.js` | List, detail, access control, admin management |
+| Resources | `e2e/resources/resources.spec.js` | List, access control, admin management, group resources tab |
+| Admin | `e2e/admin/admin.spec.js` | Access control, dashboard stats/charts, users, groups, settings, navigation |
+
+Frameworks: **Vitest**, **React Testing Library**, **Playwright**.
 
 ---
 
@@ -489,6 +572,14 @@ See `backend/automation-tests/README.md` for layout and QA documentation referen
 | `npm run preview` | Preview production build |
 | `npm run lint` | ESLint on `src/` |
 | `npm run format` | Prettier format |
+| `npm test` | Vitest unit tests (run once) |
+| `npm run test:watch` | Vitest watch mode |
+| `npm run test:coverage` | Vitest with V8 coverage report |
+| `npm run test:ui` | Vitest browser UI |
+| `npm run test:e2e` | Playwright E2E tests (headless) |
+| `npm run test:e2e:ui` | Playwright interactive UI mode |
+| `npm run test:e2e:headed` | Playwright with visible browser |
+| `npm run test:e2e:report` | Open last Playwright HTML report |
 
 ---
 

@@ -1,0 +1,4238 @@
+Software Requirements
+Specification
+for
+Study Group Management System
+Version 1.0 approved
+Prepared by Nguyen Thi Khanh Ngoc
+Nguyen Cong Duc
+Ung Quang Tri
+March 15, 2026
+Copyright © 2026 by Group 12
+
+-- 1 of 190 --
+
+Software Requirements Specification for PearlsFromSand.com 	Page 2
+Table of Contents
+1. Introduction 	1
+1.1 Purpose 	1
+1.2 Document Conventions 	1
+1.3 Project Vision and Product Scope 	2
+1.3.1 Vision Statement 	2
+1.3.2 Product Scope 	3
+1.4 References 	4
+2. Overall Description 	4
+2.1 Product Perspective 	4
+2.2 Product Functions (Features) 	4
+2.3 User Classes and Their Use Cases 	6
+2.4 Operating Environment 	7
+2.5 Design and Implementation Constraints 	8
+2.6 Assumptions and Dependencies 	8
+2.6.1 Assumptions 	8
+2.6.2 Dependencies 	8
+3. Functional Requirements 	10
+3.1 Use Cases for Students 	10
+3.2 Use Cases for Administrators 	28
+4. External Interface Requirements 	37
+4.1 User Interfaces 	37
+4.2 Software Interfaces 	39
+4.3 Hardware Interfaces 	40
+4.4 Communications Interfaces 	40
+5. Other Nonfunctional Requirements 	41
+5.1 Performance Requirements 	41
+5.2 Security 	42
+5.3 Extensibility 	43
+6. Business Rules 	44
+Copyright © 2026 by Group 12
+
+-- 2 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 1
+1. 	Introduction
+1.1 Purpose
+The purpose of this SRS is to document the complete functional and non-functional
+requirements for the Study Group Management System. This document is intended
+to be used by the development team as a blueprint for system design, implementation,
+and testing, and by stakeholders to understand the scope and expected functionality of
+the final product. This SRS clearly defines what the Study Group Management
+System platform is expected to do, covering all user interactions from secure user
+authentication and profile management to the creation and organization of study
+groups, the sharing of educational resources, and real-time collaboration through
+integrated text and video chat features.
+1.2 Document Conventions
+The following conventions are used throughout this document:
+Convention 	Meaning 	Example
+SGMS 	Study Group
+Management System
+SGMS shall allow users to select
+seats.
+Copyright © 2026 by Group 12
+
+-- 3 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 2
+[BR-XXX] 	Business Rule 	The system shall enforce [BR-01]:
+Tickets cannot be refunded after the
+show starts.
+[REQ-XXX] 	Functional Requirement [REQ-1.1] Allow customer login.
+[NFR-XXX] 	Non-Functional
+Requirement
+[NFR-3.1] The system shall respond
+within 3 seconds.
+Italics 	Important terms or
+defined concepts
+The Patron is the primary end-user.
+1.3 Project Vision and Product Scope
+1.3.1 Vision Statement
+For students and lifelong learners who are seeking a more interactive and
+collaborative way to study, the Study Group Management System is a secure web
+application that allows users to create study groups, share resources, and participate
+in real-time discussions. Unlike traditional isolated study methods, our product
+provides a synchronous learning environment with integrated text and video chat,
+ensuring that members can collaborate efficiently and effectively from anywhere.
+Copyright © 2026 by Group 12
+
+-- 4 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 3
+1.3.2 Product Scope
+The Study Group Management System (SGMS) will cover the entire process of
+organizing study groups and facilitating academic collaboration.
+The system scope includes:
+● Authentication & User Management Module: Manages user identity:
+registration, login/logout, JWT token lifecycle, account status control, and
+profile management.
+● Group Management Module: Handles study group CRUD, member
+join-request workflow, and admin-level group status control.
+● Session & Attendance Management Module: Manages study session
+scheduling, live video rooms (LiveKit), and member attendance tracking.
+● Resource Module: Provides a per-group file library organised into folders,
+with star ratings and Cloudinary-backed uploads.
+● Community & Engagement Module: Enables group discussions (posts,
+threaded comments, voting), in-app notifications, and content reporting
+● Analytics & Administration Module: Delivers role-adaptive statistics and
+charts for members, leaders, and admins.
+The system scope exclude:
+● LMS Integration: Direct synchronization or integration with external Learning
+Management Systems (e.g., Canvas, Blackboard).
+● Native Mobile Support: Development of native iOS or Android applications
+(the focus remains on a responsive web-based experience).
+● Payment Processing: Any monetization or payment gateway integration for
+group memberships or shared resources.
+Copyright © 2026 by Group 12
+
+-- 5 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 4
+1.4 References
+The following documents were used as reference materials for this SRS:
+Project Charter for Study Group Management System 1.0
+COS SRS.docx (Template for SRS Structure)1.0
+Stakeholder Interviews Summary
+2. 	Overall Description
+2.1 Product Perspective
+The Study Group Management System (SGMS) is a standalone web application
+designed to streamline collaborative learning by providing a centralized platform for
+creating study groups, managing educational resources, and multi-channel
+communication. It is intended to consolidate scattered learning materials and
+discussion threads into a single, organized environment. The system is independent of
+existing enterprise learning management systems (ELMS) and focuses on user-driven
+group dynamics.
+2.2 Product Functions (Features)
+The SGMS provides two main user interfaces and a set of core services:
+Function
+Category
+ID 	Description (What the system does)
+Copyright © 2026 by Group 12
+
+-- 6 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 5
+Authentication
+& Account
+F1.0 	Account Access: The system allows visitors to create
+a new account, sign in with their credentials, stay
+signed in across browser sessions, and sign out
+securely.
+F1.1 	Profile Management: The system allows logged-in
+users to view their personal profile and update their
+display name, photo, and bio at any time.
+User
+Management
+(Admin)
+F2.0 	User Directory: The system allows logged-in users
+to view any member's public profile, and allows
+administrators to browse and search the full user list
+with filtering by account status.
+F2.1 	User Account Administration: The system allows
+administrators to activate, suspend, deactivate, or
+permanently remove any user account on the
+platform.
+Study Groups 	F3.0 	Browse & Discover Groups: The system allows any
+visitor to browse all available study groups and view
+a group's full profile, including its members,
+sessions, resources, and discussions. Logged-in users
+Copyright © 2026 by Group 12
+
+-- 7 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 6
+also see their membership status and can access a
+personal list of all groups they belong to.
+F3.1 	Group Setup & Management: The system allows
+logged-in users to create a new study group and
+automatically become its leader. Leaders can update
+the group's information or permanently close the
+group. Administrators can archive or restore any
+group.
+F3.2 	Group Membership: The system allows users to
+request to join a group, withdraw a pending request,
+and allows group leaders to approve or decline
+membership requests.
+Study Sessions 	F4.0 	Browse Sessions: The system allows users to browse
+study sessions with filtering by group, status, or
+upcoming dates, and view the full details of any
+session including its schedule, description, and
+attendee list.
+F4.1 	Session Management: The system allows group
+members to create and schedule new sessions or start
+one immediately. Leaders and organisers can edit
+Copyright © 2026 by Group 12
+
+-- 8 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 7
+session details, conclude or cancel ongoing sessions,
+and permanently remove sessions.
+F4.2 	Live Participation & Notification: The system
+allows group members to join an ongoing session's
+live video call directly from the platform, and allows
+organisers to send in-app notifications to all group
+members about a session.
+Attendance 	F5.0 	Attendance Tracking: The system automatically
+records a member as present when they join a live
+session. Leaders can also manually record each
+member's attendance status (Present, Absent, Late, or
+Excused) and view the full attendance roster for any
+session.
+Resources &
+Folders
+F6.0 	Resource Library: The system allows members to
+browse all study materials shared within their groups,
+view full resource details, and filter materials by
+folder. Groups can organise resources into named
+folders that members can create and rename.
+F6.1 	Resource Actions: The system allows members to
+upload and share files with their group, remove
+Copyright © 2026 by Group 12
+
+-- 9 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 8
+materials they uploaded, and bookmark useful
+resources with a star for quick access.
+Discussions
+(Posts &
+Comments)
+F7.0 	Discussion Board: The system allows group
+members to browse, create, edit, and delete
+discussion posts (with optional file attachments)
+within a group. Members can upvote or downvote
+posts to surface the most relevant content.
+F7.1 	Comments & Replies: The system allows members
+to post threaded comments and replies on any
+discussion, edit or delete their own comments,
+mention other members with @, and upvote or
+downvote comments.
+Notifications 	F8.0 	Notification Centre: The system delivers in-app
+notifications to users for relevant platform activity.
+Users can view a full notification feed, see a badge
+count of unread items, and mark individual or all
+notifications as read.
+Admin
+Interface
+F9.0 	Platform Overview & Analytics: The system
+provides administrators with a dashboard of key
+platform metrics and charts, and allows drill-down
+Copyright © 2026 by Group 12
+
+-- 10 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 9
+into per-group statistics including session activity and
+member growth.
+F9.1 	Platform Content Oversight: The system provides
+administrators with full visibility of all users, groups,
+sessions, and resources across the platform, with the
+ability to manage statuses and take moderation
+actions.
+F9.2 	Content Reporting & Moderation: The system
+allows any logged-in user to flag inappropriate
+content for review, and provides administrators with
+a dedicated queue to review and resolve submitted
+reports.
+F9.3 	Content Reporting & Moderation: The system
+allows any logged-in user to flag inappropriate
+content for review, and provides administrators with
+a dedicated queue to review and resolve submitted
+reports.
+Copyright © 2026 by Group 12
+
+-- 11 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 10
+2.3 User Classes and Their Use Cases
+The SGMS identifies three primary user classes:
+User Class 	Description 	Key Characteristics & Permissions
+Guest
+(Unauthenticate
+d)
+Any visitor who
+has not logged in.
+Can browse public
+content but cannot
+interact.
+Goals: Discover the platform,
+browse available study groups and
+sessions, decide whether to register.
+Skills: Basic web browsing; no
+technical skills required.
+Permissions: Permissions: F1.1
+(register & login only), F3.1 (browse
+only), F4.1 (browse only)
+Member
+(Student)
+A registered user
+who has joined one
+or more study
+groups with the
+MEMBER 	role.
+The default role
+after registration.
+Goals: Join groups relevant to their
+studies, attend scheduled sessions,
+access and upload shared learning
+resources, participate in group
+discussions, and track personal
+attendance.
+Skills: Basic computer literacy;
+comfortable with file uploads and
+chat interfaces.
+Permissions: F1.1, F1.2, F3.1, F3.2
+(create only), F3.3 (request & cancel
+Copyright © 2026 by Group 12
+
+-- 12 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 11
+only), F4.1, F4.3 (join meeting only),
+F5.1 (self check-in only), F6.1, F6.2
+(upload & star only), F7.1, F7.2,
+F8.1, F9.3 (submit report only)
+Leader (Group
+Leader)
+A MEMBER who
+has the LEADER
+role within one or
+more groups
+(granted at group
+creation or by
+promotion). Has
+elevated
+management
+authority within
+their groups.
+Goals: Organize and run study
+groups effectively; schedule and
+conduct sessions; manage
+membership; curate resources;
+moderate discussions; review
+attendance data.
+Skills: Organisational skills;
+comfortable managing schedules and
+member lists; basic understanding of
+content moderation.
+Permissions: All Member
+permissions, with expanded access
+on - F3.2 (edit & delete own group),
+F3.3 (approve & reject requests),
+F4.2, F4.3, F5.1, F6.2
+Admin
+(Platform
+Administrator)
+A super-user with
+full platform
+authority. Typically
+a system operator
+Goals: Maintain platform health and
+safety; manage user accounts;
+monitor groups and sessions
+globally; resolve content reports;
+Copyright © 2026 by Group 12
+
+-- 13 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 12
+or staff member.
+Accesses a
+dedicated admin
+portal entirely
+separate from the
+student/leader UI.
+access platform-wide analytics.
+Skills: Platform administration; data
+interpretation; moderate technical
+proficiency.
+Permissions: All Leader
+permissions, plus — F2.1 (full),
+F2.2, F3.2, F9.1, F9.2, F9.3
+2.4 Operating Environment
+This section describes the environment in which the software will operate.
+● Client Side: React 19 (SPA) + Vite 6; React Router v7; Zustand v5 + TanStack
+Query v5 (state management); React Hook Form + Zod (forms); TailwindCSS
+v4; Recharts v2 (charts); LiveKit components (real-time video); Axios v1
+(HTTP); served via Nginx on port 80.
+● Server Side: Node.js 20+ (ESM); Express 4; RESTful JSON API at /api; JWT
+auth (access 15 min / refresh 7 days, hashed in DB); role-based middleware;
+express-validator; Helmet + CORS + bcrypt security; Morgan logging; Prisma
+Client v6 ORM; served on port 5000.
+● Database: PostgreSQL 16; Prisma 6 (schema-first migrations, 20 models);
+soft-delete via deletedAt pattern; hosted on Neon (cloud) or Docker
+(self-hosted).
+● Third-Party Services: Cloudinary (file storage, signed direct-upload); LiveKit
+(real-time video rooms, server-side token generation).
+Copyright © 2026 by Group 12
+
+-- 14 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 13
+● Runtime Environment: Node.js v20+ / npm v10+; Docker + Docker
+Compose v3.8 (optional full-stack or DB-only mode); config via .env files.
+2.5 Design and Implementation Constraints
+The project must adhere to the following constraints:
+● Technology Stack: Must use Node.js, ReactJS, and Monolithic Architecture
+as defined in the project scope.
+● Security: All financial transactions and user data must be secured using
+appropriate encryption and protocols (SSL/TLS).
+● Performance: The system must be able to handle peak traffic during popular
+movie releases without significant degradation in response time (detailed in
+Section 6.0 Quality Attributes).
+2.6 Assumptions and Dependencies
+2.6.1 Assumptions
+● Users have access to hardware (webcam/microphone) for video-based study
+sessions.
+● Database availability: PostgreSQL (Neon or Docker) is continuously available
+with < 100 ms latency to the backend server.
+● The internet connection between the student and the server is stable during
+real-time communication.
+2.6.2 Dependencies
+● External Services: PostgreSQL 16 (critical — all data); Cloudinary v2 (high
+— file uploads); LiveKit v2 (medium — live video only)
+Copyright © 2026 by Group 12
+
+-- 15 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 14
+● Node.js Ecosystem: Dependent on specific npm packages (Sequelize, Express,
+Handlebars, Bcrypt).
+● Database Engine: Dependent on a PostgreSQL-compatible database for data
+persistence.
+Copyright © 2026 by Group 12
+
+-- 16 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 15
+3. 	Functional Requirements
+3.1 Use Cases for Guest
+Guests are unauthenticated users who can browse study groups and sessions, view
+public information, and register or log in to access additional features.
+UC-G-01: Login
+Item 	Description
+Use Case ID 	UC-G-01
+Copyright © 2026 by Group 12
+
+-- 17 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 16
+Use Case Name 	Login
+Description 	Allows a registered user to sign in to the platform using their
+email address and password and be directed to their
+personalised home page.
+Actor(s) 	Guest (New User)
+Priority 	High
+Trigger 	Guest clicks the "Sign in" button or link on any public page.
+Pre-Conditions 	1. The Guest is not currently signed in.
+2. The Guest has a registered account on the platform.
+Post-Conditions 	1. The Guest is successfully signed in and their session is
+maintained.
+2. The system redirects the user to their role-appropriate
+home page.
+Basic Flow 	1. Guest navigates to the Login page.
+2. System displays the login form with email address and
+password fields.
+3. Guest enters their registered email address and password.
+4. Guest clicks Sign in.
+5. System validates that the email is in a correct format and
+the password field is not empty.
+6. System verifies the email and password against the
+registered account.
+Copyright © 2026 by Group 12
+
+-- 18 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 17
+7. System confirms the account is active.
+8. System signs the user in and preserves the session.
+9. System redirects the user to their role-appropriate home
+page.
+Alternative Flow 	Navigate to Register:
+1. Guest clicks the "Register" link on the Login page.
+2. System navigates to the Register page.
+Exception Flow 	Invalid Input:
+1. Guest submits the form with an invalid email format or an
+empty password.
+2. System displays validation error messages next to the
+affected fields.
+3. The sign-in request is not submitted.
+Wrong Credentials:
+1. Guest enters an email or password that does not match any
+account.
+2. System displays "Invalid credentials" below the form.
+3. The user remains on the Login page.
+Account Inactive:
+1. Guest attempts to sign in with a deactivated account.
+2. System displays a message indicating the account is not
+active.
+3. Access is denied.
+Copyright © 2026 by Group 12
+
+-- 19 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 18
+UC-G-02: Register Account
+Item 	Description
+Use Case ID 	UC-G-02
+Use Case Name 	Register Account
+Copyright © 2026 by Group 12
+
+-- 20 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 19
+Description 	Allows a new visitor to create a StudyHub account by
+providing their full name, email address, and password. Upon
+successful registration, the user is automatically signed in
+with the default Member role.
+Actor(s) 	Guest
+Priority 	High
+Trigger 	Guest clicks the "Register" link or button on any public page.
+Pre-Conditions 	1. The Guest is not currently signed in.
+2. The Guest does not already have an account registered with
+the same email address.
+Post-Conditions 	1. A new account is created and assigned the Member role.
+2. The user is automatically signed in.
+3. The system redirects the user to the My Groups page.
+Basic Flow 	1. Guest navigates to the Register page.
+2. System displays the registration form with fields for full
+name, email address, and password.
+3. Guest fills in all required fields.
+4. Guest clicks Create account.
+5. System validates the entered information: full name must
+be 2–100 characters; email must be in a valid format;
+password must be at least 8 characters and contain at least
+one uppercase letter and one number.
+6. System checks that the email address is not already in use.
+Copyright © 2026 by Group 12
+
+-- 21 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 20
+7. System creates the new account and assigns the Member
+role.
+8. System automatically signs the user in.
+9. System redirects the user to the My Groups page.
+Alternative Flow 	Navigate to Login:
+1. Guest clicks the "Sign in" link.
+2. System navigates to the Login page.
+Exception Flow 	Validation Failure:
+1. Guest submits the form with missing or invalid
+information.
+2. System displays field-level error messages (e.g., "Password
+must be at least 8 characters with an uppercase letter and a
+number").
+3. The account is not created.
+Email Already Registered:
+1. Guest submits a form using an email address already
+associated with an existing account.
+2. System displays "Email already registered".
+3. The account is not created.
+Copyright © 2026 by Group 12
+
+-- 22 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 21
+UC-G-03: Browse Study Groups
+Item 	Description
+Use Case ID 	UC-G-03
+Use Case Name 	Browse Study Groups
+Copyright © 2026 by Group 12
+
+-- 23 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 22
+Description 	Allows a guest to view a paginated list of all active study
+groups on the platform. The guest may search by name or
+subject, filter by subject area, and sort the results.
+Actor(s) 	Guest
+Priority 	High
+Trigger 	Guest navigates to the Study Groups page.
+Pre-Conditions 	1. The platform has at least one active study group.
+Post-Conditions 	1. A list of active study groups matching the guest's search or
+filter criteria is displayed.
+Basic Flow 	1. Guest navigates to the Study Groups page.
+2. System retrieves and displays a list of active study groups,
+showing each group's name, subject, description, and
+member count.
+3. Guest may enter a keyword in the search field to filter
+groups by name or subject.
+4. System updates the displayed list to show only matching
+groups.
+5. Guest may enter text in the subject filter field to further
+narrow results.
+Copyright © 2026 by Group 12
+
+-- 24 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 23
+6. Guest may change the sort order (by activity, by member
+count, or by name).
+7. System re-orders the displayed results accordingly.
+8. Guest selects a group card to view its details.
+Alternative Flow 	No Results:
+1. Guest enters search terms that match no groups.
+2. System displays a "No groups match your search"
+message.
+Attempt to Join Without Authentication:
+1. Guest clicks the "Join" button on a group card.
+2. System detects the guest is not logged in.
+3. System redirects the guest to the Login page.
+Exception Flow 	System Unavailable:
+1. System fails to retrieve the list of groups.
+2. System displays an error or loading state.
+3. Guest may refresh the page and try again.
+Copyright © 2026 by Group 12
+
+-- 25 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 24
+UC-G-04: View Group Detail
+Item 	Description
+Use Case ID 	UC-G-04
+Use Case Name 	View Group Detail
+Copyright © 2026 by Group 12
+
+-- 26 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 25
+Description 	Allows a guest to view detailed information about a specific
+study group, including its description, member roster,
+scheduled sessions, shared resources, and discussion board
+in a read-only capacity.
+Actor(s) 	Guest
+Priority 	High
+Trigger 	Guest selects a specific group from the Study Groups list or
+navigates directly to the group's detail URL.
+Pre-Conditions 	1. The selected study group exists and has an Active status.
+Post-Conditions 	1. The group's full detail page is displayed with Overview,
+Members, Sessions, Resources, and Discussions tabs.
+2. No data is modified.
+Basic Flow 	1. Guest selects a group from the Study Groups list.
+2. System retrieves and displays the group's detail page.
+3. System shows the group name, subject, description,
+leader name, member count, session count, and resource
+count in the Overview tab.
+4. Guest may switch to the Members tab to view the full
+member roster with roles.
+5. Guest may switch to the Sessions tab to view scheduled
+and past sessions.
+6. Guest may switch to the Resources tab to browse shared
+study materials.
+Copyright © 2026 by Group 12
+
+-- 27 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 26
+7. Guest may switch to the Discussions tab to read existing
+discussion posts and comments.
+8. Guest may click "Join Group" to request membership
+(requires authentication).
+Alternative Flow 	Navigate Back:
+1. Guest clicks "← Back to explore".
+2. System returns the guest to the Study Groups list.
+Attempt to Join Without Authentication:
+1. Guest clicks "Join Group".
+2. System detects the guest is not logged in.
+3. System redirects the guest to the Login page.
+Exception Flow 	Group Not Found:
+1. Guest navigates to a group URL that does not exist or has
+been deleted.
+2. System displays a "Group not found" message.
+Group is Archived:
+1. Guest attempts to access an archived group.
+2. System treats the group as not found and displays a
+"Group not found" message.
+System Unavailable:
+1. System fails to retrieve group data.
+Copyright © 2026 by Group 12
+
+-- 28 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 27
+2. System displays an error state.
+3. Guest may refresh the page.
+Copyright © 2026 by Group 12
+
+-- 29 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 28
+UC-G-05: Browse Study Sessions
+Item 	Description
+Use Case ID 	UC-G-05
+Use Case Name 	Browse Study Sessions
+Description 	Allows a guest to view a list of publicly available study
+sessions across all groups. Sessions can be browsed in list or
+calendar view, and may be filtered by group or status.
+Actor(s) 	Guest
+Priority 	Medium
+Trigger 	Guest navigates to the Study Sessions page.
+Pre-Conditions 	1. At least one study session exists in the system..
+Post-Conditions 	1. A list of study sessions is displayed with their title, group
+name, start time, and status.
+2. No data is modified.
+Basic Flow 	1. Guest navigates to the Study Sessions page.
+2. System retrieves and displays a list of study sessions,
+showing each session's title, associated group name,
+scheduled start time, and current status (Scheduled, In
+Progress, Completed, or Cancelled).
+3. Guest may toggle between a list view and a calendar view
+Copyright © 2026 by Group 12
+
+-- 30 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 29
+(grouped by date).
+4. Guest may select a specific session to view its full details.
+Alternative Flow 	Calendar View:
+1. Guest clicks the "Calendar" toggle button.
+2. System groups and displays sessions organized by their
+scheduled date.
+3. Guest selects a session entry to view its detail page.
+No Sessions Available:
+1. System finds no sessions matching the current query.
+2. System displays a "No sessions found" message.
+Exception Flow 	System Unavailable:
+1. System fails to retrieve the session list.
+2. System displays an error or loading state.
+3. Guest may refresh the page and try again.
+Copyright © 2026 by Group 12
+
+-- 31 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 30
+UC-G-06: View Session Detail
+Item 	Description
+Use Case ID 	UC-G-06
+Use Case Name 	View Session Detail
+Description 	Allows a guest to view the complete details of a specific
+study session, including its title, description, associated
+group, schedule (start and end time), current status, and the
+list of attendees.
+Copyright © 2026 by Group 12
+
+-- 32 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 31
+Actor(s) 	Guest
+Priority 	Medium
+Trigger 	Guest selects a specific session from the Study Sessions
+list or navigates directly to the session's detail URL.
+Pre-Conditions 	1. The selected study session exists and has not been
+deleted.
+Post-Conditions 	1. The session's full details are displayed.
+2. No data is modified.
+Basic Flow 	1. Guest selects a session from the Study Sessions list.
+2. System retrieves and displays the session detail page.
+3. System shows the session title, current status badge,
+associated group name, and description.
+4. System displays the session schedule: start time and end
+time (or "Ongoing" if no end time is set).
+5. System displays the attendance list showing the names
+of users who have attended.
+6. Guest may click "← Back to sessions" to return to the
+session list.
+Alternative Flow 	Navigate Back:
+1. Guest clicks "← Back to sessions".
+2. System returns the guest to the Study Sessions list.
+In-Progress Session (Join Button Visible):
+Copyright © 2026 by Group 12
+
+-- 33 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 32
+1. Session status is "In Progress".
+2. System displays a "Join now" button (accessible only to
+authenticated group members).
+3. Guest who is not authenticated sees the button but would
+be redirected to login upon clicking.
+Exception Flow 	Session Not Found:
+1. Guest navigates to a session URL that does not exist or
+has been deleted.
+2. System displays a "Session not found" message.
+System Unavailable:
+1. System fails to retrieve session data.
+2. System displays an error state.
+3. Guest may refresh the page.
+Copyright © 2026 by Group 12
+
+-- 34 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 33
+3.2 Use Cases for Leaders
+Leaders are members who manage study groups, handle membership requests,
+organize study sessions, track attendance, and oversee group resources.
+Copyright © 2026 by Group 12
+
+-- 35 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 34
+Copyright © 2026 by Group 12
+
+-- 36 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 35
+UC-L-01: Delete Group
+Item 	Description
+Use Case ID 	UC-L-01
+Use Case Name 	Delete Group
+Description 	Allows a Leader to permanently remove (soft-delete) a
+study group they created, making it inaccessible to all
+members and the public.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader chooses to delete a group from the group
+management interface.
+Pre-Conditions 	1. The Leader is authenticated.
+2. The Leader is the creator of the group to be deleted.
+3. The target group exists and has not already been deleted.
+Post-Conditions 	1. The group is marked as deleted and removed from all
+public listings.
+2. The group is no longer accessible to members or guests.
+Basic Flow 	1. Leader navigates to the group management page.
+2. System displays group information and available
+management actions.
+3. Leader selects the option to delete the group.
+Copyright © 2026 by Group 12
+
+-- 37 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 36
+4. System verifies that the Leader is the group creator.
+5. System marks the group as deleted.
+6. System confirms the deletion and removes the group
+from all listings.
+Alternative Flow 	Cancel Deletion:
+1. Leader decides not to proceed with deletion.
+2. Leader dismisses the action.
+3. System takes no action and the group remains unchanged.
+Exception Flow 	Unauthorized Attempt:
+1. A user who is not the group creator attempts to delete the
+group.
+2. System denies the action and displays a permission error.
+3. Group remains unchanged.
+Group Not Found:
+1. Leader attempts to delete a group that no longer exists.
+2. System displays a "Group not found" error.
+System Error:
+1. System encounters an unexpected failure during deletion.
+2. System displays an error message.
+3. Leader may retry the action.
+Copyright © 2026 by Group 12
+
+-- 38 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 37
+UC-L-02: Edit Group Info
+Item 	Description
+Use Case ID 	UC-L-02
+Use Case Name Edit Group Info
+Description 	Allows a Leader to update the details of a study group they
+lead, including the group name, description, subject, and
+maximum member capacity.
+Copyright © 2026 by Group 12
+
+-- 39 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 38
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader submits updated group information through the group
+management interface.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader holds the LEADER role within the target group.
+3. The target group exists and is active.
+Post-Conditions 1. The group's information is updated in the system.
+2. The updated details are immediately reflected in the group
+listing and detail page.
+Basic Flow 	1. Leader navigates to the group management page.
+2. System displays the current group information in an
+editable form.
+3. Leader modifies one or more fields (name, description,
+subject, or maximum members).
+4. Leader submits the changes.
+5. System validates the entered data.
+6. System verifies the Leader's role within the group.
+7. System saves the updated group information.
+8. System confirms the update and displays the refreshed
+group details.
+Alternative
+Flow
+Cancel Edit:
+1. Leader decides not to save changes.
+Copyright © 2026 by Group 12
+
+-- 40 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 39
+2. Leader dismisses the form.
+3. System discards the unsaved changes and the group remains
+unchanged.
+Exception Flow Unauthorized Attempt:
+1. A user who is not a LEADER of the group submits the
+update.
+2. System denies the action and displays a permission error.
+3. Group information remains unchanged.
+Validation Failure:
+1. Leader submits a group name shorter than 3 characters or
+longer than 100 characters.
+2. System displays a validation error.
+3. Changes are not saved.
+System Error:
+1. System encounters an unexpected failure during the save
+operation.
+2. System displays an error message.
+3. Leader may retry the action.
+Copyright © 2026 by Group 12
+
+-- 41 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 40
+UC-L-03: Reject Join Request
+Item 	Description
+Use Case ID 	UC-L-03
+Use Case Name 	Reject Join Request
+Copyright © 2026 by Group 12
+
+-- 42 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 41
+Description 	Allows a Leader to reject a pending membership request from
+a user who has applied to join their study group, preventing
+that user from becoming a member.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader clicks "Reject" on a pending join request listed in the
+Requests tab of the group detail page.
+Pre-Conditions 	1. The Leader is authenticated.
+2. The Leader holds the LEADER role within the target
+group.
+3. A pending join request from a non-member exists for the
+group.
+Post-Conditions 	1. The join request is marked as Rejected.
+2. The requesting user is not added to the group.
+3. The pending requests list is updated.
+Basic Flow 	1. Leader navigates to the group detail page and opens the
+Requests tab.
+2. System displays the list of pending join requests with
+applicant names.
+3. Leader reviews a request and clicks "Reject".
+4. System verifies the Leader's role within the group.
+5. System updates the join request status to Rejected.
+Copyright © 2026 by Group 12
+
+-- 43 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 42
+6. System removes the request from the pending list and
+confirms the action.
+Alternative Flow No Pending Requests:
+1. Leader opens the Requests tab and there are no pending
+requests.
+2. System displays a "No pending requests" message.
+Exception Flow 	Unauthorized Attempt:
+1. A user who is not a LEADER of the group attempts to
+reject a request.
+2. System denies the action and displays a permission error.
+Request No Longer Pending:
+1. Leader attempts to reject a request that has already been
+processed.
+2. System displays an error indicating the request is no longer
+pending.
+3. No change is made.
+Request Not Found:
+1. The target join request cannot be found (e.g., applicant
+withdrew).
+2. System displays a "Join request not found" error.
+System Error:
+1. System encounters an unexpected failure.
+Copyright © 2026 by Group 12
+
+-- 44 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 43
+2. System displays an error message.
+3. Leader may retry the action.
+Copyright © 2026 by Group 12
+
+-- 45 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 44
+UC-L-04: Approve Join Request
+Item 	Description
+Use Case ID 	UC-L-04
+Use Case Name Approve Join Request
+Description 	Allows a Leader to approve a pending membership request,
+granting the applicant full Member status within the study group.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader clicks "Approve" on a pending join request listed in the
+Requests tab of the group detail page.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader holds the LEADER role within the target group.
+3. A pending join request from a non-member exists.
+4. The group has not reached its maximum member capacity.
+Post-Conditions 1. The join request is marked as Approved.
+2. The applicant is added as a Member of the group.
+3. The pending requests list is updated to remove the processed
+request.
+Basic Flow 	1. Leader navigates to the group detail page and opens the
+Requests tab.
+2. System displays the list of pending join requests with
+Copyright © 2026 by Group 12
+
+-- 46 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 45
+applicant names.
+3. Leader reviews a request and clicks "Approve".
+4. System verifies the Leader's role within the group.
+5. System updates the join request status to Approved.
+6. System adds the applicant as a Member of the group.
+7. System removes the request from the pending list and
+confirms the action.
+Alternative
+Flow
+No Pending Requests:
+1. Leader opens the Requests tab and there are no pending
+requests.
+2. System displays a "No pending requests" message.
+Exception Flow Unauthorized Attempt:
+1. A user who is not a LEADER of the group attempts to
+approve a request.
+2. System denies the action and displays a permission error.
+Request No Longer Pending:
+1. Leader attempts to approve a request that has already been
+processed.
+2. System displays an error indicating the request is no longer
+pending.
+3. No change is made.
+Request Not Found:
+1. The target join request cannot be found.
+Copyright © 2026 by Group 12
+
+-- 47 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 46
+2. System displays a "Join request not found" error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Leader may retry the action.
+Copyright © 2026 by Group 12
+
+-- 48 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 47
+UC-L-05: Create Session
+Item 	Description
+Use Case ID 	UC-L-05
+Use Case Name Create Session
+Description 	Allows a Leader to schedule a new study session for their group,
+either as a future scheduled event with a defined start and end
+time, or as an immediately started live session. Optionally, group
+members can be notified.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader clicks "Create new session" in the Sessions tab of the
+group detail page and submits the session form.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is an active member of the target group.
+3. The target group exists and is active.
+Post-Conditions 1. A new study session is created and associated with the group.
+2. If "Start now" was selected, the session status is set to In
+Progress immediately.
+3. If "Notify members" was checked, all group members receive
+a notification about the new session.
+4. The session appears in the group's Sessions tab.
+Copyright © 2026 by Group 12
+
+-- 49 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 48
+Basic Flow 	1. Leader opens the Sessions tab on the group detail page.
+2. Leader clicks "Create new session".
+3. System displays the session creation form with title, start time,
+end time, and option fields.
+4. Leader enters a session title.
+5. Leader either selects a start date/time and end date/time, or
+checks "Start now".
+6. Optionally, Leader checks "Notify all group members".
+7. Leader clicks "Create Session".
+8. System validates the entered information.
+9. System verifies the Leader is a group member.
+10. System saves the new session record.
+11. If "Notify members" was checked, system sends notifications
+to all other group members.
+12. System displays the new session in the Sessions list.
+Alternative
+Flow
+Start Now:
+1. Leader checks "Start now".
+2. System hides the start and end time fields.
+3. Leader submits the form with only a title.
+4. System creates the session with In Progress status and the
+current time as the start time.
+Cancel:
+1. Leader clicks "Cancel".
+Copyright © 2026 by Group 12
+
+-- 50 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 49
+2. System hides the form.
+3. No session is created.
+Exception Flow Validation Failure — Title:
+1. Leader submits an empty or too-short title (under 3
+characters).
+2. System disables the submit button or displays a validation
+error.
+3. Session is not created.
+Validation Failure — Missing Times:
+1. Leader submits the form without "Start now" checked but
+without providing start or end time.
+2. System displays an error: "End time is required for scheduled
+sessions".
+3. Session is not created.
+Not a Group Member:
+1. System determines the requester is not a member of the group.
+2. System displays a permission error.
+3. Session is not created.
+System Error:
+1. System encounters an unexpected failure during creation.
+2. System displays an error message.
+3. Leader may retry.
+Copyright © 2026 by Group 12
+
+-- 51 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 50
+UC-L-06: Edit Session
+Item 	Description
+Use Case ID 	UC-L-06
+Use Case Name Edit Session
+Description 	Allows a Leader to update the details of an existing study
+session, such as the title, description, scheduled start/end time,
+meeting link, or status.
+Copyright © 2026 by Group 12
+
+-- 52 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 51
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader submits updated session information through the session
+detail or session management interface.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is the session creator or holds the LEADER role
+in the associated group.
+3. The target session exists and has not been deleted.
+Post-Conditions 1. The session's details are updated in the system.
+2. The updated information is reflected on the session detail
+page.
+Basic Flow 	1. Leader navigates to the session detail page.
+2. System displays the session's current information.
+3. Leader accesses the edit function for the session.
+4. Leader modifies one or more fields (title, description, start
+time, end time, meeting link, or status).
+5. Leader submits the changes.
+6. System validates the entered data.
+7. System verifies the Leader's authority to manage the session.
+8. System saves the updated session information.
+9. System confirms the update and displays the refreshed session
+details.
+Copyright © 2026 by Group 12
+
+-- 53 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 52
+Alternative
+Flow
+Cancel Edit:
+1. Leader decides not to save changes.
+2. Leader dismisses the form.
+3. System discards unsaved changes.
+Exception Flow Unauthorized Attempt:
+1. A user who is neither the session creator nor a group Leader
+attempts to edit the session.
+2. System denies the action and displays a permission error.
+Session Not Found:
+1. Leader attempts to edit a session that does not exist or has
+been deleted.
+2. System displays a "Session not found" error.
+Validation Failure:
+1. Leader submits a title that is too short or an invalid date
+format.
+2. System displays a validation error.
+3. Changes are not saved.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 54 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 53
+Copyright © 2026 by Group 12
+
+-- 55 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 54
+UC-L-07: End Session
+Item 	Description
+Use Case ID 	UC-L-07
+Use Case Name End Session
+Description 	Allows a Leader to manually terminate an active or scheduled
+study session. If the session was In Progress, its status changes
+to Completed; if Scheduled, it is marked as Cancelled.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader clicks "End now" on an active or scheduled session card
+or on the session detail page.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is the session creator or holds the LEADER role
+in the associated group.
+3. The target session exists and has a status of Scheduled or In
+Progress.
+Post-Conditions 1. The session status is changed to Completed (if it was In
+Progress) or Cancelled (if it was Scheduled).
+2. The session's end time is recorded.
+3. Any active meeting room associated with the session is
+closed.
+Copyright © 2026 by Group 12
+
+-- 56 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 55
+Basic Flow 	1. Leader navigates to the group's Sessions tab or the session
+detail page.
+2. System displays the session with its current status and
+available actions.
+3. Leader clicks "End now".
+4. System verifies the Leader's authority to manage the session.
+5. System determines the current session status.
+6. System updates the session status to Completed (if In
+Progress) or Cancelled (if Scheduled).
+7. System records the current time as the end time.
+8. System closes the associated meeting room if the session was
+live.
+9. System confirms the action and updates the display.
+Alternative
+Flow
+Session Already Ended:
+1. Leader attempts to end a session that is already Completed or
+Cancelled.
+2. System displays an error indicating the session has already
+ended.
+3. No change is made.
+Exception Flow Unauthorized Attempt:
+1. A user who is neither the session creator nor a group Leader
+attempts to end the session.
+2. System denies the action and displays a permission error.
+Session Not Found:
+Copyright © 2026 by Group 12
+
+-- 57 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 56
+1. Leader attempts to end a session that does not exist.
+2. System displays a "Session not found" error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Leader may retry.
+Copyright © 2026 by Group 12
+
+-- 58 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 57
+UC-L-08: Notify Members
+Item 	Description
+Use Case ID 	UC-L-08
+Use Case Name Notify Members
+Description 	Allows a Leader to manually send a notification to all members
+of the group about a specific study session, reminding them of
+its details.
+Actor(s) 	Leader
+Priority 	Medium
+Trigger 	Leader clicks "Notify members" on a session card or on the
+session detail page.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is the session creator or holds the LEADER role
+in the associated group.
+3. The target session exists.
+Post-Conditions 1. All group members except the Leader receive an in-app
+notification about the session.
+2. The notification includes the session title, a message, and a
+link to the session detail page.
+Basic Flow 	1. Leader navigates to the Sessions tab or session detail page.
+2. System displays session information and management actions.
+Copyright © 2026 by Group 12
+
+-- 59 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 58
+3. Leader clicks "Notify members".
+4. System verifies the Leader's authority to manage the session.
+5. System retrieves the list of all group members.
+6. System sends a notification to each member (excluding the
+Leader themselves).
+7. System confirms the number of members notified.
+Alternative
+Flow
+No Other Members:
+1. The group has no members other than the Leader.
+2. System sends no notifications.
+3. System confirms with a count of 0 notified.
+Exception Flow Unauthorized Attempt:
+1. A user who is not a LEADER of the group attempts to send
+notifications.
+2. System denies the action and displays a permission error.
+Session Not Found:
+1. Leader attempts to notify members for a session that does not
+exist.
+2. System displays a "Session not found" error.
+System Error:
+1. System encounters an unexpected failure during notification
+delivery.
+2. System displays an error message.
+3. Leader may retry.
+Copyright © 2026 by Group 12
+
+-- 60 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 59
+UC-L-09: Delete Session
+Item 	Description
+Use Case ID 	UC-L-09
+Use Case Name Delete Session
+Description 	Allows a Leader who created a session to permanently remove it
+from the system, closing any associated live meeting room.
+Copyright © 2026 by Group 12
+
+-- 61 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 60
+Actor(s) 	Leader
+Priority 	Medium
+Trigger 	Leader selects the option to delete a session from the session
+management interface.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is the creator of the target session.
+3. The target session exists and has not already been deleted.
+Post-Conditions 1. The session is soft-deleted and no longer appears in any
+session list.
+2. Any associated live meeting room is closed.
+Basic Flow 	1. Leader navigates to the session detail page or the group's
+Sessions tab.
+2. System displays the session with management actions.
+3. Leader selects the option to delete the session.
+4. System verifies that the Leader is the session creator.
+5. System closes the associated live meeting room (if
+applicable).
+6. System marks the session as deleted.
+7. System confirms the deletion.
+Alternative
+Flow
+Cancel Deletion:
+1. Leader decides not to proceed with deletion.
+2. Leader dismisses the action.
+3. System takes no action and the session remains unchanged.
+Copyright © 2026 by Group 12
+
+-- 62 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 61
+Exception Flow Unauthorized Attempt:
+1. A user who is not a LEADER of the group attempts to
+approve a request.
+2. System denies the action and delete the session.
+Session Not Found:
+1. Leader attempts to delete a session that does not exist.
+2. System displays a "Session not found" error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Leader may retry the action.
+Copyright © 2026 by Group 12
+
+-- 63 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 62
+UC-L-10: Mark Attendance
+Item 	Description
+Use Case ID 	UC-L-10
+Use Case Name Mark Attendance
+Description 	Allows a Leader to record the attendance status of a group
+member for a specific study session, setting their status to
+Present, Absent, Late, or Excused.
+Copyright © 2026 by Group 12
+
+-- 64 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 63
+Actor(s) 	Leader
+Priority 	Medium
+Trigger 	Leader submits an attendance record for a specific member in a
+given session.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader is the session creator.
+3. The target session exists.
+4. The target member's user record exists.
+Post-Conditions 1. The member's attendance record for the session is created or
+updated with the specified status and the current timestamp.
+2. The updated attendance record is reflected in the attendance
+roster.
+Basic Flow 	1. Leader navigates to the session detail page or attendance
+management interface.
+2. System displays the session details and available member list.
+3. Leader selects a member and assigns an attendance status
+(Present, Absent, Late, or Excused).
+4. Leader submits the attendance record.
+5. System verifies that the Leader is the session creator.
+6. System creates or updates the attendance record for the
+specified member.
+7. System confirms the record was saved and displays the
+updated attendance roster.
+Copyright © 2026 by Group 12
+
+-- 65 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 64
+Alternative
+Flow
+Self-Attendance (Member marking own attendance):
+1. A member marks their own attendance as Present.
+2. System accepts the record without requiring session creator
+privileges.
+3. System saves the attendance record.
+Exception Flow Unauthorized Attempt:
+1. A user attempts to mark attendance for another member but is
+not the session creator.
+2. System denies the action and displays a permission error.
+Session Not Found:
+1. Leader attempts to mark attendance for a session that does not
+exist.
+2. System displays a "Session not found" error.
+Invalid Status:
+1. Leader submits an attendance status that is not one of Present,
+Absent, Late, or Excused.
+2. System displays a validation error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 66 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 65
+UC-L-11: View Attendance Roster
+Item 	Description
+Use Case ID 	UC-L-11
+Use Case Name View Attendance Roster
+Description 	Allows a Leader to view the complete list of attendance records
+for a specific study session, showing which members attended,
+their attendance statuses, and when they checked in.
+Actor(s) 	Leader
+Copyright © 2026 by Group 12
+
+-- 67 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 66
+Priority 	Medium
+Trigger 	Leader navigates to the session detail page, which displays the
+attendance section.
+Pre-Conditions 1. The Leader is authenticated.
+2. The target session exists.
+3. The Leader is a member of the group associated with the
+session.
+Post-Conditions 1. The attendance roster is displayed, listing all recorded
+attendees and their statuses.
+2. No data is modified.
+Basic Flow 	1. Leader navigates to the session detail page.
+2. System retrieves and displays the session information.
+3. System retrieves all attendance records for the session.
+4. System displays the attendance roster with each attendee's
+name and status.
+5. Leader reviews the attendance list.
+Alternative
+Flow
+No Attendance Records:
+1. No members have checked in or been marked yet.
+2. System displays a "No attendance records yet" message.
+Exception Flow Session Not Found:
+1. Leader navigates to a session that does not exist or has been
+deleted.
+2. System displays a "Session not found" error.
+Copyright © 2026 by Group 12
+
+-- 68 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 67
+System Error:
+1. System fails to retrieve attendance data.
+2. System displays an error message.
+3. Leader may refresh the page.
+UC-L-12: Delete Resource
+Item 	Description
+Use Case ID 	UC-L-12
+Use Case Name Delete Resource
+Copyright © 2026 by Group 12
+
+-- 69 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 68
+Description 	Allows a Leader to remove any shared resource file from their
+group's resource folder. When the Leader deletes a file uploaded
+by another member, that member receives an in-app notification
+informing them of the removal.
+Actor(s) 	Leader
+Priority 	High
+Trigger 	Leader clicks the delete icon on a resource file row within the
+group's Resources tab and confirms the deletion.
+Pre-Conditions 1. The Leader is authenticated.
+2. The Leader holds the LEADER role or is the group creator.
+3. The Leader is an active member of the group.
+4. The target resource exists and has not already been deleted.
+Post-Conditions 1. The resource is soft-deleted and removed from the folder's file
+list.
+2. If the deleted resource was uploaded by another member, that
+member receives an in-app notification about the removal.
+3. The folder's file count is updated.
+Basic Flow 	1. Leader opens the group detail page and navigates to the
+Resources tab.
+2. System displays the resource folders for the group.
+3. Leader opens a specific folder and views the file list.
+4. Leader clicks the delete icon on a resource file.
+5. System displays a confirmation popup.
+Copyright © 2026 by Group 12
+
+-- 70 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 69
+6. Leader confirms the deletion.
+7. System verifies the Leader's membership and role within the
+group.
+8. System soft-deletes the resource file.
+9. If the file was uploaded by a different member, system sends a
+notification to that member.
+10. System updates the file list and confirms the deletion.
+Alternative
+Flow
+Cancel Deletion:
+1. Leader clicks the delete icon but then clicks "Cancel" in the
+confirmation popup.
+2. System dismisses the popup.
+3. Resource remains unchanged.
+Delete Own Resource:
+1. Leader deletes a file that they themselves uploaded.
+2. System proceeds with deletion without sending a notification.
+Exception Flow Unauthorized Attempt:
+1. A user who is not the file uploader and not a group Leader
+attempts to delete a resource.
+2. System denies the action and displays a permission error.
+Resource Not Found:
+1. Leader attempts to delete a resource that no longer exists.
+2. System displays a "Resource not found" error.
+Copyright © 2026 by Group 12
+
+-- 71 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 70
+Not a Group Member:
+1. Leader is no longer an active member of the group.
+2. System displays a permission error.
+System Error:
+1. System encounters an unexpected failure during deletion.
+2. System displays an error message.
+3. Leader may retry.
+Copyright © 2026 by Group 12
+
+-- 72 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 71
+3.3 Use Case for Members
+Members are registered users who can manage their profiles, participate in study
+groups and sessions, share learning resources, and engage in discussions with other
+members.
+Copyright © 2026 by Group 12
+
+-- 73 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 72
+Copyright © 2026 by Group 12
+
+-- 74 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 73
+UC-M-01: Edit Own Profile
+Item 	Description
+Use Case ID 	UC-M-01
+Use Case Name 	Edit Own Profile
+Description 	Allows a Member to update their personal profile
+information, including their full name, avatar image URL,
+and biographical description.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member navigates to the Profile page, modifies their
+information, and submits the changes.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is editing their own profile.
+Post-Conditions 	1. The Member's profile information is updated in the
+system.
+2. The updated details are immediately reflected across the
+platform.
+Basic Flow 	1. Member navigates to the Profile page.
+2. System displays the current profile information in an
+editable form (full name, avatar URL, and bio).
+3. Member modifies one or more fields.
+Copyright © 2026 by Group 12
+
+-- 75 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 74
+4. Member clicks "Save changes".
+5. System validates the entered data.
+6. System updates the profile record.
+7. System displays a success confirmation message.
+Alternative Flow 	No Changes Made:
+1. Member clicks "Save changes" without modifying any
+fields.
+2. System saves the unchanged data and displays a success
+confirmation.
+Exception Flow 	Validation Failure — Full Name:
+1. Member submits a name shorter than 2 characters or
+longer than 100 characters.
+2. System displays a validation error.
+3. Profile is not updated.
+Validation Failure — Bio:
+1. Member submits a bio exceeding 500 characters.
+2. System displays a validation error.
+3. Profile is not updated.
+Validation Failure — Avatar URL:
+1. Member enters a malformed URL for the avatar.
+2. System displays a validation error.
+3. Profile is not updated.
+Copyright © 2026 by Group 12
+
+-- 76 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 75
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Member may retry.
+UC-M-02: View Own Profile
+Item 	Description
+Use Case ID 	UC-M-02
+Use Case Name 	View Own Profile
+Copyright © 2026 by Group 12
+
+-- 77 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 76
+Description 	Allows a Member to view their own profile page, which
+displays their personal information, assigned roles, activity
+statistics (group count, attendance rate, uploaded resources),
+a list of joined groups, and their uploaded resources.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member navigates to the Profile page.
+Pre-Conditions 	1. The Member is authenticated.
+Post-Conditions 	1. The Member's profile page is displayed with up-to-date
+personal information and activity statistics.
+2. No data is modified.
+Basic Flow 	1. Member navigates to the Profile page.
+2. System retrieves the Member's profile data, activity
+statistics, joined groups, and uploaded resources.
+3. System displays the Member's email address, roles, full
+name, avatar, and bio.
+4. System displays summary statistics: number of joined
+groups, attendance rate, and number of uploaded resources.
+5. System displays a list of the Member's joined groups with
+links to each.
+6. System displays a list of resources the Member has
+uploaded.
+Copyright © 2026 by Group 12
+
+-- 78 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 77
+Alternative Flow 	No Joined Groups:
+1. The Member has not joined any groups.
+2. System displays "No groups joined." in the groups
+section.
+No Uploaded Resources:
+1. The Member has not uploaded any resources.
+2. System displays "No uploads yet." in the resources
+section.
+Exception Flow 	System Error:
+1. System fails to retrieve profile or statistics data.
+2. System displays an error or empty state.
+3. Member may refresh the page.
+Copyright © 2026 by Group 12
+
+-- 79 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 78
+UC-M-03: View User Profile
+Item 	Description
+Use Case ID 	UC-M-03
+Use Case Name 	View User Profile
+Description 	Allows a Member to view the public profile of another
+registered user on the platform, including their name, avatar,
+bio, and role information.
+Actor(s) 	Member
+Priority 	Low
+Copyright © 2026 by Group 12
+
+-- 80 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 79
+Trigger 	Member navigates to another user's profile page by clicking
+their name or profile link.
+Pre-Conditions 	1. The Member is authenticated.
+2. The target user exists in the system.
+Post-Conditions 	1. The target user's profile information is displayed.
+2. No data is modified.
+Basic Flow 	1. Member clicks on another user's name or profile link.
+2. System retrieves the target user's profile data.
+3. System displays the user's full name, email, avatar, bio,
+roles, and account status.
+Alternative Flow 	None.
+Exception Flow 	User Not Found:
+1. The target user does not exist or has been deleted.
+2. System displays a "User not found" error.
+System Error:
+1. System fails to retrieve user data.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 81 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 80
+UC-M-04: Create Study Group
+Item 	Description
+Use Case ID 	UC-M-04
+Use Case Name 	Create Study Group
+Description 	Allows a Member to create a new study group on the
+platform. The Member who creates the group automatically
+becomes its Leader.
+Actor(s) 	Member
+Priority 	High
+Copyright © 2026 by Group 12
+
+-- 82 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 81
+Trigger 	Member clicks "Create group" and submits the group
+creation form.
+Pre-Conditions 	1. The Member is authenticated.
+Post-Conditions 	1. A new study group is created with Active status.
+2. The Member is automatically enrolled as the group's
+Leader.
+3. The new group is accessible in the study groups listing.
+Basic Flow 	1. Member navigates to the Study Groups page and clicks
+"Create group".
+2. System displays the group creation form (Name, Subject,
+Description, Max Members).
+3. Member enters the group name, subject, optional
+description, and maximum member count.
+4. Member submits the form.
+5. System validates the entered information.
+6. System creates the new group and assigns the Member as
+its Leader.
+7. System redirects the Member to the newly created
+group's detail page.
+Alternative Flow 	Cancel:
+1. Member navigates away without submitting.
+2. System discards the entered data.
+3. No group is created.
+Copyright © 2026 by Group 12
+
+-- 83 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 82
+Exception Flow 	Validation Failure — Name:
+1. Member submits a group name shorter than 3 characters
+or longer than 100 characters.
+2. System displays a validation error.
+3. Group is not created.
+Validation Failure — Subject:
+1. Member submits an empty subject field.
+2. System displays a validation error.
+3. Group is not created.
+Validation Failure — Max Members:
+1. Member enters a value outside the allowed range
+(2–100).
+2. System displays a validation error.
+3. Group is not created.
+System Error:
+1. System encounters an unexpected failure during creation.
+2. System displays an error message.
+3. Member may retry.
+Copyright © 2026 by Group 12
+
+-- 84 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 83
+UC-M-05: View My Groups
+Item 	Description
+Use Case ID 	UC-M-05
+Use Case Name 	View My Groups
+Description 	Allows a Member to view a personalized dashboard of all
+study groups they have joined, along with a sidebar showing
+their upcoming scheduled sessions.
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member navigates to the My Groups page.
+Copyright © 2026 by Group 12
+
+-- 85 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 84
+Pre-Conditions 	1. The Member is authenticated.
+Post-Conditions 	1. All groups the Member belongs to are displayed, along
+with their upcoming sessions.
+2. No data is modified.
+Basic Flow 	1. Member navigates to the My Groups page.
+2. System retrieves all groups the Member has joined and
+their upcoming scheduled sessions.
+3. System displays joined groups in a grid, showing each
+group's name, subject, member count, and session count.
+4. System displays a sidebar with upcoming sessions
+showing title, group name, and scheduled start time.
+5. Member may click on a group card to navigate to the
+group's detail page.
+6. Member may click on a session card to navigate to the
+session's detail page.
+Alternative Flow 	No Joined Groups:
+1. Member has not joined any groups.
+2. System displays a prompt to explore groups with a link to
+the Groups page.
+No Upcoming Sessions:
+1. Member has no upcoming sessions.
+2. System displays "No upcoming sessions." in the sidebar.
+Copyright © 2026 by Group 12
+
+-- 86 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 85
+Exception Flow 	System Error:
+1. System fails to retrieve groups or session data.
+2. System displays an error or loading state.
+3. Member may refresh.
+c
+UC-M-06: Cancel Join Request
+Item 	Description
+Use Case ID 	UC-M-06
+Use Case Name 	Cancel Join Request
+Copyright © 2026 by Group 12
+
+-- 87 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 86
+Description 	Allows a Member to withdraw a pending join request they
+submitted for a study group before the group Leader has
+acted on it.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member clicks "Cancel Request" on a group detail page
+where they have a pending join request.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member has a pending join request for the target
+group.
+3. The join request has not yet been approved or rejected.
+Post-Conditions 	1. The pending join request is removed from the system.
+2. The Member is no longer listed as a pending applicant for
+the group.
+Basic Flow 	1. Member navigates to the group detail page where they
+have a pending request.
+2. System displays a "Cancel Request" button indicating
+their pending request status.
+3. Member clicks "Cancel Request".
+4. System locates the Member's pending join request for the
+group.
+5. System deletes the pending join request.
+Copyright © 2026 by Group 12
+
+-- 88 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 87
+6. System updates the page to show the "Join Group" button
+again.
+Alternative Flow 	None.
+Exception Flow 	Request Not Found:
+1. The join request no longer exists (e.g., was processed by
+the Leader).
+2. System displays a "Join request not found" error.
+Request Already Processed:
+1. Member attempts to cancel a request that has already
+been approved or rejected.
+2. System displays an error indicating only pending requests
+can be cancelled.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 89 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 88
+UC-M-07: Request Join Group
+Item 	Description
+Use Case ID 	UC-M-07
+Use Case Name 	Request Join Group
+Description 	Allows a Member to submit a request to join a study group.
+The request is placed in a pending state and must be
+approved by the group Leader before the Member gains
+access.
+Copyright © 2026 by Group 12
+
+-- 90 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 89
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member clicks "Join Group" on a group's detail page or
+group card.
+Pre-Conditions 	1. The Member is authenticated.
+2. The target group exists and has an Active status.
+3. The Member is not already a member of the group.
+4. The Member does not already have a pending join
+request for the group.
+5. The group has not reached its maximum member
+capacity.
+Post-Conditions 	1. A pending join request is created for the Member in the
+target group.
+2. The "Join Group" button is replaced with a "Cancel
+Request" button on the group page.
+Basic Flow 	1. Member navigates to the group detail page or group
+listing.
+2. System displays a "Join Group" button for groups the
+Member has not joined.
+3. Member clicks "Join Group".
+4. System verifies the group is Active and the Member has
+no existing membership or pending request.
+5. System checks that the group has not reached its
+Copyright © 2026 by Group 12
+
+-- 91 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 90
+maximum member capacity.
+6. System creates a pending join request for the Member.
+7. System updates the page to show a "Cancel Request"
+button.
+Alternative Flow 	Click Join from Group Listing:
+1. Member clicks "Join" on a group card in the groups
+listing.
+2. System navigates the Member to the group detail page.
+3. The join request flow proceeds from the group detail
+page.
+Exception Flow 	Already a Member:
+1. Member attempts to join a group they already belong to.
+2. System displays a conflict error: "Already a member".
+Request Already Pending:
+1. Member attempts to submit a duplicate join request.
+2. System displays a conflict error: "Join request already
+pending".
+Group Not Active:
+1. Member attempts to join a group that is not in Active
+status.
+2. System displays an error: "This group is not accepting
+members".
+Copyright © 2026 by Group 12
+
+-- 92 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 91
+Group is Full:
+1. The group has reached its maximum member capacity.
+2. System displays an error: "Group is full".
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 93 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 92
+UC-M-08: Browse Sessions
+Item 	Description
+Use Case ID 	UC-M-08
+Copyright © 2026 by Group 12
+
+-- 94 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 93
+Use Case Name 	Browse Sessions
+Description 	Allows a Member to view a list of study sessions associated
+with the groups they have joined, including upcoming
+scheduled sessions and session history. Sessions can be
+viewed in list or calendar view.
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member navigates to the Study Sessions page.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member belongs to at least one study group with
+scheduled sessions.
+Post-Conditions 	1. A list of the Member's relevant study sessions is
+displayed.
+2. No data is modified.
+Basic Flow 	1. Member navigates to the Study Sessions page.
+2. System retrieves all sessions associated with the
+Member's groups.
+3. System displays each session's title, group name, start
+time, and status (Scheduled, In Progress, Completed, or
+Cancelled).
+4. Member may toggle between List view and Calendar
+Copyright © 2026 by Group 12
+
+-- 95 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 94
+view (grouped by date).
+5. Member may click a session to navigate to its detail page.
+Alternative Flow 	Calendar View:
+1. Member clicks the "Calendar" toggle.
+2. System groups and displays sessions by their scheduled
+date.
+No Sessions:
+1. The Member has no sessions in their groups.
+2. System displays "No sessions found."
+Exception Flow 	System Error:
+1. System fails to retrieve sessions.
+2. System displays an error state.
+3. Member may refresh.
+Copyright © 2026 by Group 12
+
+-- 96 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 95
+UC-M-09: Self Check-in
+Item 	Description
+Use Case ID 	UC-M-09
+Use Case Name 	Self Check-in
+Description 	Allows a Member to mark themselves as Present for an In
+Progress study session by joining the live meeting room.
+The system automatically records their attendance upon
+successful connection.
+Copyright © 2026 by Group 12
+
+-- 97 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 96
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member joins a live meeting room for an In Progress
+session, triggering an automatic attendance record.
+Pre-Conditions 	1. The Member is authenticated.
+2. The target session exists and has a status of In Progress.
+3. The Member is an active member of the group associated
+with the session.
+Post-Conditions 	1. An attendance record with status "Present" is created or
+updated for the Member in the session.
+2. The Member's attendance is reflected in the session's
+attendance roster.
+Basic Flow 	1. Member navigates to the session detail page and clicks
+"Join now".
+2. System verifies the session is In Progress and the
+Member belongs to the group.
+3. System redirects the Member to the live meeting room
+page.
+4. Upon successful connection to the meeting room, the
+system automatically records the Member's attendance as
+Present.
+5. System updates the attendance roster for the session.
+Alternative Flow 	None.
+Copyright © 2026 by Group 12
+
+-- 98 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 97
+Exception Flow 	Session Not In Progress:
+1. Member attempts to check in to a session that is not In
+Progress.
+2. System displays an error: "Session is not in progress".
+3. No attendance record is created.
+Not a Group Member:
+1. Member attempts to check in to a session for a group they
+do not belong to.
+2. System denies access and displays a permission error.
+System Error:
+1. System encounters an unexpected failure during
+attendance recording.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 99 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 98
+UC-M-10: Join Live Meeting
+Item 	Description
+Use Case ID 	UC-M-10
+Use Case Name 	Join Live Meeting
+Description 	Allows a Member to join the live video meeting room for an
+In Progress study session, enabling real-time audio and
+video participation with other group members.
+Copyright © 2026 by Group 12
+
+-- 100 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 99
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member clicks "Join now" on a session detail page or
+session card when the session is In Progress.
+Pre-Conditions 	1. The Member is authenticated.
+2. The target session exists and has a status of In Progress.
+3. The Member is an active member of the group associated
+with the session.
+4. The live meeting service is properly configured on the
+platform.
+Post-Conditions 	1. The Member is connected to the live meeting room. 2.
+The Member can participate in audio and video
+communication with other attendees.
+3. The Member's attendance is automatically recorded as
+Present.
+Basic Flow 	1. Member navigates to a session detail page showing an In
+Progress session.
+2. System displays a "Join now" button.
+3. Member clicks "Join now".
+4. System validates that the session is still In Progress and
+the Member belongs to the group.
+5. System obtains a connection token for the live meeting
+room.
+Copyright © 2026 by Group 12
+
+-- 101 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 100
+6. System redirects the Member to the meeting room page
+with live audio and video.
+7. The meeting room displays the session title and group
+name in the header.
+8. Member can participate in the live session.
+9. Member may click "Leave room" to exit the meeting
+without ending the session.
+Alternative Flow 	Leave Room:
+1. Member clicks "Leave room".
+2. System disconnects the Member from the meeting room.
+3. System returns the Member to the session detail page.
+Session Ends While in Room:
+1. The session Leader ends the session while the Member is
+in the room.
+2. System displays a "The host has ended this session"
+overlay.
+3. System automatically navigates the Member back to the
+session detail page.
+Exception Flow 	Session No Longer In Progress:
+1. Member attempts to join but the session has since ended
+or been cancelled.
+2. System displays a "Session not active" message.
+3. Member is not connected to the meeting room.
+Copyright © 2026 by Group 12
+
+-- 102 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 101
+Not a Group Member:
+1. Member attempts to join a meeting for a group they do
+not belong to.
+2. System denies access and displays a permission error.
+Meeting Service Not Configured:
+1. The live meeting service is not configured on the server.
+2. System displays "Unable to join meeting — LiveKit may
+not be configured."
+3. Member cannot connect.
+System Error:
+1. System encounters an unexpected failure obtaining the
+connection token.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 103 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 102
+UC-M-11: Upload Resource
+Item 	Description
+Use Case ID 	UC-M-11
+Use Case Name 	Upload Resource
+Copyright © 2026 by Group 12
+
+-- 104 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 103
+Description 	Allows a Member to upload one or more study files
+(documents, images, PDFs, spreadsheets, presentations) to a
+specific resource folder within their group.
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member clicks "Upload files" within a resource folder and
+confirms the file upload.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the target group.
+3. A resource folder exists within the group.
+Post-Conditions 	1. The uploaded files are stored in the selected resource
+folder.
+2. Each resource record is created with the file title, URL,
+and type.
+3. The resource appears in the folder's file list and the
+Member is recorded as the uploader.
+Basic Flow 	1. Member navigates to the group's Resources tab and opens
+a resource folder.
+2. Member clicks "Upload files".
+3. System displays the file upload form with a
+drag-and-drop area.
+4. Member selects one or more files by clicking or dragging
+them onto the upload area.
+Copyright © 2026 by Group 12
+
+-- 105 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 104
+5. System validates each file (accepted types: PDF, DOC,
+DOCX, XLS, PPT, images; maximum file size applies).
+6. System displays a preview card for each valid file with an
+editable title field.
+7. Member may adjust the title for each file.
+8. Member clicks "Confirm".
+9. System uploads each file to the cloud storage service.
+10. System creates a resource record for each successfully
+uploaded file, linking it to the folder and group.
+11. System displays the uploaded files in the folder's file
+list.
+Alternative Flow 	Drag and Drop:
+1. Member drags files directly onto the upload drop zone.
+2. System validates and adds them to the upload queue.
+3. The flow continues from step 7.
+Cancel Before Upload:
+1. Member clicks "Cancel" before confirming.
+2. System discards the selected files and hides the form.
+Partial Success:
+1. Some files fail to upload while others succeed.
+2. System marks failed items with an error indicator.
+3. Successfully uploaded files appear in the folder.
+4. Member may retry failed items.
+Copyright © 2026 by Group 12
+
+-- 106 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 105
+Exception Flow 	Invalid File Type:
+1. Member selects a file with an unsupported type.
+2. System silently excludes the invalid file from the upload
+queue.
+File Too Large:
+1. Member selects a file exceeding the maximum allowed
+size.
+2. System excludes the oversized file from the upload
+queue.
+Not a Group Member:
+1. Member is no longer an active member of the group.
+2. System denies the upload and displays a permission error.
+Invalid Folder:
+1. The selected folder does not belong to the target group.
+2. System displays an error: "Invalid folder for this group".
+Upload Service Unavailable:
+1. The file hosting service is not configured.
+2. System displays a configuration error.
+3. Member cannot upload files.
+Copyright © 2026 by Group 12
+
+-- 107 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 106
+UC-M-12: Browse Resource Library
+Item 	Description
+Use Case ID 	UC-M-12
+Copyright © 2026 by Group 12
+
+-- 108 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 107
+Use Case Name 	Browse Resource Library
+Description 	Allows a Member to view and search through the resource
+folders and files shared across all groups they have joined.
+Members can search by folder name, description, or group
+name.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member navigates to the Resources page.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member belongs to at least one study group.
+Post-Conditions 	1. Resource folders from all of the Member's groups are
+displayed.
+2. No data is modified.
+Basic Flow 	1. Member navigates to the Resources page.
+2. System retrieves all resource folders from groups the
+Member belongs to.
+3. System displays each folder with its name, associated
+group, description, creator, file count, and creation date.
+4. Member may enter a keyword in the search field to filter
+folders by name, description, or group name.
+5. System updates the displayed list to show only matching
+folders.
+Copyright © 2026 by Group 12
+
+-- 109 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 108
+6. Member clicks a folder card to navigate to the folder
+within the group's Resources tab.
+Alternative Flow 	No Folders:
+1. Member's groups have no resource folders.
+2. System displays "No resource folders yet."
+Search Returns No Results:
+1. Member enters a keyword that matches no folders.
+2. System shows an empty state.
+Exception Flow 	System Error:
+1. System fails to retrieve resource folders.
+2. System displays an error or loading state.
+3. Member may refresh.
+Copyright © 2026 by Group 12
+
+-- 110 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 109
+UC-M-13: Manage Resource Folders
+Item 	Description
+Use Case ID 	UC-M-13
+Use Case Name 	Manage Resource Folders
+Description 	Allows a Member (with Leader privileges) to create new
+resource folders within their group and edit existing folder
+names and descriptions to organize shared study materials.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member clicks "Create new folder" or edits an existing
+folder within the group's Resources tab.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the target group.
+Post-Conditions 	A new resource folder is created and immediately available
+in the group's Resources tab.
+Basic Flow 	Create Folder:
+1. Member navigates to the group's Resources tab.
+2. Member clicks "Create new folder".
+3. System displays a popover form with a folder name field
+and optional description.
+4. Member enters a folder name and optional description.
+Copyright © 2026 by Group 12
+
+-- 111 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 110
+5. Member clicks "Create folder".
+6. System validates the folder name is not empty.
+7. System creates the new folder associated with the group.
+8. System updates the folder list and navigates the Member
+into the new folder.
+Alternative Flow 	Cancel Folder Creation:
+1. Member closes the popover without submitting.
+2. No folder is created.
+Exception Flow 	Validation Failure — Folder Name:
+1. Member submits an empty folder name.
+2. System disables the submit button.
+3. Folder is not created.
+Not a Group Member:
+1. Member is not an active member of the group.
+2. System displays a permission error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 112 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 111
+UC-M-14: Star Resource
+Item 	Description
+Use Case ID 	UC-M-14
+Use Case Name 	Star Resource
+Description 	Allows a Member to toggle a star rating on a shared
+resource file. Starring a resource marks it as a favourite;
+starring it again removes the rating. The star count is visible
+to all group members.
+Copyright © 2026 by Group 12
+
+-- 113 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 112
+Actor(s) 	Member
+Priority 	Low
+Trigger 	Member clicks the star icon on a resource file row within
+the group's Resources tab.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the group that owns
+the resource.
+3. The target resource exists.
+Post-Conditions 	1. If the resource was not starred: a star rating is created and
+the star count increments by one.
+2. If the resource was already starred: the star rating is
+removed and the star count decrements by one.
+Basic Flow 	1. Member navigates to a resource folder within the group's
+Resources tab.
+2. System displays the file list with a star icon and star
+count for each resource.
+3. Member clicks the star icon on a resource.
+4. System verifies the Member is an active group member.
+5. System checks whether the Member has already starred
+the resource.
+6. If not starred: system creates a star rating record;
+displayed count increases.
+7. If already starred: system removes the star rating record;
+Copyright © 2026 by Group 12
+
+-- 114 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 113
+displayed count decreases.
+8. System updates the star count displayed on the resource
+row.
+Alternative Flow 	None.
+Exception Flow 	Resource Not Found:
+1. Member attempts to star a resource that has been deleted.
+2. System displays a "Resource not found" error.
+Not a Group Member:
+1. Member is no longer an active member of the resource's
+group.
+2. System displays a permission error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 115 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 114
+UC-M-15: Create Post
+Item 	Description
+Use Case ID 	UC-M-15
+Use Case Name 	Create Post
+Description 	Allows a Member to publish a new discussion post in a
+study group they belong to, optionally attaching files. The
+Copyright © 2026 by Group 12
+
+-- 116 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 115
+post appears in the group's Discussions tab and in the
+Member's Discussions feed.
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member clicks "Create new Discussion" in the Discussions
+tab and submits the post form.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the target group.
+Post-Conditions 	1. The discussion post is created and appears in the group's
+Discussions tab.
+2. The post displays the author's name, timestamp, title,
+content, and any attachments.
+Basic Flow 	1. Member navigates to the group's Discussions tab.
+2. Member clicks "Create new Discussion".
+3. System displays the post creation form (Title, Content,
+optional file attachments).
+4. Member enters a title and content for the post.
+5. Optionally, Member attaches one or more files.
+6. Member clicks "Publish".
+7. If files are attached, system uploads them first and shows
+upload progress.
+8. System validates the title (minimum 3 characters,
+maximum 200 characters) and content (non-empty).
+Copyright © 2026 by Group 12
+
+-- 117 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 116
+9. System verifies the Member belongs to the group.
+10. System creates the discussion post with any uploaded
+attachments.
+11. System displays the new post in the Discussions tab.
+Alternative Flow 	Cancel:
+1. Member clicks "Cancel".
+2. System hides the form.
+3. No post is created.
+Exception Flow 	Validation Failure — Title:
+1. Member submits a title shorter than 3 characters or longer
+than 200 characters.
+2. System prevents submission.
+3. Post is not created.
+Validation Failure — Content:
+1. Member submits an empty content field.
+2. System prevents submission.
+3. Post is not created.
+Not a Group Member:
+1. Member is not an active member of the group.
+2. System displays a permission error: "Must be a group
+member".
+File Upload Failure:
+Copyright © 2026 by Group 12
+
+-- 118 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 117
+1. One or more attachments fail to upload.
+2. System displays an error.
+3. Member may retry.
+UC-M-16: Edit Post
+Item 	Description
+Use Case ID 	UC-M-16
+Copyright © 2026 by Group 12
+
+-- 119 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 118
+Use Case Name 	Edit Post
+Description 	Allows a Member to edit the title or content of a discussion
+post they have authored. Edited posts are marked with an
+"Edited" badge to indicate they have been modified.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member clicks the "Edit" button on their own discussion
+post on the post detail page.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is the author of the post to be edited.
+3. The Member is still an active member of the group.
+4. The target post exists and has not been deleted.
+Post-Conditions 	1. The post's title and/or content is updated.
+2. The post is marked with an "Edited" label indicating it
+has been modified.
+Basic Flow 	1. Member navigates to the discussion post detail page.
+2. System displays the post with an "Edit" button visible
+only to the post author.
+3. Member clicks "Edit".
+4. System replaces the post view with an inline edit form
+pre-filled with the current title and content.
+5. Member modifies the title and/or content.
+Copyright © 2026 by Group 12
+
+-- 120 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 119
+6. Member clicks "Save".
+7. System validates the updated data.
+8. System verifies the Member is the post author and an
+active group member.
+9. System saves the updated post and marks it as edited.
+10. System displays the updated post content with an
+"Edited" badge.
+Alternative Flow 	Cancel Edit:
+1. Member clicks "Cancel".
+2. System discards the changes.
+3. The original post content is restored.
+Exception Flow 	Not the Author:
+1. A Member who is not the post author attempts to edit.
+2. System denies the action and displays a permission error.
+Post Not Found:
+1. The post has been deleted before the edit is submitted.
+2. System displays a "Post not found" error.
+Nothing to Update:
+1. Member submits the form without changing the title or
+content.
+2. System displays an error: "Nothing to update".
+Not a Group Member:
+Copyright © 2026 by Group 12
+
+-- 121 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 120
+1. Member is no longer an active group member.
+2. System displays a permission error.
+Validation Failure:
+1. Member submits a title shorter than 3 characters.
+2. System displays a validation error.
+Copyright © 2026 by Group 12
+
+-- 122 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 121
+UC-M-17: Vote Content
+Item 	Description
+Use Case ID 	UC-M-17
+Use Case Name 	Vote Content
+Description 	Allows a Member to upvote or downvote a discussion post
+or comment. Voting the same value a second time removes
+the vote (toggle). The vote score influences the ranking of
+posts and comments in the Discussions tab.
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member clicks the upvote (▲) or downvote (▼) button on
+a discussion post or comment.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the group where the
+post or comment resides.
+3. The target post or comment exists.
+Post-Conditions 	1. If voting a new value: the Member's vote is recorded and
+the vote score is updated.
+2. If voting the same value as an existing vote: the vote is
+removed (toggled off) and the score is updated.
+Copyright © 2026 by Group 12
+
+-- 123 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 122
+Basic Flow 	1. Member navigates to the discussion post detail page.
+2. System displays vote buttons (upvote and downvote) with
+the current vote score.
+3. Member clicks an upvote or downvote button on a post or
+comment.
+4. System verifies the vote value is valid (+1 or -1).
+5. System verifies the Member is an active group member.
+6. System checks if the Member has an existing vote on the
+item.
+7. If no existing vote or a different vote value: system
+records or updates the vote.
+8. If the same vote value: system removes the existing vote.
+9. System updates the displayed vote score.
+Alternative Flow 	Vote on Comment:
+1. Member clicks a vote button on a comment within a post.
+2. System processes the vote for the comment rather than
+the post.
+3. The comment's vote score is updated accordingly.
+Switch Vote:
+1. Member previously voted and clicks the opposite vote
+button.
+2. System replaces the existing vote with the new value.
+3. Vote score is updated.
+Copyright © 2026 by Group 12
+
+-- 124 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 123
+Exception Flow 	Post/Comment Not Found:
+1. The target post or comment does not exist.
+2. System displays a "Post not found" or "Comment not
+found" error.
+Not a Group Member:
+1. Member is not an active member of the group.
+2. System disables voting and displays a permission-related
+message.
+Invalid Vote Value:
+1. An invalid vote value is submitted.
+2. System displays an error: "Invalid vote value".
+Copyright © 2026 by Group 12
+
+-- 125 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 124
+UC-M-18: Comment
+Item 	Description
+Use Case ID 	UC-M-18
+Use Case Name 	Comment
+Copyright © 2026 by Group 12
+
+-- 126 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 125
+Description 	Allows a Member to post a comment on a discussion post,
+reply to another comment, and mention other group
+members using the @ symbol. Mentioned users and the
+parent comment's author receive in-app notifications.
+Actor(s) 	Member
+Priority 	High
+Trigger 	Member types a comment in the comment input and clicks
+"Post comment".
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member is an active member of the group where the
+discussion post resides.
+3. The target post exists.
+Post-Conditions 	1. The comment is created and appears in the comment list
+for the post.
+2. If replying: the comment is nested under the parent
+comment.
+3. Mentioned group members and the parent comment's
+author (if replying) receive in-app notifications.
+4. The post's comment count is updated.
+Basic Flow 	1. Member navigates to the discussion post detail page.
+2. System displays the comment input area with a text field.
+3. Member types a comment. Optionally, Member uses the
+@ symbol to mention other group members.
+Copyright © 2026 by Group 12
+
+-- 127 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 126
+4. Member clicks "Post comment".
+5. System validates the comment content is non-empty and
+within 2000 characters.
+6. System verifies the Member is an active group member.
+7. System creates the comment, linking any valid mentions
+to group members.
+8. System sends notifications to mentioned members and
+the parent comment's author (if replying).
+9. System adds the comment to the list and updates the
+comment count.
+Alternative Flow 	Reply to a Comment:
+1. Member clicks "Reply" on an existing comment.
+2. System populates the reply form referencing the parent
+comment.
+3. Member types a reply and clicks "Post comment".
+4. The reply is nested under the parent comment.
+5. The parent comment's author receives a "New reply"
+notification.
+Mention a Member (@):
+1. Member types @ followed by a name.
+2. System suggests matching group members.
+3. Member selects a suggested member.
+4. The mentioned member receives a "You were mentioned"
+notification after the comment is posted.
+Copyright © 2026 by Group 12
+
+-- 128 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 127
+Sort Comments:
+1. Member clicks "Newest" or "Top" sort toggle.
+2. System re-orders the comment list by creation time or
+vote score.
+Exception Flow 	Empty Comment:
+1. Member submits an empty comment.
+2. System disables the submit button.
+3. Comment is not posted.
+Comment Too Long:
+1. Member submits a comment exceeding 2000 characters.
+2. System displays a validation error.
+3. Comment is not posted.
+Post Not Found:
+1. The parent post does not exist.
+2. System displays a "Post not found" error.
+Invalid Parent Comment:
+1. Member attempts to reply to a comment from a different
+post.
+2. System displays an error: "Invalid parent comment".
+Not a Group Member:
+1. Member is not an active group member.
+2. System displays a permission error.
+Copyright © 2026 by Group 12
+
+-- 129 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 128
+UC-M-19: Mark Notifications Read
+Item 	Description
+Use Case ID 	UC-M-19
+Use Case Name 	Mark Notifications Read
+Copyright © 2026 by Group 12
+
+-- 130 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 129
+Description 	Allows a Member to mark one or all of their in-app
+notifications as read, clearing the unread notification count
+indicator in the navigation.
+Actor(s) 	Member
+Priority 	Low
+Trigger 	Member clicks "Mark all as read" or interacts with an
+individual notification to mark it as read.
+Pre-Conditions 	1. The Member is authenticated.
+2. The Member has at least one unread notification.
+Post-Conditions 	1. The selected notification(s) are marked as read.
+2. The unread notification count badge in the navigation is
+updated to reflect the change.
+Basic Flow 	1. Member opens the notifications panel.
+2. System displays a list of notifications with unread items
+highlighted.
+3. Member clicks "Mark all as read".
+4. System marks all of the Member's unread notifications as
+read.
+5. System updates the notification list to show all items as
+read.
+6. The unread count badge in the navigation clears.
+Copyright © 2026 by Group 12
+
+-- 131 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 130
+Alternative Flow 	Mark Single Notification Read:
+1. Member clicks on an individual notification.
+2. System marks only that specific notification as read.
+3. The unread count decrements by one.
+Exception Flow 	No Unread Notifications:
+1. Member attempts to mark all as read when there are no
+unread notifications.
+2. System processes the request silently; no change is made.
+System Error:
+1. System fails to update the notification status.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 132 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 131
+UC-M-20: View Notifications
+Item 	Description
+Use Case ID 	UC-M-20
+Use Case Name 	View Notifications
+Description 	Allows a Member to view a chronological list of their
+in-app notifications, including session reminders, join
+request updates, resource deletion notices, group status
+changes, mentions, and comment replies.
+Copyright © 2026 by Group 12
+
+-- 133 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 132
+Actor(s) 	Member
+Priority 	Medium
+Trigger 	Member opens the notifications panel or navigates to the
+notifications section.
+Pre-Conditions 	1. The Member is authenticated.
+Post-Conditions 	1. The Member's notifications are displayed in
+reverse-chronological order.
+2. No data is modified.
+Basic Flow 	1. Member clicks the notification bell icon in the
+navigation.
+2. System retrieves the Member's notifications, ordered by
+most recent first.
+3. System displays a list of notifications, each showing the
+title, message content, and timestamp.
+4. Unread notifications are visually distinguished from read
+ones.
+5. Member may click a notification link to navigate to the
+relevant content (e.g., a session, group, or discussion).
+6. Member may choose to filter to show only unread
+notifications.
+Alternative Flow 	No Notifications:
+1. Member has no notifications.
+2. System displays an empty state.
+Copyright © 2026 by Group 12
+
+-- 134 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 133
+Filter Unread Only:
+1. Member toggles the "unread only" filter.
+2. System retrieves only unread notifications for the
+Member.
+3. System updates the displayed list.
+Exception Flow 	System Error:
+1. System fails to retrieve notifications.
+2. System displays an error or loading state.
+3. Member may retry.
+Copyright © 2026 by Group 12
+
+-- 135 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 134
+3.4 Use Case for Admin
+Administrators are platform managers who oversee users, groups, resources, reports,
+and platform activities to ensure the system operates effectively and securely.
+Copyright © 2026 by Group 12
+
+-- 136 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 135
+UC-A-01: Delete User
+Item 	Description
+Use Case ID 	UC-A-01
+Use Case Name 	Delete User
+Description 	Allows an Administrator to permanently remove a user
+account from the platform. The account is soft-deleted and
+can no longer be used to log in or access any platform
+feature.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin clicks the delete action for a specific user account on
+the Admin Users page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target user account exists on the platform.
+Post-Conditions 	1. The user account is marked as deleted and is no longer
+accessible.
+2. The deleted user cannot log in or use the platform.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System displays a list of all registered user accounts.
+3. Admin locates the target user account.
+4. Admin clicks the delete action for the target user.
+Copyright © 2026 by Group 12
+
+-- 137 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 136
+5. System removes the user account from the platform.
+6. System confirms the deletion and refreshes the user list.
+Alternative Flow 	None.
+Exception Flow 	User Not Found:
+1. The target account no longer exists at the time of the
+action.
+2. System displays a "User not found" error.
+Target is an Admin:
+1. Admin attempts to delete another Administrator account.
+2. System displays a permission error.
+Self-Deletion:
+1. Admin attempts to delete their own account.
+2. System displays an error: "Cannot change your own
+account status."
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Admin may retry.
+Copyright © 2026 by Group 12
+
+-- 138 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 137
+UC-A-02: Deactivate User
+Item 	Description
+Use Case ID 	UC-A-02
+Copyright © 2026 by Group 12
+
+-- 139 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 138
+Use Case Name 	Deactivate User
+Description 	Allows an Administrator to set a user account to an Inactive
+status, preventing the user from logging in without
+permanently removing their account or their data.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin sets a user's status to Inactive on the Admin Users
+page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target user account exists and is currently Active or
+Suspended.
+3. The target user does not hold the Admin role.
+Post-Conditions 	1. The user's account status is updated to Inactive.
+2. The user can no longer log in until the status is changed.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System displays a list of all registered user accounts with
+their current status.
+3. Admin locates the target user and selects the Deactivate
+action.
+4. System verifies the Admin's authority and checks the
+target user is not an Administrator.
+5. System updates the user's account status to Inactive.
+Copyright © 2026 by Group 12
+
+-- 140 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 139
+6. System confirms the change and updates the status badge
+displayed for that user.
+Alternative Flow 	None.
+Exception Flow 	User Not Found:
+1. The target account no longer exists at the time of the
+action.
+2. System displays a "User not found" error.
+Target is an Admin:
+1. Admin attempts to deactivate another Administrator
+account.
+2. System displays a permission error.
+Self-Deletion:
+1. Admin attempts to delete their own account.
+2. System displays an error: "Cannot change your own
+account status."
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Admin may retry.
+Copyright © 2026 by Group 12
+
+-- 141 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 140
+UC-A-03: Suspend User
+Item 	Description
+Use Case ID 	UC-A-03
+Use Case Name 	Suspend User
+Copyright © 2026 by Group 12
+
+-- 142 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 141
+Description 	Allows an Administrator to suspend a user account,
+immediately revoking the user's active session and blocking
+future logins until the account is restored. This is used for
+accounts that have violated platform policies.
+Actor(s) 	Admin
+Priority 	High
+Trigger 	Admin clicks the suspend (ban) action for a user on the
+Admin Users page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target user account exists and is currently Active.
+3. The target user does not hold the Admin role.
+Post-Conditions 	1. The user's account status is updated to Suspended.
+2. All of the user's active login sessions are immediately
+invalidated.
+3. The suspended user cannot log in until the account is
+restored.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System displays all user accounts with their current
+status.
+3. Admin locates the target user and clicks the ban
+(suspend) icon.
+4. System verifies the Admin's authority and confirms the
+target is not an Administrator.
+Copyright © 2026 by Group 12
+
+-- 143 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 142
+5. System updates the user's status to Suspended.
+6. System immediately invalidates all of the user's active
+sessions.
+7. System confirms the change and displays a "Suspended"
+status badge for that user.
+Alternative Flow 	None.
+Exception Flow 	User Not Found:
+1. The target account no longer exists at the time of the
+action.
+2. System displays a "User not found" error.
+Target is an Admin:
+1. Admin attempts to delete another Administrator account.
+2. System displays a permission error.
+Self-Deletion:
+1. Admin attempts to delete their own account.
+2. System displays an error: "Cannot change your own
+account status."
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Admin may retry.
+Copyright © 2026 by Group 12
+
+-- 144 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 143
+UC-A-04: Activate User
+Item 	Description
+Use Case ID 	UC-A-04
+Use Case Name 	Activate User
+Copyright © 2026 by Group 12
+
+-- 145 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 144
+Description 	Allows an Administrator to restore a Suspended or Inactive
+user account to Active status, re-enabling the user's ability
+to log in and use the platform.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin clicks the restore (unban) action for a suspended or
+inactive user on the Admin Users page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target user account exists on the platform.
+Post-Conditions 	1. The user's account status is updated to Active.
+2. The user can log in and use the platform normally again.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System displays a list of all registered user accounts.
+3. Admin locates the target Suspended or Inactive user and
+clicks the restore (shield-check) icon.
+4. System verifies the Admin's authority.
+5. System updates the user's account status to Active.
+6. System confirms the change and displays an "Active"
+status badge for that user.
+Alternative Flow 	None.
+Exception Flow 	User Not Found:
+1. The target account no longer exists at the time of the
+Copyright © 2026 by Group 12
+
+-- 146 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 145
+action.
+2. System displays a "User not found" error.
+Target is an Admin:
+1. Admin attempts to delete another Administrator account.
+2. System displays a permission error.
+Self-Deletion:
+1. Admin attempts to delete their own account.
+2. System displays an error: "Cannot change your own
+account status."
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+3. Admin may retry.
+Copyright © 2026 by Group 12
+
+-- 147 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 146
+UC-A-05: List Users
+Item 	Description
+Use Case ID 	UC-A-05
+Use Case Name 	List Users
+Copyright © 2026 by Group 12
+
+-- 148 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 147
+Description 	Allows an Administrator to view a paginated list of all
+registered user accounts on the platform, including each
+user's name, email address, assigned roles, and current
+account status.
+Actor(s) 	Admin
+Priority 	High
+Trigger 	Admin navigates to the Admin Users page.
+Pre-Conditions 	1. The Admin is authenticated.
+Post-Conditions 	1. A list of all registered user accounts is displayed.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System retrieves all registered user accounts.
+3. System displays each account in a table row showing the
+user's avatar, full name, email address, assigned roles, and
+current status badge (Active, Inactive, or Suspended).
+4. Admin-role rows do not display a status-change action
+button.
+5. Admin may scroll through the list or act on individual
+users.
+Alternative Flow 	No Users:
+1. No user accounts exist in the system.
+2. System displays an empty table.
+Copyright © 2026 by Group 12
+
+-- 149 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 148
+Exception Flow 	Not an Admin:
+1. A non-Administrator user attempts to access the Admin
+Users page.
+2. System denies access and displays a permission error.
+System Error:
+1. System fails to retrieve user data.
+2. System displays an error or loading state.
+3. Admin may refresh.
+Copyright © 2026 by Group 12
+
+-- 150 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 149
+UC-A-06: Search Users
+Item 	Description
+Use Case ID 	UC-A-06
+Use Case Name 	Search Users
+Description 	Allows an Administrator to filter the user list by entering a
+keyword that matches against user names or email
+addresses, narrowing the results to find a specific account
+quickly.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin enters a keyword in the search field on the Admin
+Users page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The Admin Users page is open and displaying the user
+list.
+Post-Conditions 	1. The user list is filtered to show only accounts whose
+name or email matches the entered keyword.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Admin Users page.
+2. System displays the full user list.
+3. Admin enters a keyword in the search input.
+Copyright © 2026 by Group 12
+
+-- 151 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 150
+4. System filters the displayed users to show only those
+whose full name or email address contains the entered
+keyword (case-insensitive).
+5. System updates the table in real time as the Admin types.
+Alternative Flow 	Clear Search:
+1. Admin clears the search field.
+2. System restores the full unfiltered user list.
+Exception Flow 	No Matching Users:
+1. The entered keyword does not match any user.
+2. System displays an empty table or "No results" message.
+System Error:
+1. System fails to retrieve filtered results.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 152 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 151
+UC-A-07: Restore Group
+Item 	Description
+Use Case ID 	UC-A-07
+Use Case Name 	Restore Group
+Description 	Allows an Administrator to restore a previously archived
+study group, returning its status to Active and re-enabling it
+Copyright © 2026 by Group 12
+
+-- 153 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 152
+for normal use by members and Leaders. The group's
+Leader receives a notification when the group is restored.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin clicks the restore action for an archived group on the
+Admin Groups page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target group exists and currently has an Archived
+status.
+Post-Conditions 	1. The group's status is updated to Active.
+2. The group is accessible to members and visible in the
+group listings.
+3. The group's Leader receives an in-app notification that
+the group has been restored.
+Basic Flow 	1. Admin navigates to the Admin Groups page.
+2. System displays all groups, including archived ones, with
+their current status.
+3. Admin locates the archived group and clicks the restore
+(shield-check) icon.
+4. System verifies the Admin's authority.
+5. System updates the group's status to Active.
+6. System sends an in-app notification to the group's Leader
+informing them the group has been restored.
+Copyright © 2026 by Group 12
+
+-- 154 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 153
+7. System confirms the change and displays an "Active"
+status badge on the group card.
+Alternative Flow 	None.
+Exception Flow 	Group Not Found:
+1. The target group no longer exists.
+2. System displays a "Group not found" error.
+Not an Admin:
+1. A non-Admin user attempts to restore a group.
+2. System denies the action and displays a permission error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 155 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 154
+UC-A-08: Archive Group
+Item 	Description
+Use Case ID 	UC-A-08
+Use Case Name 	Archive Group
+Description 	Allows an Administrator to archive a study group that
+violates platform policies or is no longer appropriate.
+Archived groups are hidden from the general group listing
+and cannot accept new members. The group's Leader
+receives a notification when the group is archived.
+Copyright © 2026 by Group 12
+
+-- 156 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 155
+Actor(s) 	Admin
+Priority 	High
+Trigger 	Admin clicks the archive (ban) action for an active group on
+the Admin Groups page.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target group exists and currently has an Active status.
+Post-Conditions 	1. The group's status is updated to Archived.
+2. The group is hidden from the general group listing and is
+no longer accessible to non-Admin users.
+3. The group's Leader receives an in-app notification that
+the group has been archived.
+Basic Flow 	1. Admin navigates to the Admin Groups page.
+2. System displays all groups with their current status.
+3. Admin locates the target active group and clicks the ban
+(archive) icon.
+4. System verifies the Admin's authority.
+5. System updates the group's status to Archived.
+6. System sends an in-app notification to the group's Leader
+informing them the group has been archived.
+7. System confirms the change and displays an "Archived"
+status badge on the group card.
+Alternative Flow 	None.
+Copyright © 2026 by Group 12
+
+-- 157 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 156
+Exception Flow 	Group Not Found:
+1. The target group no longer exists.
+2. System displays a "Group not found" error.
+Not an Admin:
+1. A non-Admin user attempts to archive a group.
+2. System denies the action and displays a permission error.
+System Error:
+1. System encounters an unexpected failure.
+2. System displays an error message.
+Copyright © 2026 by Group 12
+
+-- 158 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 157
+UC-A-09: Group Analytics
+Item 	Description
+Use Case ID 	UC-A-09
+Use Case Name 	Group Analytics
+Description 	Allows an Administrator to view detailed activity analytics
+for a specific study group, including a breakdown of session
+statuses and a chart showing cumulative member growth
+over time.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin clicks the "View more" toggle on a group card in the
+Admin Groups page to expand its analytics section.
+Pre-Conditions 	1. The Admin is authenticated.
+2. The target group exists on the platform.
+Post-Conditions 	1. Session statistics and member growth charts for the
+selected group are displayed inline beneath the group card.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Admin Groups page.
+2. System displays all groups as a card grid.
+3. Admin clicks the "View more" button on the group card
+they want to inspect.
+Copyright © 2026 by Group 12
+
+-- 159 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 158
+4. System retrieves analytics data for the selected group.
+5. System displays a Session Statistics bar chart (breakdown
+by session status) and a Member Growth bar chart
+(cumulative members by month) directly below the selected
+group card.
+6. Admin may click "Hide stats" to collapse the analytics
+panel.
+Alternative Flow 	Collapse Analytics:
+1. Admin clicks "Hide stats" on the expanded group card.
+2. System hides the analytics panel.
+Exception Flow 	Group Not Found:
+1. The target group no longer exists when analytics are
+requested.
+2. System displays a "Group not found" error.
+Not an Admin:
+1. A non-Admin user attempts to access group analytics.
+2. System denies the request and displays a permission
+error.
+System Error:
+1. System fails to retrieve analytics data.
+2. System displays an error or loading state.
+Copyright © 2026 by Group 12
+
+-- 160 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 159
+UC-A-10: Platform Dashboard
+Item 	Description
+Use Case ID 	UC-A-10
+Use Case Name 	Platform Dashboard
+Description 	Allows an Administrator to view a high-level overview of
+the platform's current state, including total user count,
+Copyright © 2026 by Group 12
+
+-- 161 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 160
+active group count, a platform health indicator, and visual
+charts showing user status distribution and group subject
+distribution.
+Actor(s) 	Admin
+Priority 	High
+Trigger 	Admin navigates to the Dashboard page.
+Pre-Conditions 	1. The Admin is authenticated.
+Post-Conditions 	1. Platform-level statistics and charts are displayed on the
+Admin Dashboard.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Dashboard page.
+2. System detects the Admin role and retrieves
+platform-wide statistics.
+3. System displays three summary statistic cards: Total
+Users, Active Groups, and Platform Health (showing "All
+systems operational").
+4. System displays a Pie Chart showing user accounts
+broken down by status (Active, Inactive, Suspended).
+5. System displays a Bar Chart showing the number of
+active groups per subject area (top 6 subjects).
+6. System displays a Bar Chart showing the top 10 groups
+ranked by member count.
+Alternative Flow 	None.
+Copyright © 2026 by Group 12
+
+-- 162 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 161
+Exception Flow 	Not an Admin:
+1. A non-Admin user navigates to the Dashboard.
+2. System renders the Member or Leader dashboard variant
+instead.
+System Error:
+1. System fails to retrieve platform statistics.
+2. System displays an error or loading state.
+3. Admin may refresh.
+Copyright © 2026 by Group 12
+
+-- 163 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 162
+UC-A-11: Monitor Resources
+Item 	Description
+Use Case ID 	UC-A-11
+Use Case Name 	Monitor Resources
+Description 	Allows an Administrator to view a platform-wide listing of
+all shared resources across all study groups, enabling
+oversight of uploaded content including the file title,
+associated group, the user who uploaded it, and the upload
+date.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin navigates to the Admin Resources monitoring page.
+Pre-Conditions 	1. The Admin is authenticated.
+Post-Conditions 	1. All platform resources are displayed in a table view.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Admin Resources monitoring
+page.
+2. System retrieves all resource files uploaded across all
+groups on the platform.
+3. System displays each file in a table row showing: a
+file-type icon, the file title as a clickable link opening in a
+Copyright © 2026 by Group 12
+
+-- 164 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 163
+new tab, the associated group's name, the uploader's name
+and avatar, and the upload date.
+4. Admin may click any file title to open and inspect the
+file.
+Alternative Flow 	No Resources:
+1. No files have been uploaded to the platform.
+2. System displays an empty table.
+Exception Flow 	Not an Admin:
+1. A non-Admin user attempts to access the Resources
+monitoring page.
+2. System denies access and displays a permission error.
+System Error:
+1. System fails to retrieve resource data.
+2. System displays an error or loading state.
+3. Admin may refresh.
+Copyright © 2026 by Group 12
+
+-- 165 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 164
+UC-A-12: Monitor Sessions
+Item 	Description
+Use Case ID 	UC-A-12
+Use Case Name 	Monitor Sessions
+Description 	Allows an Administrator to view a platform-wide listing of
+all study sessions across all groups, showing each session's
+Copyright © 2026 by Group 12
+
+-- 166 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 165
+title, associated group, scheduled start time, and current
+status, enabling oversight of platform activity.
+Actor(s) 	Admin
+Priority 	Medium
+Trigger 	Admin navigates to the Admin Sessions monitoring page.
+Pre-Conditions 	1. The Admin is authenticated.
+Post-Conditions 	1. All platform sessions are displayed in a table view.
+2. No data is modified.
+Basic Flow 	1. Admin navigates to the Admin Sessions monitoring page.
+2. System retrieves all sessions across all groups on the
+platform.
+3. System displays each session in a table row showing: the
+session title, the associated group's name with its avatar, the
+formatted start date and time, and a color-coded status
+badge (Scheduled, In Progress, Completed, or Cancelled).
+4. Admin may scroll through the list to review session
+activity across the platform.
+Alternative Flow 	No Sessions:
+1. No sessions have been created on the platform.
+2. System displays an empty table.
+Exception Flow 	Not an Admin:
+1. A non-Admin user attempts to access the Sessions
+Copyright © 2026 by Group 12
+
+-- 167 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 166
+monitoring page.
+2. System denies access and displays a permission error.
+System Error:
+1. System fails to retrieve session data.
+2. System displays an error or loading state.
+3. Admin may refresh.
+Copyright © 2026 by Group 12
+
+-- 168 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 167
+4. 	External Interface Requirements
+4.1 User Interfaces
+The SGMS is primarily a web-based application, requiring a responsive and intuitive
+interface for both Patrons (Customers) and Administrators.
+ID 	Requirement 	Description
+UI-
+1.1
+Public Interface
+&
+Authentication
+The system shall provide a public Landing Page that
+showcases the platform's key features, active study
+groups, upcoming sessions, and student testimonials,
+accessible without an account. The system shall
+provide a Login screen and a Registration screen
+where users can sign in or create a new account by
+entering their name, email, and password. Input errors
+shall be shown immediately beneath the relevant
+fields, and all buttons shall visually indicate when an
+action is in progress.
+UI-
+1.2
+Navigation
+Structure and
+Layout
+The system shall provide a consistent navigation
+structure on all authenticated pages, consisting of a
+top bar and a left sidebar. The top bar shall display the
+current page name, a theme toggle, a notification bell,
+the signed-in user's name and role, and a logout
+Copyright © 2026 by Group 12
+
+-- 169 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 168
+button. The sidebar shall list the main sections:
+Dashboard, Groups, Sessions, Resources, and Profile,
+with an additional Admin section visible only to
+administrators. On smaller screens, the sidebar shall
+be hidden by default and open as an overlay when the
+menu button is tapped.
+UI-
+1.3
+Role-Based
+Dashboard
+The system shall display a personalised Dashboard
+that automatically adapts to the user's role. Students
+shall see their group count, upcoming sessions,
+attendance rate, and recent resources, along with
+summary charts. Group Leaders shall see statistics
+and charts for the groups they manage. Administrators
+shall see platform-wide totals for users and active
+groups, along with system health status. Each
+dashboard view shall present the most relevant
+information for that role without requiring any manual
+configuration.
+UI-
+1.4
+Group
+Management
+Interface
+The system shall provide a Study Groups page where
+users can browse, search, and filter all available
+groups and request to join them. Each group shall
+have a dedicated detail page with tabbed sections for
+Overview, Sessions, Resources, and Discussions.
+Group Leaders shall have access to an additional
+Copyright © 2026 by Group 12
+
+-- 170 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 169
+Requests tab to review and respond to pending join
+requests, as well as tools to edit the group's
+information and view group activity charts.
+UI-
+1.5
+Session
+Management
+and Live
+Collaboration
+The system shall provide a Sessions page where users
+can view their upcoming and past study sessions in
+either a list or a calendar layout. Each session shall
+display its title, group, scheduled time, and current
+status. Group Leaders shall be able to create and
+manage sessions, send notifications to members, and
+mark a session as ended. When a session is in
+progress, members shall be able to join a live video
+meeting room directly from the session page. The
+session detail page shall also display an attendance
+record showing each participant's status and check-in
+time, which Leaders can manually update.
+UI-
+1.6
+Resource
+Management
+Interface
+The system shall provide a Resources page where
+users can browse all study materials shared across
+their groups, organised into folders. Within each
+group, members shall be able to create folders, upload
+files using a drag-and-drop interface, and view
+uploaded files as a list with their type, title, uploader,
+date, and star rating. Deleting a file shall require an
+explicit confirmation step. The upload interface shall
+Copyright © 2026 by Group 12
+
+-- 171 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 170
+show the progress of each file individually and report
+success or failure upon completion.
+UI-
+1.7
+Discussion and
+Voting Interface
+The system shall provide a Discussions page where
+members can read and participate in forum-style
+conversations across their groups. Members shall be
+able to create new posts with a title, content, and
+optional file attachments, and sort posts by most
+recent or highest voted. Each post's detail page shall
+display the full content with upvote and downvote
+controls, and a threaded comment section where
+members can reply, mention other members using the
+@ symbol, and vote on individual comments.
+UI-
+1.8
+Notifications
+Interface
+The system shall display a notification bell button in
+the top navigation bar that shows a badge with the
+number of unread notifications. Clicking the bell shall
+open a panel listing the user's recent notifications,
+each with a title, short description, and timestamp;
+unread items shall be visually highlighted. Users shall
+be able to mark all notifications as read at once, or
+mark individual ones by clicking them. Clicking a
+notification with a linked destination shall navigate
+the user to the relevant page. The notification count
+Copyright © 2026 by Group 12
+
+-- 172 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 171
+shall update automatically in the background every 30
+seconds.
+UI-
+1.9
+Profile
+Management
+Interface
+The system shall provide a Profile page where users
+can view their account summary and update their
+personal information. The page shall display an
+overview of the user's activity (groups joined,
+attendance rate, resources uploaded), followed by an
+editable section for their name, avatar, and bio. It shall
+also list the groups they belong to and the files they
+have uploaded. Changes shall be saved with a single
+button, which shall confirm success or display an
+error message accordingly.
+UI-
+1.10
+Administration
+& Search
+Interface
+The system shall provide an Administration panel,
+accessible only to Administrators, for managing
+platform users and study groups. The Users page shall
+display all registered accounts in a table with their
+name, email, roles, and account status, and shall allow
+Administrators to suspend or restore individual
+accounts. The Groups page shall display all study
+groups with the option to archive or restore them and
+view per-group activity charts. Across the platform,
+keyword search shall be available on the Groups,
+Copyright © 2026 by Group 12
+
+-- 173 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 172
+Resources, and Admin Users pages, allowing users to
+filter displayed results by typing in a search field.
+UI-
+1.11
+Data
+Visualization &
+Loading States
+The system shall present activity statistics as
+interactive Bar Charts and Pie Charts on Dashboard
+and administration pages, with readable tooltips that
+match the platform's visual theme. While any page
+content is being loaded from the server, the system
+shall display animated placeholder blocks that mirror
+the shape of the expected content, providing a smooth
+loading experience without blank screens or abrupt
+layout shifts.
+UI-
+1.12
+Design
+Standards,
+Theme &
+Responsiveness
+The system shall maintain a consistent visual style
+across all pages using a shared set of colours, spacing,
+and shape values, with smooth visual transitions on
+interactive elements. The system shall support both a
+light and a dark colour theme, switchable at any time
+from the top navigation bar, with the user's preference
+saved across sessions. All pages shall be fully usable
+on screen sizes from mobile phones to desktop
+monitors, with layouts that adapt their column
+structure to the available screen width. Any changes
+made on the platform (such as creating or deleting
+Copyright © 2026 by Group 12
+
+-- 174 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 173
+content) shall be reflected immediately in the
+interface without requiring a manual page refresh.
+UI-
+1.13
+Non-Functional
+UI Standards
+The system shall meet the following interface quality
+standards. All buttons that display only icons shall
+include descriptive labels for screen reader users.
+Form fields shall be properly labelled so that assistive
+technologies can identify their purpose. Status
+information shall always be communicated through
+text in addition to colour. All interface text, labels,
+and messages shall be written in English. Dates and
+times shall appear in a consistent, human-readable
+format throughout the platform. The application shall
+operate correctly on current versions of Google
+Chrome, Mozilla Firefox, Microsoft Edge, and Apple
+Safari.
+4.2 Software Interfaces
+The SGMS is built as a Server-Side Rendered (SSR) monolithic application, and
+relies on several internal and external software interfaces.
+ID 	Requirement 	Interface Detail
+Copyright © 2026 by Group 12
+
+-- 175 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 174
+SI-2.
+1
+API Structure
+and Response
+Format
+The system shall expose all features through a unified
+API. Every response shall include a status indicator, a
+message, and the relevant data. Error responses shall
+additionally list the specific issues encountered.
+Results from listing endpoints shall be returned in
+pages, with information about the total number of
+records available. A publicly accessible status
+endpoint shall allow monitoring tools to confirm the
+server is running.
+SI-2.
+2
+Authentication
+& Token
+Management
+The system shall allow users to register, log in, and log
+out. Upon login, the server shall issue a short-lived
+credential for making requests and a longer-lived
+credential for renewing access without logging in
+again. The server shall refuse access to requests with
+missing or expired credentials and shall deny login to
+suspended accounts. When a user logs out, their
+renewal credential shall be invalidated immediately.
+SI-2.
+3
+Access Control 	The system shall restrict each action to users who have
+the appropriate role. Platform-wide administrative
+actions shall only be available to Administrators.
+Group-level actions such as approving members or
+managing sessions shall only be available to the
+Leader of that specific group or the person who
+Copyright © 2026 by Group 12
+
+-- 176 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 175
+created the resource. Actions that require group
+membership shall be blocked for users who are not
+active members of the relevant group.
+SI-2.
+4
+Group
+Management
+API
+The system shall provide endpoints to browse, create,
+update, and manage the status of study groups.
+Anyone may view the group listing and group details.
+Authenticated users may create groups and submit or
+withdraw join requests. Group Leaders may respond to
+pending join requests and edit their group's
+information. Administrators may archive or restore
+any group. The server shall prevent duplicate join
+requests and reject requests to join groups that are full
+or inactive.
+2.5 	Session
+Management
+and Live
+Meeting API
+The system shall provide endpoints to create, update,
+and end study sessions. Group members may schedule
+sessions for a future time or start one immediately.
+Leaders and session creators may notify all group
+members about a session and end it when finished.
+The server shall provide a secure access credential so
+that members can join the live video room for a
+session that is currently in progress. The server shall
+Copyright © 2026 by Group 12
+
+-- 177 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 176
+reject live meeting requests if the session is not active
+or if the live meeting service is unavailable.
+2.6 	Attendance
+API
+The system shall provide endpoints to record and view
+session attendance. When a member joins a live
+session, their attendance shall be automatically
+recorded as Present. Session creators may also
+manually record or update an attendance status for any
+group member. The server shall provide the full
+attendance list for a session, showing each participant's
+name, status, and the time they joined.
+2.7 	Resource &
+File Upload
+API
+The system shall provide endpoints to manage study
+material folders and files within groups. Members may
+create folders and upload files into them. Leaders may
+edit or remove folders. Uploaded files shall be stored
+in an external cloud storage service; the server
+facilitates the upload by issuing a temporary
+permission, and only stores a reference to the file after
+upload. Members may star files they find useful. Only
+the person who uploaded a file or a group Leader may
+delete it.
+Copyright © 2026 by Group 12
+
+-- 178 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 177
+2.8 	Discussion and
+Voting API
+The system shall provide endpoints for forum-style
+discussions within groups. Members may create, edit,
+and vote on posts and comments. Voting the same way
+twice shall remove the vote. Members may reply to
+comments and mention other members by name. The
+server shall automatically notify mentioned members
+and the author of a comment when someone replies to
+it.
+2.9 	Notification
+API
+The system shall provide endpoints to retrieve and
+manage a user's in-app notifications. Users may view
+their notification list, check how many they have
+unread, and mark one or all notifications as read. The
+server shall generate notifications automatically when
+key events occur on the platform, such as a session
+announcement, a join request decision, a reply to a
+comment, or a change to a group's status.
+2.10 	Dashboard &
+Reporting API
+The system shall provide a single dashboard endpoint
+that returns a personalised summary adapted to the
+requesting user's role — showing personal activity
+data for Members, group management data for
+Leaders, and platform-wide statistics for
+Administrators. The system shall also provide a
+reporting endpoint where any user may flag content
+Copyright © 2026 by Group 12
+
+-- 179 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 178
+for review, and Administrators may view all submitted
+reports and record their resolution.
+2.11 	Data Validation
+& Error
+Handling
+The system shall check all submitted data for
+completeness and correctness before acting on it. If
+data is missing, in the wrong format, or outside
+allowed limits, the server shall return a clear error
+response listing the specific problems so the user can
+correct them. Attempts to create duplicate records
+shall be rejected with a conflict error. Requests to
+non-existent endpoints shall return a not-found
+response. Unexpected server failures shall return a
+generic error message in production to avoid exposing
+internal details.
+2.12 	Third-Party
+Service
+Integrations
+The system shall connect to two external services to
+support its core features. For live video meetings, it
+shall integrate with LiveKit to manage meeting rooms
+and issue participant access credentials. For file
+storage, it shall integrate with Cloudinary, allowing
+files to be uploaded directly by the client while the
+server controls the authorisation. Both services shall
+be configured privately on the server and their
+credentials shall never be shared with the client.
+Copyright © 2026 by Group 12
+
+-- 180 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 179
+2.13 	Security &
+Environment
+Configuration
+The system shall apply security protections to all
+responses and only accept requests from the authorised
+client application. All sensitive credentials —
+including the database connection and signing secrets
+— shall be loaded from environment variables, and the
+server shall refuse to start if any required value is
+absent. The server shall reject request payloads larger
+than 10 MB.
+4.3 Hardware Interfaces
+The primary hardware interface requirements relate to the client devices and the
+payment/entry infrastructure at the cinema.
+ID 	Requirement 	Description
+HI-
+3.1
+Client Devices 	The system shall be fully accessible and usable on
+standard consumer hardware, including desktop
+computers, laptops, tablets, and smartphones. It shall
+not require users to purchase or install any specialised
+hardware to operate the platform.
+Copyright © 2026 by Group 12
+
+-- 181 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 180
+HI-
+3.2
+Audio & Video
+Capture
+The system shall connect to standard webcams and
+microphones built into or attached to the user's device
+to facilitate live study sessions. Access to these
+hardware peripherals shall be managed respectfully
+through standard browser permission prompts.
+HI-
+3.3
+Audio
+Playback
+The system shall route sound through the device's
+default audio output hardware, such as built-in
+speakers or connected headphones. This ensures users
+can hear other participants clearly during live meetings
+and video conferences.
+HI-
+3.4
+Server
+Infrastructure
+The system's central backend services shall be capable
+of running on standard, commercially available cloud
+hosting hardware. It shall not depend on bespoke,
+proprietary, or highly specialized server equipment to
+function correctly.
+HI-
+3.5
+Network
+Connectivity
+The system shall operate reliably over standard internet
+connections, including Wi-Fi, wired ethernet, and
+mobile cellular networks (4G/5G). It shall be designed
+to function adequately across the typical varying
+Copyright © 2026 by Group 12
+
+-- 182 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 181
+network speeds found in homes and educational
+institutions.
+4.4 Communications Interfaces
+ID 	Requirement 	Description
+CI-
+4.1
+Network
+Protocol
+All client-server communication must use the secure
+HTTPS protocol.
+CI-
+4.2
+Bandwidth 	The system shall function effectively and meet
+performance requirements (see Section 5.1) over a
+typical consumer broadband connection.
+5. 	Other Nonfunctional Requirements
+This section specifies the qualitative attributes the SGMS must possess.
+5.1 Performance Requirements
+Copyright © 2026 by Group 12
+
+-- 183 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 182
+ID 	Requirement 	Description
+PE
+-1
+Page Load
+Speed
+The system shall load interface pages quickly to
+provide a smooth and frustration-free user experience.
+Under normal network conditions, the initial page load
+should complete within a few seconds, and subsequent
+page navigations should feel instantaneous.
+PE
+-2
+Server
+Response Time
+The system shall process standard user actions—such
+as saving a profile update, submitting a comment, or
+uploading a small file—rapidly. The platform should
+aim to acknowledge and complete these common tasks
+in under a second to keep users engaged.
+PE
+-3
+Live Meeting
+Performance
+The system shall maintain smooth video and audio
+quality during live study sessions. A single meeting
+room should be capable of comfortably
+accommodating a standard study group size (e.g., up to
+20 active participants) without experiencing severe lag
+or dropped connections.
+Copyright © 2026 by Group 12
+
+-- 184 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 183
+5.2 Security
+ID 	Requirement Description
+SEC
+-1
+Data
+Encryption
+in Transit
+The system shall protect all information traveling
+between the user's device and the server using
+industry-standard secure connections (HTTPS). This
+ensures that passwords, personal details, and study
+materials cannot be intercepted or read by unauthorised
+parties over the internet.
+SEC
+-2
+Secure
+Password
+Storage
+The system shall never store user passwords in plain
+text. All passwords must be transformed using strong,
+industry-standard cryptographic hashing before being
+saved to the database, ensuring they remain safe even if
+the data storage is compromised.
+SEC
+-3
+Session
+Security
+The system shall protect unattended user accounts by
+automatically expiring login sessions after a prolonged
+period of inactivity. It shall also provide a reliable
+logout feature that immediately invalidates the user's
+access, ensuring security on shared or public devices.
+Copyright © 2026 by Group 12
+
+-- 185 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 184
+5.3 Extensibility
+ID 	Requirement 	Description
+AVL
+-1
+Modular
+Design for
+Extensibility
+The system shall be built using a flexible, modular
+software architecture. This ensures that new
+features—such as calendar integrations, new resource
+types, or automated grading tools—can be added by
+developers in the future without requiring a complete
+rebuild of the existing platform.
+AVL
+-2
+Scalable
+Infrastructure
+The system shall be designed to grow seamlessly
+alongside its user base. The underlying server setup
+must allow for easy expansion, meaning additional
+server capacity can be quickly added to handle
+increased traffic during peak periods, such as
+university exam seasons.
+6. 	Business Rules
+These are policies, constraints, or computations that govern the business domain of
+movie ticketing.
+Copyright © 2026 by Group 12
+
+-- 186 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 185
+ID 	Rule 	Description
+BR-
+1
+Account
+Status
+Enforcement
+Users with an Inactive or Suspended account status
+cannot log in to the platform or refresh their existing
+sessions.
+BR-
+2
+Suspension
+Consequence
+Suspending a user account must immediately revoke all
+of the user's active login sessions across all devices.
+BR-
+3
+Admin
+Immunity
+An Administrator's account status cannot be changed,
+deactivated, or suspended by another Administrator.
+BR-
+4
+Join Request
+Exclusivity
+A user cannot submit a join request to a study group if
+they are already an active member or currently have a
+pending request for that group.
+Copyright © 2026 by Group 12
+
+-- 187 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 186
+BR-
+5
+Join Request
+Approval
+A user only becomes an official group member after a
+Group Leader explicitly approves their pending join
+request.
+BR-
+6
+Group Creator
+Ownership
+The user who creates a study group is automatically
+assigned the role of Leader within that group.
+BR-
+7
+Group
+Capacity Limit
+A group cannot accept new members or new join
+requests if its active member count has reached its
+defined maximum capacity.
+BR-
+8
+Group
+Archival
+Consequence
+An Archived group is hidden from general listings and
+cannot accept new members or new activity (sessions,
+posts, uploads).
+BR-
+9
+Group
+Management
+Authority
+Only a Leader of a group can modify the group's
+details, change its status, or approve/reject pending join
+requests.
+BR-
+10
+Admin Group
+Override
+Administrators have the authority to archive or restore
+any group on the platform, regardless of whether they
+are a member of that group.
+Copyright © 2026 by Group 12
+
+-- 188 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 187
+BR-
+11
+Session
+Scheduling
+A scheduled session must have a defined start time in
+the future and a explicitly defined end time.
+BR-
+12
+Live Session
+Initiation
+A session can be started immediately (status set to In
+Progress) without requiring a predefined end time.
+BR-
+13
+Session
+Modification
+Only the user who created a session or a Group Leader
+can update its details, end it prematurely, or cancel it.
+BR-
+14
+Live Meeting
+Access
+Only active members of the associated group can join a
+live video meeting room for a session currently in
+progress.
+BR-
+15
+Session
+Completion
+States
+Ending an "In Progress" session marks its status as
+"Completed". Ending a "Scheduled" session marks its
+status as "Cancelled".
+BR-
+16
+Attendance
+Auto-Tracking
+A member's attendance is automatically recorded as
+"Present" when they successfully join the live meeting
+room.
+Copyright © 2026 by Group 12
+
+-- 189 of 190 --
+
+Software Requirements Specification for Study Group Management System 	Page 188
+BR-
+17
+Resource
+Upload
+Permission
+Only active members of a group can upload files to that
+group's resource folders.
+Copyright © 2026 by Group 12
+
+-- 190 of 190 --
+
