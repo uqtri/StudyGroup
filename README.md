@@ -1,6 +1,6 @@
-# StudyHub — Group Study Management System
+# 📚 StudyHub — Group Study Management System
 
-## Project Description
+## 📖 Project Description
 
 StudyHub is a full-stack web application for organizing and running collaborative study groups. Students and group leaders can discover groups, request membership, schedule study sessions, track attendance, share resources in folders, and participate in group discussions with voting and mentions. Platform administrators manage users, groups, sessions, resources, and moderation reports through a separate admin portal.
 
@@ -12,9 +12,9 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 
 ---
 
-## Features
+## ✨ Features
 
-### Authentication
+### 🔐 Authentication
 - User registration (default MEMBER role)
 - Login with access and refresh tokens
 - Profile retrieval (`GET /auth/me`)
@@ -22,13 +22,13 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 - Logout (refresh token invalidation)
 - Account status checks (ACTIVE, INACTIVE, SUSPENDED)
 
-### User Management
+### 👤 User Management
 - View and update own profile
 - Admin: list users with pagination
 - Admin: update user status (ACTIVE / INACTIVE / SUSPENDED)
 - Admin: soft-delete users
 
-### Study Groups
+### 👥 Study Groups
 - Browse groups (public listing with optional auth)
 - Create, update, and soft-delete groups
 - Join requests (request, cancel, approve, reject)
@@ -36,27 +36,27 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 - Admin: set group status (ACTIVE, ARCHIVED, DELETED)
 - Group management UI for leaders (members, join requests)
 
-### Study Sessions
+### 📅 Study Sessions
 - List and view sessions (optional auth for public browse)
 - Create, update, end, and delete sessions
 - Session statuses: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED
 - Notify group members about a session
 - LiveKit access token for in-browser meetings (`GET /sessions/:id/livekit-token`)
 
-### Attendance
+### ✅ Attendance
 - Mark attendance (PRESENT, ABSENT, LATE, EXCUSED)
 - Record session join timestamp
 - List attendance by session
 - Per-user attendance statistics on dashboards
 
-### Resources
+### 📁 Resources
 - Resource folders per group (create, list, update)
 - Upload resources (title, file URL, type) into folders
 - Star ratings (toggle per user)
 - Soft-delete resources
 - Cloudinary signed upload support
 
-### Discussions
+### 💬 Discussions
 - Group posts with title, content, and file attachments
 - Upvote/downvote on posts
 - Threaded comments with replies
@@ -64,33 +64,33 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 - Upvote/downvote on comments
 - Edit and soft-delete (author-owned content)
 
-### Notifications
+### 🔔 Notifications
 - In-app notification list
 - Unread count
 - Mark single or all notifications as read
 
-### Moderation & Reports
+### 🛡️ Moderation & Reports
 - Submit reports (USER, GROUP, POST, COMMENT, RESOURCE)
 - Admin: list and update report status (PENDING, REVIEWED, RESOLVED, DISMISSED)
 
-### Dashboard & Analytics
+### 📊 Dashboard & Analytics
 - Role-based stats for MEMBER, LEADER, and ADMIN
 - Admin: per-group statistics
 - Charts on admin dashboard (Recharts)
 
-### Administration (Web UI)
+### ⚙️ Administration (Web UI)
 - Admin portal at `/admin/*` (separate layout from student site)
 - Dashboard, users, groups, sessions, resources, settings pages
 
-### Public Website
+### 🌐 Public Website
 - Landing page, FAQ, contact, terms, and privacy pages
 - Dark/light theme toggle
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-### Frontend
+### ⚛️ Frontend
 - React 19
 - Vite 6
 - React Router 7
@@ -104,7 +104,7 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 - Lucide React
 - Base UI / shadcn-style components
 
-### Backend
+### 🖥️ Backend
 - Node.js (ES modules)
 - Express 4
 - Prisma ORM 6
@@ -116,26 +116,26 @@ StudyHub is a full-stack web application for organizing and running collaborativ
 - Cloudinary SDK
 - LiveKit Server SDK
 
-### Database
+### 🗄️ Database
 - PostgreSQL (Neon cloud or local via Docker Compose)
 
-### Testing
+### 🧪 Testing
 - Vitest (service, utility, middleware unit tests)
 - Jest (service, controller/API, E2E tests)
 - Supertest (HTTP integration tests)
 
-### Deployment
+### 🐳 Deployment (infrastructure)
 - Docker (multi-stage builds)
 - Docker Compose (PostgreSQL, backend, frontend)
 - Nginx (production frontend static hosting and `/api` proxy)
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 The project is a **monorepo** with a React SPA frontend and a modular Express API backend.
 
-### Backend (layered, feature-based modules)
+### 🔧 Backend (layered, feature-based modules)
 
 Each API module follows a consistent structure:
 
@@ -153,7 +153,7 @@ Patterns in use:
 - **MVC-style separation** (controller → service → repository)
 - **RBAC** via `authenticate` and `authorize(ROLES.*)` middleware
 
-### Frontend
+### 🎨 Frontend
 
 - **Page-based routing** with role guards (`StudentRoute`, `AdminRoute`, `GuestRoute`)
 - **API client layer** (`src/api/*`) over Axios with automatic token refresh
@@ -161,7 +161,7 @@ Patterns in use:
 
 ---
 
-## Folder Structure
+## 📂 Folder Structure
 
 ```text
 StudyGroup/
@@ -218,15 +218,15 @@ StudyGroup/
 
 ---
 
-## Installation
+## 📦 Installation
 
-### Prerequisites
+### ✅ Prerequisites
 
 - Node.js 20+
 - npm 10+
 - PostgreSQL (Neon, local install, or Docker)
 
-### Clone and install
+### 📥 Clone and install
 
 ```bash
 git clone <repository-url>
@@ -251,9 +251,9 @@ npm install
 
 ---
 
-## Environment Variables
+## 🔑 Environment Variables
 
-### Backend (`backend/.env`)
+### ⚙️ Backend (`backend/.env`)
 
 | Variable | Description |
 |----------|-------------|
@@ -273,7 +273,7 @@ npm install
 | `CLOUDINARY_API_SECRET` | Cloudinary API secret |
 | `CLOUDINARY_UPLOAD_PRESET` | Cloudinary unsigned/signed upload preset |
 
-### Frontend (`frontend/.env`)
+### 💻 Frontend (`frontend/.env`)
 
 | Variable | Description |
 |----------|-------------|
@@ -283,9 +283,9 @@ Never commit `.env` files with real secrets.
 
 ---
 
-## Running the Project
+## ▶️ Running the Project
 
-### Backend (development)
+### 🖥️ Backend (development)
 
 ```bash
 cd backend
@@ -294,7 +294,7 @@ npm run dev
 
 API: **http://localhost:5000**
 
-### Frontend (development)
+### 💻 Frontend (development)
 
 ```bash
 cd frontend
@@ -303,7 +303,7 @@ npm run dev
 
 App: **http://localhost:5173**
 
-### Frontend (production build)
+### 📦 Frontend (production build)
 
 ```bash
 cd frontend
@@ -311,7 +311,7 @@ npm run build
 npm run preview
 ```
 
-### Backend (production)
+### 🚀 Backend (production)
 
 ```bash
 cd backend
@@ -321,7 +321,7 @@ npm start
 
 ---
 
-## Database Setup
+## 🗃️ Database Setup
 
 Generate the Prisma client:
 
@@ -362,7 +362,7 @@ npm run db:studio
 
 Migrations live in `backend/prisma/migrations/`. The Docker backend image runs `prisma migrate deploy` on startup before starting the server.
 
-### Seed accounts
+### 🌱 Seed accounts
 
 | Email | Password | Role |
 |-------|----------|------|
@@ -374,7 +374,7 @@ Change these credentials before any production deployment.
 
 ---
 
-## Main APIs
+## 🔌 Main APIs
 
 Base URL: `http://localhost:5000/api`
 
@@ -395,7 +395,7 @@ Base URL: `http://localhost:5000/api`
 | Dashboard | `/dashboard` | Role stats; admin group stats |
 | Upload | `/upload` | Cloudinary signature |
 
-### Auth endpoints
+### 🔐 Auth endpoints
 
 | Method | Endpoint | Auth |
 |--------|----------|------|
@@ -405,7 +405,7 @@ Base URL: `http://localhost:5000/api`
 | POST | `/auth/refresh` | Refresh token |
 | POST | `/auth/logout` | Bearer |
 
-### Response format
+### 📋 Response format
 
 ```json
 {
@@ -419,11 +419,11 @@ Protected routes require: `Authorization: Bearer <accessToken>`
 
 ---
 
-## Testing
+## 🧪 Testing
 
 Tests run from the `backend/` directory.
 
-### Vitest (default `npm test`)
+### ⚡ Vitest (default `npm test`)
 
 ```bash
 cd backend
@@ -432,7 +432,7 @@ npm run test:watch
 npm run test:cov:vitest
 ```
 
-### Jest (service, API/controller, E2E)
+### 🎯 Jest (service, API/controller, E2E)
 
 ```bash
 npm run test:jest
@@ -442,7 +442,7 @@ npm run test:e2e
 npm run test:cov
 ```
 
-### All tests
+### ✅ All tests
 
 ```bash
 npm run test:all
@@ -454,9 +454,9 @@ See `backend/automation-tests/README.md` for layout and QA documentation referen
 
 ---
 
-## Scripts
+## 📜 Scripts
 
-### Backend (`backend/package.json`)
+### 🖥️ Backend (`backend/package.json`)
 
 | Command | Description |
 |---------|-------------|
@@ -480,7 +480,7 @@ See `backend/automation-tests/README.md` for layout and QA documentation referen
 | `npm run test:cov` | Jest with coverage |
 | `npm run test:cov:vitest` | Vitest with coverage |
 
-### Frontend (`frontend/package.json`)
+### 💻 Frontend (`frontend/package.json`)
 
 | Command | Description |
 |---------|-------------|
@@ -492,7 +492,7 @@ See `backend/automation-tests/README.md` for layout and QA documentation referen
 
 ---
 
-## Security Features
+## 🔒 Security Features
 
 | Feature | Implementation |
 |---------|----------------|
@@ -512,9 +512,9 @@ Not implemented in the current backend: rate limiting, CSRF middleware, or dedic
 
 ---
 
-## Deployment
+## 🚀 Deployment
 
-### Docker Compose (full stack)
+### 🐳 Docker Compose (full stack)
 
 ```bash
 docker compose up --build
@@ -536,17 +536,17 @@ docker compose up -d postgres
 
 Use `postgresql://studyhub:studyhub@localhost:5432/studyhub?sslmode=disable` in `backend/.env`.
 
-### Docker images
+### 📦 Docker images
 
 - **Backend:** Node 20 Alpine; `prisma migrate deploy` then `node server.js`
 - **Frontend:** Node build stage → Nginx Alpine serving SPA with API reverse proxy
 
-### CI/CD
+### 🔄 CI/CD
 
 No GitHub Actions or other CI pipeline configuration is present in this repository.
 
 ---
 
-## License
+## 📄 License
 
 This project is intended for educational and internal use.
